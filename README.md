@@ -36,4 +36,4 @@ Projects update from the latest **tagged GitHub release** (see `update.md`). To 
 
 ## Status
 
-v0.1.1 is built and tested on Windows 11 (setup, first chat, save points, account check, starter build, packaged AI call) and reviewed adversarially by GPT reviewers over three rounds; the last round's fixes are tested but not re-reviewed. The desktop app's **Review hooks** button is named from the app's own text; clicking it is not yet tested. macOS paths are written but untested. The repository is private, so the install line above works only once it's public.
+v0.1.2 is built and tested on Windows 11 (setup, first chat, save points, account check, starter build, packaged AI call) and reviewed adversarially by GPT reviewers over three rounds; the last round's fixes are tested but not re-reviewed. The desktop app's **Review hooks** button is named from the app's own text; clicking it is not yet tested. macOS paths are written but untested. The repository is private, so the line under "Start a project" works only once it's public.
