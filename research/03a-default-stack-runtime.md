@@ -1,6 +1,6 @@
 # Default Stack and Runtime (no-admin, Windows + macOS)
 
-Scope: the technologies the skill picks, without asking her, for small personal tools that need no server, under the hard rule that nothing needs administrator/root rights. Research date 2026-09-29.
+Scope: the technologies the skill picks, without asking the user, for small personal tools that need no server, under the hard rule that nothing needs administrator/root rights and nothing is installed on the computer. Research date 2026-09-29.
 
 **Decision (2026-09-29): Electron + TypeScript is the default, and one self-contained HTML file is the fallback.** This replaces the first draft's Python + uv + pywebview. The choice came from building the same app (a local resume parser) in four admin-free stacks and trying three more that turned out to need admin; the reports are in [`bakeoff/`](bakeoff/) [B].
 
@@ -10,11 +10,11 @@ Tags: `[UNVERIFIED]` means I could not confirm it from a page I opened. `[INFERE
 
 **Stack choice**
 
-1. **Default: Electron (TypeScript) with Electron Forge + Vite, on a per-user Node 24 LTS, installed with npm.**
-   - *Why.* The UI is HTML, so the mockups she approves are made of the same material as the app ([05](05-mockups-alternatives.md)), and the same UI code becomes the no-install fallback (rec 2). One language covers the UI, the model calls ([04a](04a-software-2-llm-extraction.md)) and the MCP server ([04b](04b-software-3-local-mcp.md)).
+1. **Default: Electron (TypeScript) with Electron Forge + Vite, on Node 24 LTS unpacked inside the project, installed with npm.**
+   - *Why.* The UI is HTML, so the mockups the user approves are made of the same material as the app ([05](05-mockups-alternatives.md)), and the same UI code becomes the no-install fallback (rec 2). One language covers the UI, the model calls ([04a](04a-software-2-llm-extraction.md)) and the MCP server ([04b](04b-software-3-local-mcp.md)).
    - *Bake-off evidence [B].* No admin and no C++ compiler at any step. UI edits showed up in 26–93 ms. The packaged app starts in 0.4–0.9 s. After one fix (rec 15) it made 0 network connections. The agent made zero Electron API mistakes when it read the current docs first. Its code-review score (25/35) tied for best.
    - *Costs.*
-     - Size: a 370 MB app folder, 320–400 MB RAM across 4 processes, and 673 MB of `node_modules` per project [B].
+     - Size: a 370 MB app folder, 320–400 MB RAM across 4 processes [B], and about 700 MB of `node_modules` per project (673 MB in the bake-off [B], 699 MB in the in-project run [LOCAL]).
      - Security is the author's job [18]: every tool starts from the hardened starter template (rec 14), never a fresh scaffold.
      - Churn: a new major every 8 weeks, and only the latest 3 are supported [16].
 2. **Fallback: one HTML file with inline JS/CSS, opened from disk.** It needs no runtime, no download and no executable, so AppLocker, WDAC, Smart App Control, Constrained Language Mode and proxies cannot stop it. `file://` counts as a secure context [49].
@@ -28,10 +28,16 @@ Tags: `[UNVERIFIED]` means I could not confirm it from a page I opened. `[INFERE
 
 **Install mechanics**
 
-5. **Node: the official zip (Windows) or tarball (macOS), unpacked into the user's folder. Never the MSI, `.pkg` or nvm-windows.**
+5. **Node: the official zip (Windows) or tarball (macOS), unpacked into the project's own `.tools/node` folder. Never the MSI, `.pkg` or nvm-windows.** Nothing is installed on the computer; all tooling lives inside the project folder.
    - Files: `nodejs.org/dist/v24.x/` publishes `node-v24.21.0-win-x64.zip`, `-win-arm64.zip`, `-darwin-arm64.tar.gz` and `-darwin-x64.tar.gz`, with `SHASUMS256.txt` [2].
-   - How: fetch with `curl.exe`, check the hash, run `tar -xf` into `%LOCALAPPDATA%\Programs\` (macOS: `~/.local/`). No PowerShell script and no installer are involved, so execution policy and Constrained Language Mode do not matter.
-   - Put Node on PATH **per process**, the way the build agents did. Don't edit the user PATH: `setx` truncates long values, and the .NET route is blocked under CLM [11] [INFERENCE].
+   - How: fetch with `curl.exe` into `.tools\`, compare the SHA-256 with `SHASUMS256.txt`, then `tar -xf … -C .tools\node --strip-components=1` (macOS: `tar -xzf`, into `.tools/node`). No `.ps1` file and no installer are involved, so execution policy does not matter. The exact commands are in "Install and smoke test" and were run as written [LOCAL]: the hash matched and `node -v` printed v24.21.0.
+   - **Every cache and config file stays in `.tools/` too:**
+     - npm cache: `.tools\npm-cache`, set with `npm_config_cache`. npm reads any `npm_config_*` variable as a setting [31].
+     - npm user config: `.tools\npmrc`, set with `NPM_CONFIG_USERCONFIG` [31]. This is also where proxy and `cafile` lines go (recs 17–18), and it keeps the user's own `~/.npmrc` out of the build. npm's global config then resolves to `.tools\node\etc\npmrc` [LOCAL].
+     - Electron download cache: `.tools\electron-cache`, set with `electron_config_cache` (rec 9).
+     - Verified [LOCAL]: with these variables set, `npm config get cache` and `get userconfig` printed the `.tools` paths.
+   - **Put Node on PATH per process, with a launcher.** `.workbench\scripts\run.cmd` (shipped in the skill's template and kept in version control, unlike the recreated `.tools\`) sets `PATH` and the three variables above to the `.tools\` paths, then runs its arguments (`.workbench\scripts\run.cmd npm.cmd ci`). It is a plain batch file, so execution policy does not apply. Don't edit the user PATH: `setx` truncates long values, and the .NET route is blocked under CLM [11] [INFERENCE]. Never use `npm -g`: nothing global is wanted.
+   - **What is still accepted outside the project:** Node, npm, Electron and the built app may write ordinary per-user files in AppData and Temp (for example Electron's default user-data folder for the app). That is fine. The rule is: no installed software, no programs and no caches kept outside the project, and the desktop shortcut (rec 12) is the only change elsewhere.
    - What needs admin: users report that the MSI does [3][4]; I found no nodejs.org page stating it [UNVERIFIED]. The nvm-windows README says it "runs in an Admin shell" [5]. fnm needed Developer Mode for symlinks on Windows [6]. Volta has no official no-admin installer [7].
    - Version: Node 24 "Krypton" is in LTS until **2028-04-30** (Maintenance from 2026-10-20). Node 26 becomes LTS on 2026-10-28 [1]. Electron 44 embeds Node 24.21.0 [17], so the tooling and the app use the same line.
    - Signing: the official `node.exe` is Authenticode-signed by the OpenJS Foundation [LOCAL].
@@ -52,10 +58,10 @@ Tags: `[UNVERIFIED]` means I could not confirm it from a page I opened. `[INFERE
      - The override: `npm install` 27 s, `npm test` passed, `npm run package` 7 s, and the packaged app opened its window.
    - The override removes the `github.com` code dependency from the install. Only the Electron binary still comes from GitHub (rec 9).
    - Forge 8 (currently alpha) modernises the templates and drops "experimental" from the Vite plugin [24][27]. Re-evaluate once it is stable.
-9. **Fetch the Electron binary explicitly at install time: `npx.cmd install-electron --no`.**
-   - Since Electron 42, `npm install` no longer downloads the binary. It comes lazily on first run [12][14]. Running it explicitly makes a blocked download fail during setup, not later when she tries to open the app.
+9. **Fetch the Electron binary explicitly at install time: `.workbench\scripts\run.cmd npx.cmd install-electron --no`.**
+   - Since Electron 42, `npm install` no longer downloads the binary. It comes lazily on first run [12][14]. Running it explicitly makes a blocked download fail during setup, not later when the user tries to open the app.
    - The binary is a zip from `github.com/electron/electron/releases`, which redirects to `release-assets.githubusercontent.com` [LOCAL]. It is checked against `checksums.json` inside the npm package (a hash check, not a signature) [13][15].
-   - Cache: `%LOCALAPPDATA%\electron\Cache` (Windows) or `~/Library/Caches/electron` (macOS), shared by all projects. Setting it with `electron_config_cache` works [12][13].
+   - Cache: `.tools\electron-cache`, set with `electron_config_cache` [12][13]. Electron's default is a folder shared by all projects (`%LOCALAPPDATA%\electron\Cache` on Windows, `~/Library/Caches/electron` on macOS) [12]; the skill does not use it. Each project therefore keeps its own copy, 158 MB [LOCAL]. The unpacked binary also sits in `node_modules/electron/dist` [13].
    - Mirror: `ELECTRON_MIRROR` + `ELECTRON_CUSTOM_DIR` [12]. `ELECTRON_SKIP_BINARY_DOWNLOAD` was removed in 42 [14].
 10. **No native Node modules, ever.**
     - Anything without a prebuilt binary compiles with node-gyp, which needs the VS C++ Build Tools on Windows or the Xcode CLT on macOS [32]; both need admin [52][51-CLT]. Prebuilt downloads also come from GitHub [INFERENCE].
@@ -65,18 +71,25 @@ Tags: `[UNVERIFIED]` means I could not confirm it from a page I opened. `[INFERE
     - The starter allows exactly two install-script packages: `electron-winstaller` (only used by `make`) and `fsevents` (optional, macOS only) [LOCAL lockfile].
     - SQLite without a native module is covered in [03b](03b-data-storage.md).
 11. **Install by terminal, never by browser.**
-    - Files fetched with `curl.exe`/`Invoke-WebRequest` or macOS `curl` get no Mark-of-the-Web or quarantine flag [9][44]. SmartScreen fires only on files that have Mark-of-the-Web [47], and Gatekeeper checks only quarantined files [44]. Everything the agent builds on her machine is local too.
+    - Files fetched with `curl.exe`/`Invoke-WebRequest` or macOS `curl` get no Mark-of-the-Web or quarantine flag [9][44]. SmartScreen fires only on files that have Mark-of-the-Web [47], and Gatekeeper checks only quarantined files [44]. Everything the agent builds on the user's machine is local too.
     - A browser-downloaded installer triggers exactly the prompts that break the no-admin rule. On macOS 15+ that is the "Open Anyway" flow, reportedly with an admin password [46].
     - Exception: a terminal inside a GUI app that opts into quarantine can tag files [45]. Preflight with `xattr -l`.
-12. **Ship by building on her machine. Keep only the packaged folder, and add a per-user shortcut. No installer.**
-    - `npm.cmd run package` gives `out/<App>-win32-x64/`, which runs from the folder with no Node at runtime [B].
-    - Copy it to `%LOCALAPPDATA%\Programs\<App>\` (macOS: `~/Applications/<App>.app`) and create a Start-menu/Desktop shortcut. Electron's `shell.writeShortcutLink` can create it on Windows [UNVERIFIED: not tested] [INFERENCE].
+12. **Ship by building on the user's machine. Keep the packaged app inside the project, and add a desktop shortcut. No installer.**
+    - `.workbench\scripts\run.cmd npm.cmd run package` gives `out/<App>-win32-x64/`, which runs from the folder with no Node at runtime [B]. Run it right there: the shortcut points at `out\<App>-win32-x64\<App>.exe` (macOS: the `.app` in `out/`, [INFERENCE]). The app is not copied into any per-user program folder, `~/Applications` or the Start menu.
+    - If the user keeps using the app while the AI builds a change, first copy the folder to `<project>/tool/<App>/` and point the shortcut there, so the next package step does not replace a running program [INFERENCE]. This costs about another 390 MB.
+    - **The desktop shortcut is the only thing outside the project.** Create it with PowerShell's `WScript.Shell` `CreateShortcut`, at `[Environment]::GetFolderPath('Desktop')` (may be OneDrive-redirected). Tested [LOCAL] in a scratch folder only, not on the real Desktop: the `.lnk` was written and read back with the right target. Under Constrained Language Mode COM objects are limited to a short allow-list [11], so this may fail there [INFERENCE]. Then use Electron's `shell.writeShortcutLink` [UNVERIFIED: not tested], or skip the shortcut and tell the user to open the `.exe` in the project folder. Deleting the project folder and that one shortcut removes everything.
     - Skip `make`: the Squirrel installer is 147 MiB and installs a 501 MB copy [B]. It leaves `Update.exe` behind after uninstall [28][B], and Group Policy can block it from `%LocalAppData%` [28]. Use it only for sharing, and sharing is an IT conversation (signing).
-    - **Disk budget:** about 1.1 GB per project (`node_modules` 673 MB + packaged folder 370 MB) plus the shared 151 MB Electron cache [B]. Delete `out/make` and old packaged folders. Preflight requires ≥ 3 GB free.
+    - **Disk budget, measured [LOCAL]:** a project with no shared caches took 72 s for the whole in-project run (`npm ci`, `install-electron`, tests, packaging) and about **1.45 GB**:
+      - Node `.tools/node` 107 MB
+      - npm cache 90 MB
+      - Electron cache 158 MB
+      - `node_modules` 699 MB
+      - packaged `out` 388 MB
+    - Ten tools are about 14.5 GB. Delete `out/make` and old packaged folders. Preflight requires ≥ 3 GB free on the project's drive. `.tools`, `node_modules` and `out` can all be rebuilt, so keep them out of anything shared and out of the save points [INFERENCE; see [07](07-codex-host.md) and [08](08-security-compliance.md)].
 13. **Updating Electron is planned work, not an automatic step.**
     - Each major is supported for about 24 weeks (3 majors × 8 weeks). Electron 44's end of life is 2027-03-02 [16].
     - The app parses untrusted files (PDFs) in Chromium, so a stale Electron is a real, if small, risk [INFERENCE].
-    - Rule: when she asks for a change and the pinned major is out of support, the first step is "update the engine". It gets its own save point, a test run and a network check.
+    - Rule: when the user asks for a change and the pinned major is out of support, the first step is "update the engine". It gets its own save point, a test run and a network check.
 
 **The starter template's security settings (all measured in the bake-off [B])**
 
@@ -133,12 +146,12 @@ Tags: `[UNVERIFIED]` means I could not confirm it from a page I opened. `[INFERE
       - What was not: `electron.exe` itself.
       - The verdict changed within an hour, because it depends on reputation.
       - Electron 43/44 now load that extractor lazily [37]. The starter's Forge 7.11.2 packager uses a pure-JS extractor [29].
-    - **Rule.** Preflight reads the SAC state. If SAC is enforcing, run the smoke test (install, package, launch) before building anything for her. A block (Code Integrity event 3033/3077) goes to tier 7 (HTML).
+    - **Rule.** Preflight reads the SAC state. If SAC is enforcing, run the smoke test (install, package, launch) before building anything for the user. A block (Code Integrity event 3033/3077) goes to tier 7 (HTML).
 
 **macOS (not tested; docs only)**
 
 23. **The same design should work per-user on macOS, but only as untested inference.**
-    - **Node and Electron.** The tarball goes into `~/.local/` [2]. Electron 44 needs macOS 13+ [14].
+    - **Node and Electron.** The tarball goes into the project's `.tools/node`, the same layout as on Windows [2]. Electron 44 needs macOS 13+ [14].
     - **Signing on Apple Silicon.** arm64 code must carry at least an ad-hoc signature [40]. Official Electron builds are ad-hoc signed. When no `osxSign` is configured, Forge's fuses plugin and `@electron/packager` re-sign ad-hoc with `/usr/bin/codesign` after patching [39].
       - Whether `codesign` ships with base macOS or needs the CLT has only third-party evidence (base macOS) [43] [UNVERIFIED]. This is the single most important thing to test on a Mac.
     - **Running it.** A locally built app has no quarantine flag, so it should open without Gatekeeper prompts [42][44] [INFERENCE; Apple doesn't state it].
@@ -148,7 +161,7 @@ Tags: `[UNVERIFIED]` means I could not confirm it from a page I opened. `[INFERE
 
 24. **Git without admin — tiers.**
     1. If `git` already works, use it.
-    2. **Windows:** MinGit (`MinGit-<ver>-64-bit.zip`) or PortableGit (`-y -gm2 -InstallPath=...`) from the Git for Windows release page. Both unpack per-user [51-GfW][51-MinGit][51-Zip]. MinGit has no bash/Perl, which is enough for add/commit/restore [51-MinGit].
+    2. **Windows:** MinGit (`MinGit-<ver>-64-bit.zip`) or PortableGit (`-y -gm2 -InstallPath=<project>\.tools\git`) from the Git for Windows release page. Both unpack without admin [51-GfW][51-MinGit][51-Zip], so they go into `.tools\git`, and the launcher adds `.tools\git\cmd` to PATH [INFERENCE]. MinGit has no bash/Perl, which is enough for add/commit/restore [51-MinGit].
     3. **macOS:** Apple's git comes only with the Xcode CLT, and installing those asks for admin [51-gitscm][51-CLT]. Never run `git --version` blindly, because the `/usr/bin/git` stub can pop the CLT installer dialog: check `xcode-select -p` first.
     4. **No git binary:** **isomorphic-git** (pure JS, npm-installable) now fits the stack natively [51-iso]. The earlier draft's dulwich was the Python equivalent.
     5. If everything else fails: timestamped folder snapshots.
@@ -178,7 +191,7 @@ All builds implemented the same spec: open PDF/DOCX/TXT resumes, parse them dete
 - **Not built:**
   - Neutralinojs and Wails use the system webview, the same WebView2 that phoned home for pywebview [INFERENCE]; Wails would also need the macOS CLT for cgo [UNVERIFIED].
   - Swift/SwiftUI is parked until a cross-platform SwiftUI works on Windows.
-- **Why Electron over the lighter native options:** the skill's core loop is mockup → small change → try it. An HTML UI serves all three, and it is the only admin-free, network-clean option that does. Size and RAM matter little for one person's tool on her own PC [INFERENCE].
+- **Why Electron over the lighter native options:** the skill's core loop is mockup → small change → try it. An HTML UI serves all three, and it is the only admin-free, network-clean option that does. Size and RAM matter little for one person's tool on their own PC [INFERENCE].
 
 ## Environment preflight checklist
 
@@ -190,8 +203,8 @@ $PSVersionTable.PSVersion
 Get-ExecutionPolicy -List                        # MachinePolicy/UserPolicy set => GPO-controlled [9]
 $ExecutionContext.SessionState.LanguageMode      # ConstrainedLanguage => AppLocker/WDAC active [11]
 whoami /groups | findstr /i "S-1-5-32-544 S-1-16-12288"   # admin group / elevated?
-# Can an exe run from the user profile? (AppLocker path rules) [48]
-Copy-Item $env:WINDIR\System32\whoami.exe $env:LOCALAPPDATA\pf-test.exe; & $env:LOCALAPPDATA\pf-test.exe; Remove-Item $env:LOCALAPPDATA\pf-test.exe
+# Can an exe run from the project folder? (AppLocker path rules; run this from the project folder, because that is where everything will run) [48]
+Copy-Item $env:WINDIR\System32\whoami.exe .\pf-test.exe; & .\pf-test.exe; Remove-Item .\pf-test.exe
 # Smart App Control: Settings > Privacy & security > Windows Security > App & browser control [35]
 Get-WinEvent -LogName 'Microsoft-Windows-CodeIntegrity/Operational' -MaxEvents 20 -EA SilentlyContinue | ? Id -in 3033,3077
 # Proxy / TLS
@@ -200,21 +213,27 @@ Get-ItemProperty 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Setti
 # Reachability (any HTTP status = reachable; a curl error = blocked)
 foreach($u in 'https://nodejs.org/dist/index.json','https://registry.npmjs.org/electron','https://github.com/electron/electron/releases','https://release-assets.githubusercontent.com/'){ curl.exe -sS -o NUL -w "$u %{http_code}`n" -I $u }
 # Tools, disk, synced folders
-Get-Command node,npm.cmd,git -EA SilentlyContinue; (Get-PSDrive C).Free/1GB     # need >= 3 GB
+Get-Command node,npm.cmd,git -EA SilentlyContinue; (Get-PSDrive (Get-Location).Drive.Name).Free/1GB     # need >= 3 GB on the project's drive
 [Environment]::GetFolderPath('Desktop'); [Environment]::GetFolderPath('MyDocuments')   # under OneDrive? see 03b
 ```
 
 **Install and smoke test (Windows)**
 ```powershell
-$v='v24.21.0'; $n="node-$v-win-x64"; $d="$env:LOCALAPPDATA\Programs"
-curl.exe -fL -o "$env:TEMP\$n.zip" "https://nodejs.org/dist/$v/$n.zip"
-curl.exe -fL -o "$env:TEMP\SHASUMS256.txt" "https://nodejs.org/dist/$v/SHASUMS256.txt"
-certutil -hashfile "$env:TEMP\$n.zip" SHA256; Select-String "$n.zip" "$env:TEMP\SHASUMS256.txt"   # must match
-New-Item -ItemType Directory -Force $d | Out-Null; tar -xf "$env:TEMP\$n.zip" -C $d
-$env:Path = "$d\$n;$env:Path"                    # per process only
-node -v; npm.cmd -v
-# in a copy of the starter:
-npm.cmd ci; npx.cmd install-electron --no; npm.cmd test; npm.cmd run package
+# the template's .workbench\scripts\bootstrap.ps1 does the download part below (Node into .tools\node and, only if git is missing, MinGit into .tools\git); these are its steps
+# run from the project folder; everything lands in .tools\ and nothing is installed
+$p = (Get-Location).Path; $t = "$p\.tools"; $v = 'v24.21.0'; $n = "node-$v-win-x64"
+New-Item -ItemType Directory -Force "$t\node", "$t\npm-cache", "$t\electron-cache" | Out-Null
+New-Item -ItemType File -Force "$t\npmrc" | Out-Null
+curl.exe -fL -o "$t\$n.zip" "https://nodejs.org/dist/$v/$n.zip"
+curl.exe -fL -o "$t\SHASUMS256.txt" "https://nodejs.org/dist/$v/SHASUMS256.txt"
+$want = ((Select-String -Path "$t\SHASUMS256.txt" -Pattern "  $n.zip$").Line -split '\s+')[0]
+if ((Get-FileHash "$t\$n.zip" -Algorithm SHA256).Hash.ToLower() -ne $want) { throw "Node zip hash mismatch" }
+tar -xf "$t\$n.zip" -C "$t\node" --strip-components=1
+Remove-Item "$t\$n.zip", "$t\SHASUMS256.txt"
+# the launcher .workbench\scripts\run.cmd ships with the template (it is not created here): PATH and caches for one command at a time, never system-wide
+.workbench\scripts\run.cmd node -v; .workbench\scripts\run.cmd npm.cmd -v
+# in the project (a copy of the starter):
+.workbench\scripts\run.cmd npm.cmd ci; .workbench\scripts\run.cmd npx.cmd install-electron --no; .workbench\scripts\run.cmd npm.cmd test; .workbench\scripts\run.cmd npm.cmd run package
 # launch out\<App>-win32-x64\<App>.exe, load samples, then the network check:
 $ids = (Get-CimInstance Win32_Process | ? { $_.ExecutablePath -like '*\<App>-win32-x64\*' }).ProcessId
 Get-NetTCPConnection -OwningProcess $ids -EA SilentlyContinue; Get-NetUDPEndpoint -OwningProcess $ids -EA SilentlyContinue   # expect nothing
@@ -229,35 +248,35 @@ spctl --status; ls -l /usr/bin/codesign           # codesign needed for ad-hoc r
 xcode-select -p 2>/dev/null || echo "no CLT (do not run git --version)"
 env | grep -iE 'proxy|ssl_cert|node_extra|node_use|electron'; scutil --proxy | head -20
 for u in https://nodejs.org/dist/index.json https://registry.npmjs.org/electron https://github.com/electron/electron/releases https://release-assets.githubusercontent.com/; do curl -sSI -o /dev/null -w "$u %{http_code}\n" "$u"; done
-cp /bin/echo ~/pf-test && ~/pf-test ok; rm -f ~/pf-test   # can user-folder binaries run?
-# install: curl the darwin tarball + SHASUMS256.txt, shasum -a 256, tar -xzf into ~/.local/, PATH per process
+cp /bin/echo ./pf-test && ./pf-test ok; rm -f ./pf-test   # can binaries in the project folder run? (run from the project folder)
+# install: curl the darwin tarball + SHASUMS256.txt into .tools/, shasum -a 256, tar -xzf into .tools/node (--strip-components=1); a launcher sets PATH, npm_config_cache, NPM_CONFIG_USERCONFIG and electron_config_cache, as on Windows
 # after packaging: xattr -l out/*/*.app; codesign -dv out/*/*.app; lsof -nP -i -a -p <pid>   # expect no network
 ```
 
 ## Blocked-environment decision procedure
 
-Work top to bottom and stop at the first tier whose smoke test passes. Tell her in one plain sentence which tier you are on and why.
+Work top to bottom and stop at the first tier whose smoke test passes. Tell the user in one plain sentence which tier you are on and why.
 
 1. **Standard path:** the install and smoke test above.
 2. **TLS error** (`UNABLE_TO_GET_ISSUER_CERT_LOCALLY`, `SELF_SIGNED_CERT_IN_CHAIN`): set `NODE_USE_SYSTEM_CA=1`. If that fails, ask IT for the root as PEM and set `NODE_EXTRA_CA_CERTS` plus npm `cafile` [30][31].
 3. **Proxy:** set `HTTPS_PROXY`/`HTTP_PROXY`/`NO_PROXY`, `ELECTRON_GET_USE_PROXY=1` and `GLOBAL_AGENT_HTTPS_PROXY` (rec 18).
 4. **Registry or GitHub blocked:**
    - npm: IT's registry mirror via npm `registry`.
-   - Electron: IT's mirror via `ELECTRON_MIRROR`, or IT provides the release zip and it is placed in the Electron cache [12][13]. The zip is still checked against `checksums.json` [13].
+   - Electron: IT's mirror via `ELECTRON_MIRROR`, or IT provides the release zip and it is placed in the project's `.tools\electron-cache` [12][13]. The zip is still checked against `checksums.json` [13].
    - Never a public third-party mirror on a work laptop.
 5. **`npm` fails with an execution-policy error:** use `npm.cmd` (rec 6).
-6. **Executables in the user profile are blocked** (the whoami copy test fails, or "blocked by group policy" [28][48]), **or SAC blocks `electron.exe`/`node.exe`** (event 3033/3077) [34]: do not route around it. Go to tier 7.
-7. **HTML-only tier.** Build the same UI as one HTML file (rec 2). Keep data in `localStorage`/IndexedDB, or in files she imports and exports. Serve nothing.
-   - Storage caveat: tell her browser storage can be cleared, and give her an "Export backup" button [INFERENCE].
+6. **Executables in the project folder (usually inside the user profile) are blocked** (the whoami copy test fails, or "blocked by group policy" [28][48]), **or SAC blocks `electron.exe`/`node.exe`** (event 3033/3077) [34]: do not route around it. Go to tier 7.
+7. **HTML-only tier.** Build the same UI as one HTML file (rec 2). Keep data in `localStorage`/IndexedDB, or in files the user imports and exports. Serve nothing.
+   - Storage caveat: tell the user browser storage can be cleared, and give them an "Export backup" button [INFERENCE].
    - Browser caveat: file-write-back needs Edge/Chrome [49]. In Safari it is download/import only.
 8. **Office-native tier (Windows/M365).**
    - *Formulas / tables / Power Query:* no policy dependency beyond Excel [UNVERIFIED].
-   - *VBA:* macros in internet-marked files are blocked, but locally created workbooks are not [50]. She pastes the code herself.
+   - *VBA:* macros in internet-marked files are blocked, but locally created workbooks are not [50]. The user pastes the code themselves.
    - *Office Scripts:* needs a business licence and OneDrive, and the tenant can disable it [50].
    - *Power Automate Desktop:* the MSI needs admin; the Store build does not [50].
 9. **Ask IT.** Generate this message and edit the bracketed parts:
 
-   > Hi IT — I'm building a small local tool for [task] with an AI assistant. It needs (1) permission to run programs from my user folder (`%LOCALAPPDATA%\Programs`), namely Node.js (signed by the OpenJS Foundation) and an Electron app built on this laptop; (2) outbound HTTPS to `nodejs.org`, `registry.npmjs.org`, `github.com` and `release-assets.githubusercontent.com`, or our internal npm/Electron mirrors; (3) if TLS inspection is used, the company root CA as a `.pem` file. No admin rights, no services, and no data leaves the laptop. If this isn't possible, I'll build it in Excel instead.
+   > Hi IT — I'm building a small local tool for [task] with an AI assistant. It needs (1) permission to run programs from one folder in my user profile, [full folder path]: Node.js (signed by the OpenJS Foundation), unpacked into its `.tools\node` subfolder, and an Electron app built there on this laptop; (2) outbound HTTPS to `nodejs.org`, `registry.npmjs.org`, `github.com` and `release-assets.githubusercontent.com`, or our internal npm/Electron mirrors; (3) if TLS inspection is used, the company root CA as a `.pem` file. Nothing is installed on the laptop; the only thing outside that folder is a desktop shortcut. No admin rights, no services, and no data leaves the laptop. If this isn't possible, I'll build it in Excel instead.
 
 ## Key evidence
 
@@ -286,17 +305,17 @@ Work top to bottom and stop at the first tier whose smoke test passes. Tell her 
 - **Other Chromium background traffic** (component updater, variations, Safe Browsing) is not catalogued by Electron [UNVERIFIED]. The bake-off saw none after the spellcheck fix, over three fresh-profile runs of 10 s each [B]. Longer runs were not measured.
 - **Forge 7 vs 8.** The starter pins 7.11.2 plus the rebuild override. Forge 8 (alpha) fixes the templates and drops "experimental" from the Vite plugin [24][27]. Move when it is stable.
 - **HTML fallback from the Electron UI** is designed but not built [B].
-- **Disk footprint across many tools.** At about 1.1 GB each, ten tools use 11 GB. npm workspaces with shared `node_modules` could cut this [INFERENCE, untested].
+- **Disk footprint across many tools.** At about 1.45 GB each (Node, npm cache and Electron cache are per project by design), ten tools use about 14.5 GB. Deleting `.tools/npm-cache` and `.tools/electron-cache` after a successful build would save about 250 MB per project, but the next install or package step would download again [INFERENCE, untested]. npm workspaces with a shared `node_modules` could cut more, but would tie the tools together [INFERENCE, untested].
 - **How the packaged app trusts a corporate CA** for model calls (rec 16) belongs to [04a](04a-software-2-llm-extraction.md).
 - **Git on macOS** without the CLT remains unsolved. isomorphic-git is the in-stack candidate [51-iso].
 
 ## Conflicts with the guiding principles
 
 - **"Bias toward desktop apps."** Holds: a packaged Electron folder built locally has no Mark-of-the-Web, so SmartScreen and Gatekeeper don't fire. But the exe is unsigned, and SAC-enforcing PCs may block it (rec 22). Sharing the app with anyone else means signing, which means IT.
-- **"Local-first; data never leaves without her knowing."** A stock Electron app broke this silently (the spellcheck download), and so did WebView2 in the Python build. The rule is only as good as the network check at the end of every build loop (rec 15).
+- **"Local-first; data never leaves without the user knowing."** A stock Electron app broke this silently (the spellcheck download), and so did WebView2 in the Python build. The rule is only as good as the network check at the end of every build loop (rec 15).
 - **"Hard requirement: no admin."** Holds on Windows (measured). On macOS it depends on `codesign` without the CLT (unverified), and git needs the CLT.
-- **"Smallest useful thing."** Each Electron tool carries a 370 MB runtime and about 1.1 GB of project files. That doesn't change what she experiences, but it costs disk, and the disk ran out during the bake-off. The skill must budget and clean up (rec 12).
-- **"AI picks; the user never chooses tech."** Holds. She may still have to forward the IT message (tier 9); keep it short and non-technical.
+- **"Smallest useful thing."** Each Electron tool carries a 370 MB runtime and about 1.45 GB of tools and project files. That doesn't change what the user experiences, but it costs disk, and the disk ran out during the bake-off. The skill must budget and clean up (rec 12).
+- **"AI picks; the user never chooses tech."** Holds. The user may still have to forward the IT message (tier 9); keep it short and non-technical.
 
 ## Sources
 
@@ -306,6 +325,7 @@ Work top to bottom and stop at the first tier whose smoke test passes. Tell her 
 - `curl -I` on the Electron release URL (302 to `release-assets.githubusercontent.com`);
 - `npm ci` and an override `npm install` with no git on PATH and a fresh cache, followed by test, package and launch;
 - the bake-off `package-lock.json` (`git+ssh` node-gyp and `hasInstallScript` entries).
+- the in-project run: `npm ci`, `install-electron`, tests and packaging from `.tools\` with nothing installed, 72 s and about 1.45 GB (Node 107 MB, npm cache 90 MB, Electron cache 158 MB, `node_modules` 699 MB, `out` 388 MB). These figures come from the project's own test run; for this note I re-ran only the Node download, hash check, unpack, launcher and `npm config get` paths, plus a `.lnk` creation in a scratch folder, and deleted the scratch folders afterwards.
 
 [1] Node.js Release schedule, https://raw.githubusercontent.com/nodejs/Release/main/schedule.json — v24 LTS dates, v26 LTS date.
 [2] Node.js dist, https://nodejs.org/dist/index.json and https://nodejs.org/dist/latest-v24.x/ — zip/tarball files, SHASUMS256, zip contents (`npm.ps1`).
@@ -318,7 +338,7 @@ Work top to bottom and stop at the first tier whose smoke test passes. Tell her 
 [9] Microsoft Learn, about_Execution_Policies (2026-08-31), https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-5.1 — Restricted default, GPO precedence, `curl.exe`/`iwr` add no MOTW.
 [10] Microsoft Learn, Set-ExecutionPolicy (2026-08-31), https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.security/set-executionpolicy?view=powershell-5.1 — CurrentUser scope without admin.
 [11] Microsoft Learn, about_Language_Modes, https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_language_modes?view=powershell-7.5 — CLM under AppLocker/WDAC.
-[12] Electron, Advanced Installation Instructions, https://www.electronjs.org/docs/latest/tutorial/installation — lazy first-run download, mirror, cache, proxy.
+[12] Electron, Advanced Installation Instructions, https://www.electronjs.org/docs/latest/tutorial/installation — lazy first-run download, mirror, cache (default shared location and the `electron_config_cache` override), proxy.
 [13] Electron npm package source, https://raw.githubusercontent.com/electron/electron/main/npm/install.js (and `index.js`, `package.json`) — `install-electron` bin, `checksums.json`, `electron_config_cache`, `ELECTRON_OVERRIDE_DIST_PATH`.
 [14] Electron PR #49328, https://github.com/electron/electron/pull/49328; PR #50406, https://github.com/electron/electron/pull/50406; Breaking Changes, https://raw.githubusercontent.com/electron/electron/main/docs/breaking-changes.md — no postinstall from 42; skip variable removed; 44 needs macOS 13+.
 [15] @electron/get README, source and releases, https://github.com/electron/get (v5.0.0, 2026-04-22) — native `fetch`, `ELECTRON_GET_USE_PROXY` + `HTTP(S)_PROXY`, `GLOBAL_AGENT_*` dropped, cache paths.
@@ -337,7 +357,7 @@ Work top to bottom and stop at the first tier whose smoke test passes. Tell her 
 [28] Electron Forge Squirrel.Windows maker, https://raw.githubusercontent.com/electron/forge/main/docs/config/makers/squirrel.windows.md; Squirrel.Windows README and FAQ, https://github.com/Squirrel/Squirrel.Windows — per-user, no UAC; leftover folder; GPO block on `%LocalAppData%`.
 [29] npm registry metadata: https://registry.npmjs.org/@electron%2Frebuild (3.7.2 git dependency; 4.2.0 uses `node-gyp ^12`), https://registry.npmjs.org/@electron-forge%2Fcore/7.11.2, https://registry.npmjs.org/@electron%2Fpackager — packager 18 uses `@electron/get` 3 and JS `extract-zip`.
 [30] Node.js CLI docs (v24), https://raw.githubusercontent.com/nodejs/node/v24.x/doc/api/cli.md — `--use-system-ca` (23.8), `NODE_USE_SYSTEM_CA` (24.6), `NODE_EXTRA_CA_CERTS`, `NODE_USE_ENV_PROXY`.
-[31] npm config, https://docs.npmjs.com/cli/v11/using-npm/config — `cafile`, `strict-ssl`, `proxy`, `https-proxy`, `ignore-scripts`.
+[31] npm config, https://docs.npmjs.com/cli/v11/using-npm/config — `cafile`, `strict-ssl`, `proxy`, `https-proxy`, `ignore-scripts`; `npm_config_*` environment variables; `--userconfig` / `NPM_CONFIG_USERCONFIG`.
 [32] Electron, Native Node Modules, https://raw.githubusercontent.com/electron/electron/main/docs/tutorial/using-native-node-modules.md; node-gyp README, https://github.com/nodejs/node-gyp — VS C++ Build Tools / Xcode CLT required.
 [33] npm docs, package.json `gypfile` and package-lock `hasInstallScript`, https://github.com/npm/cli/tree/latest/docs/lib/content/configuring-npm — detecting native builds.
 [34] Microsoft Support, Smart App Control FAQ (2026-08-17), https://support.microsoft.com/en-us/windows/security/threat-malware-protection/smart-app-control-frequently-asked-questions — unsigned blocked unless reputation; no per-app bypass; off on enterprise/dev devices.

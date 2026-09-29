@@ -1,45 +1,45 @@
-# Interviewing a Non-Technical Person to Find the Smallest Useful Personal Tool
+# Interviewing an Office Worker to Find the Smallest Useful Personal Tool
 
-Scope: how an AI agent should interview an office worker who cannot name what she wants, so it can pick a first version worth building. Sources were opened unless marked [snippet] (only search-result text seen) or [UNVERIFIED]. "[INFERENCE]" marks my own synthesis, not a sourced claim.
+Scope: how an AI agent should interview an office worker who cannot name what they want, so it can pick a first version worth building. Sources were opened unless marked [snippet] (only search-result text seen) or [UNVERIFIED]. "[INFERENCE]" marks my own synthesis, not a sourced claim.
 
 ## Recommendations
 
 **A. Process shape**
 
 1. **Run a fixed, short, staged interview instead of free-form chat.** Use the six stages in "Interview stages and exit criteria" below. In one simulated benchmark, LLMs chatting free-form elicited under half of hidden requirements, and their useful questions came late [7]. Adding an explicit requirements-concern structure to the same base model raised elicited-requirement coverage from 0.13 to 0.41 [8]. Step-by-step guidelines also reduced interviewer errors (e.g. final summaries) [6]. Caveat: both are website-scenario simulations (see Open questions).
-2. **Track a silent slot checklist and never read it out.** Slots: trigger, inputs, steps, output, who receives it, frequency, time cost, where data lives, sensitivity. Skip a slot when she says it doesn't apply, and stop probing that branch [8]. [INFERENCE: the slot names are mine, adapted from the aspect/dimension/slot idea in [8].]
-3. **Time-box the interview.** Target 15–25 minutes, about 10–15 exchanges, before the first build. Sources: Torres advises recruiting with a 20-minute ask [26]; text-based AI interviews in a large study ran about 30 minutes [19][snippet]; LLMREI sessions ran about 30 minutes including reading and questionnaire time [6]. LLMREI's bots also ended early when users showed low interest [6]. Fatigue effects are documented only for hours-long surveys [36][snippet], so there is no direct evidence for the exact number. Offer her a "pause and build what we have" exit at any time.
+2. **Track a silent slot checklist and never read it out.** Slots: trigger, inputs, steps, output, who receives it, frequency, time cost, where data lives, sensitivity. Skip a slot when the user says it doesn't apply, and stop probing that branch [8]. [INFERENCE: the slot names are mine, adapted from the aspect/dimension/slot idea in [8].]
+3. **Time-box the interview.** Target 15–25 minutes, about 10–15 exchanges, before the first build. Sources: Torres advises recruiting with a 20-minute ask [26]; text-based AI interviews in a large study ran about 30 minutes [19][snippet]; LLMREI sessions ran about 30 minutes including reading and questionnaire time [6]. LLMREI's bots also ended early when users showed low interest [6]. Fatigue effects are documented only for hours-long surveys [36][snippet], so there is no direct evidence for the exact number. Offer the user a "pause and build what we have" exit at any time.
 4. **Vary methods; don't rely on one habit.** Less experienced analysts pick the one technique they know or repeat what worked last time [1]. Mix story-telling (Stage 1), artifact walk-through (Stage 2) and reaction to a concrete first version (after Stage 5).
 
 **B. Getting situations, not features**
 
 5. **Open with one specific-past-episode question, never "what do you want?"** Use "Tell me about the last time you …" [25][26]. General or habitual questions produce aspirational answers, so Torres builds every interview around a specific story of past behavior [26]. Fitzpatrick's rules give the same instruction: talk about their life, not your idea, and ask about specifics in the past, not generics or future opinions [27][28].
-6. **Excavate the story chronologically.** Torres ("excavate the story"): a first answer like "last night after dinner" is not yet a story, so the interviewer prompts for context, trigger, and sequence [26]. Ask: what set it off, then what, where were you, what else was open [25][26]. Silence and echoing her emotional words help memory [search result on Torres's course page, snippet].
-7. **Ask *when*, not *what*, when she names a feature.** Basecamp's calendar case: "we asked her *when* she wanted a calendar", which surfaced "see free spaces" and turned a six-week project into a small one [32]. Treat "I need a dashboard/app/database" as a symptom; ask for the last moment she wished she had it.
-8. **Mine the workaround.** Ask for the spreadsheet, email thread, template or copy-paste routine she uses now. Contextual inquiry exists because summaries omit habitual steps; in NN/g's example, users hid steps (cross-referencing, saving after every entry) until observed [22]. The AI cannot watch her screen, so ask her to share a redacted or fake-data copy and "walk me through it as if I'm new". [INFERENCE: this substitutes an artifact for observation.] Use the master/apprentice stance: she is the expert, and the AI states its interpretations for her to correct [22].
-9. **Reflect back in her words after each chunk and invite correction.** Contextual inquiry's interpretation principle: share your understanding so the participant corrects it [22]. Ferrari et al. found that an analyst explicitly surfacing an ambiguity is often "a conversational picklock" for tacit knowledge (34 simulated interviews; a vision paper, not a controlled trial) [4]. Ask "What did I get wrong?", not "Is that right?" [INFERENCE from [22], [14]].
-10. **Cap "why" laddering at two or three rungs.** Laddering moves from what she does to consequences to what matters, by repeatedly asking why it matters [34][snippet]. Card shows "5 whys" chains are linear and non-reproducible, with little evidence of effectiveness, so don't chase one chain to the bottom [35][snippet]. One LLM laddering framework reports good chain convergence, but only in simulated interviews [11].
+6. **Excavate the story chronologically.** Torres ("excavate the story"): a first answer like "last night after dinner" is not yet a story, so the interviewer prompts for context, trigger, and sequence [26]. Ask: what set it off, then what, where were you, what else was open [25][26]. Silence and echoing the user's emotional words help memory [search result on Torres's course page, snippet].
+7. **Ask *when*, not *what*, when the user names a feature.** Basecamp's calendar case: "we asked her *when* she wanted a calendar", which surfaced "see free spaces" and turned a six-week project into a small one [32]. Treat "I need a dashboard/app/database" as a symptom; ask for the last moment the user wished they had it.
+8. **Mine the workaround.** Ask for the spreadsheet, email thread, template or copy-paste routine they use now. Contextual inquiry exists because summaries omit habitual steps; in NN/g's example, users hid steps (cross-referencing, saving after every entry) until observed [22]. The AI cannot watch the user's screen, so ask them to share a redacted or fake-data copy and "walk me through it as if I'm new". [INFERENCE: this substitutes an artifact for observation.] Use the master/apprentice stance: the user is the expert, and the AI states its interpretations for them to correct [22].
+9. **Reflect back in the user's words after each chunk and invite correction.** Contextual inquiry's interpretation principle: share your understanding so the participant corrects it [22]. Ferrari et al. found that an analyst explicitly surfacing an ambiguity is often "a conversational picklock" for tacit knowledge (34 simulated interviews; a vision paper, not a controlled trial) [4]. Ask "What did I get wrong?", not "Is that right?" [INFERENCE from [22], [14]].
+10. **Cap "why" laddering at two or three rungs.** Laddering moves from what the user does to consequences to what matters, by repeatedly asking why it matters [34][snippet]. Card shows "5 whys" chains are linear and non-reproducible, with little evidence of effectiveness, so don't chase one chain to the bottom [35][snippet]. One LLM laddering framework reports good chain convergence, but only in simulated interviews [11].
 11. **Use a critical-incident probe for edge cases only.** "A time when this went badly" finds rare, important cases but over-represents extreme events [23]. Default to "the last time" [23][26].
 
-**C. When she can't name anything**
+**C. When the user can't name anything**
 
 12. **Start from friction, time and people, not needs.** Use the scripts in "Question scripts" below. Ulwick and Christensen both argue customers describe solutions poorly and need to be asked about the job and its circumstances [30][31] (Ulwick's abstract is available; article body paywalled). Moesta: nobody does anything randomly; find the struggling moment and context [29].
-13. **Offer concrete options only after she has told her own story, and always include "neither".** LLMREI participants asked the bot for guidance, and its "context-enhancing" suggestions were appreciated [6], while NN/g warns against suggesting answers or naming things for the user [24]. Reconcile by offering at most two or three examples shaped like *her* episode, then asking her to react. [INFERENCE]
-14. **If she can't recall, do it live.** Say "open the file/mailbox and let's do one now" (contextual-inquiry fallback [22]). If still empty, propose building the tiniest possible slice and learning from use. Experts recommend iterating when confidence in understanding is low [1]. Torres: disappointing interviews happen and shouldn't be forced [25].
+13. **Offer concrete options only after the user has told their own story, and always include "neither".** LLMREI participants asked the bot for guidance, and its "context-enhancing" suggestions were appreciated [6], while NN/g warns against suggesting answers or naming things for the user [24]. Reconcile by offering at most two or three examples shaped like the user's episode, then asking them to react. [INFERENCE]
+14. **If the user can't recall, do it live.** Say "open the file/mailbox and let's do one now" (contextual-inquiry fallback [22]). If still empty, propose building the tiniest possible slice and learning from use. Experts recommend iterating when confidence in understanding is low [1]. Torres: disappointing interviews happen and shouldn't be forced [25].
 
 **D. Steering toward a small first build**
 
 15. **Ask for one moment.** "What's the one moment in the last week you'd most like to have skipped or sped up?" This is the walking-skeleton idea applied to requirements: a tiny end-to-end implementation of one small function, kept, not thrown away [33][snippet].
 16. **Set a fixed appetite; let scope flex.** Ask "if this had to be useful by tomorrow morning, what would it *only* do?" Shape Up: "fixed time, variable scope"; appetites start with a number and end with a design [32].
-17. **Keep a visible Later list and answer new ideas with "interesting, maybe later".** Hickey and Davis note experts keep an issues list on the side so tangents aren't lost or followed [1]. Shape Up's default response to a raw idea is a soft "maybe some day", not a backlog commitment [32]. [INFERENCE: for her, keep one short visible "Later" list so ideas feel captured but are not promised.]
-18. **Turn her real episode into the acceptance test.** "We'll know it works if last Tuesday's case comes out right." Anchors success to observed behavior, not to a feature list [25][26].
+17. **Keep a visible Later list and answer new ideas with "interesting, maybe later".** Hickey and Davis note experts keep an issues list on the side so tangents aren't lost or followed [1]. Shape Up's default response to a raw idea is a soft "maybe some day", not a backlog commitment [32]. [INFERENCE: for the user, keep one short visible "Later" list so ideas feel captured but are not promised.]
+18. **Turn the user's real episode into the acceptance test.** "We'll know it works if last Tuesday's case comes out right." Anchors success to observed behavior, not to a feature list [25][26].
 
 **E. Conversation mechanics for an LLM interviewer**
 
 19. **One question per turn (two only if tightly related).** LLMREI's bots overwhelmed users by asking several questions at once. The authors' own error taxonomy (Bano et al.) did not cover this, so they added "one at a time, or two closely related" to the prompt [6]. Ferrari et al. record an analyst unable to interpret a customer's chaotic multi-part utterance [4]. [Evidence for exactly one is thin; see Open questions.]
 20. **Begin each turn with a neutral echo, not praise.** "So the totals get retyped from the email into the sheet." Avoid "Great idea!" See sycophancy below [14][15].
 21. **Don't start building until the Stage 5 exit criteria are met.** Laban et al.: LLMs make assumptions early, propose solutions prematurely and then "get lost and do not recover" (39% average drop in multi-turn vs single-turn) [13]. Recapping all information in one turn helped only partially [13]. Keep a running, corrected summary and restate it before coding. [INFERENCE: the running summary is mine, motivated by [13].]
-22. **Use her words; introduce every new term only once, with an example.** Non-programmers reported being unable to articulate intent and lacking vocabulary; 42% named wording as a problem [20]. Anything unfamiliar, like "database", "sync" or "API", is banned in questions; substitute "list", "the same info in two places", and so on. [INFERENCE for the ban; [20] supports the vocabulary problem.] Ferrari et al. show jargon and vague terms cause unclarity [4].
+22. **Use the user's words; introduce every new term only once, with an example.** Non-programmers reported being unable to articulate intent and lacking vocabulary; 42% named wording as a problem [20]. Anything unfamiliar, like "database", "sync" or "API", is banned in questions; substitute "list", "the same info in two places", and so on. [INFERENCE for the ban; [20] supports the vocabulary problem.] Ferrari et al. show jargon and vague terms cause unclarity [4].
 23. **Never collect personal data, quote prices/timelines, or promise features you can't back.** LLMREI's bot once asked for an email address and once invented a project price [6]. Also see Conflicts (privacy).
 
 ## Interview stages and exit criteria
@@ -48,20 +48,20 @@ Scope: how an AI agent should interview an office worker who cannot name what sh
 
 | Stage | Purpose | Exit criteria |
 |---|---|---|
-| 0. Frame (1 exchange) | Set expectations: ~20 min, one question at a time, "I'll ask about things that happened, not what you want", "say skip any time", nothing leaves her computer without her okay [22 primer][26] | She agrees. |
+| 0. Frame (1 exchange) | Set expectations: ~20 min, one question at a time, "I'll ask about things that happened, not what you want", "say skip any time", nothing leaves the user's computer without their okay [22 primer][26] | They agree. |
 | 1. Find the episode (2–3) | Pick one recent annoying, repetitive or error-prone thing | One concrete recent episode with date-ish anchor, trigger, and outcome. |
-| 2. Walk the workaround (3–5) | See real inputs, steps, tools and hand-offs; harvest vocabulary | AI can restate 4–8 steps and she says what's wrong; a glossary of 5–10 of *her* nouns with her definitions; she has shown or described the real file or email. |
-| 3. Stakes (2–3) | Frequency, time, consequence, 2–3 "why does that matter" rungs | Stated in her words: how often, roughly how long, what goes wrong or gets delayed, and what "better" looks like. |
-| 4. Slice (2–3) | Choose the one moment; fix appetite; write the Later list | One-sentence first version: "does X for moment Y", plus explicit "will not do A, B, C (yet)". She edits it. |
-| 5. Confirm and close (1–2) | Test understanding, catch what was missed | Summary in her words; she names at least one correction or explicitly says nothing is wrong after being asked "what did I get wrong?"; acceptance test = her episode; asked "anything I should have asked?" [28]. Then build. |
+| 2. Walk the workaround (3–5) | See real inputs, steps, tools and hand-offs; harvest vocabulary | AI can restate 4–8 steps and they say what's wrong; a glossary of 5–10 of the user's nouns with their definitions; they have shown or described the real file or email. |
+| 3. Stakes (2–3) | Frequency, time, consequence, 2–3 "why does that matter" rungs | Stated in the user's words: how often, roughly how long, what goes wrong or gets delayed, and what "better" looks like. |
+| 4. Slice (2–3) | Choose the one moment; fix appetite; write the Later list | One-sentence first version: "does X for moment Y", plus explicit "will not do A, B, C (yet)". They edit it. |
+| 5. Confirm and close (1–2) | Test understanding, catch what was missed | Summary in the user's words; they name at least one correction or explicitly say nothing is wrong after being asked "what did I get wrong?"; acceptance test = their episode; asked "anything I should have asked?" [28]. Then build. |
 
 Escape rules: no episode by exchange 5 → do Stage 2 live; user disengages → jump to Stage 4 with what exists [6 showed bots adapting to low interest].
 
 ## Question scripts
 
-Use these as seeds, not lists; ask one at a time and adapt to her words.
+Use these as seeds, not lists; ask one at a time and adapt to the user's words.
 
-**Stage 1: find the episode (she can't name a need)**
+**Stage 1: find the episode (the user can't name a need)**
 
 - "Think back over this past week at work. Was there a moment you thought, 'ugh, there has to be a better way'? What was happening?"
 - If none: "What did you do first thing Monday? … and then? Was any of it something you do again and again?"
@@ -85,14 +85,14 @@ Use these as seeds, not lists; ask one at a time and adapt to her words.
 
 **Turning a feature request into a situation**
 
-- She says: "I want a dashboard." → "When would you have looked at it? Tell me about the last time you needed that answer." [32]
-- She says: "It should have reminders." → "Tell me about the last time something slipped. What happened?"
-- She says: "It should do everything." → "If it only did one thing by tomorrow, which moment from last week would you pick?" [32]
+- The user says: "I want a dashboard." → "When would you have looked at it? Tell me about the last time you needed that answer." [32]
+- The user says: "It should have reminders." → "Tell me about the last time something slipped. What happened?"
+- The user says: "It should do everything." → "If it only did one thing by tomorrow, which moment from last week would you pick?" [32]
 
 **Stage 4: slice**
 
-- "So the annoying part is [her words]. Would it be okay if the first version only handled that, and nothing else?"
-- "Here's my Later list so far: [her ideas]. Anything I'm missing, or anything you'd move up?"
+- "So the annoying part is [the user's words]. Would it be okay if the first version only handled that, and nothing else?"
+- "Here's my Later list so far: [their ideas]. Anything I'm missing, or anything you'd move up?"
 - "How will we know it worked — could we run last Tuesday's case through it?"
 
 **Stage 5: close**
@@ -119,8 +119,7 @@ Mohedas et al.: recommended interviewing practices correlated with how much inte
 - Free-form LLM chat vs structured: ReqElicitGym (101 website scenarios, simulated oracle user) found LLMs elicit less than half of implicit requirements and struggle with style requirements [7]. OntoAgent adds an aspect-dimension-slot ontology plus pruning; implicit-requirement elicitation ratio rose to 0.69, versus 0.39 for LLMREI-short and 0.13 for the base model [8]. Baselines hardly explored "style" (near zero), a category a personal-tool interview would also miss without an explicit checklist [8].
 - Shen et al. found GPT-4o follow-up questions no worse than human-authored, and better when guided by known interviewer-mistake types [9].
 - Singhal et al. (2026): AI-assisted interviews covered fewer topics (9.6 vs 14.5) but asked more follow-ups per topic (3.43 vs 1.15) [10]. Depth over breadth is what a one-episode interview wants.
-- Elicitron simulates *users* with LLM agents [12]. This skill has a real user, so it is not applicable; do not role-play her needs.
-- Conversational-survey chatbots with probing elicited more informative, specific responses than static forms (~600 participants) [17]. Different probe types (descriptive, idiographic, clarifying, explanatory) were most useful at different stages, including requirements gathering (N=64) [18]. An AI interviewer's dynamic follow-ups drove most of the gain in a 381-person study [19][snippet].
+- Elicitron simulates *users* with LLM agents [12]. This skill has a real user, so it is not applicable; do not role-play their needs.
 
 **Contextual inquiry (Beyer and Holtzblatt).** As summarized by NN/g: master/apprentice; four principles (context, partnership, interpretation, focus); four-part session (primer, transition, contextual interview, wrap-up); risks include participants slipping back into interview mode, sessions becoming grievance lists, and the interviewer biasing the participant [22]. I did not read the original book; treat "show me the last time" as the practitioner paraphrase.
 
@@ -130,7 +129,7 @@ Mohedas et al.: recommended interviewing practices correlated with how much inte
 
 **Mom Test.** Fitzpatrick's official page only shows marketing text [27]. The rules and "bad data = compliments, fluff/hypotheticals, ideas/wishlists" come from Kadlac's book notes (secondary) [28]. Also: "you aren't allowed to tell them what their problem is, and they aren't allowed to tell you what to build" [28].
 
-**Jobs to be Done.** Christensen et al.: people "hire" products for jobs; circumstances matter more than buyer traits [30]. Moesta: interviews reconstruct a timeline (first thought, passive looking, active looking, deciding); the struggling moment creates demand; anomalies and "irrational" behavior mean context is missing; interview people who already switched [29]. For her, the analogue is what she does *today*, which is the thing the tool will replace.
+**Jobs to be Done.** Christensen et al.: people "hire" products for jobs; circumstances matter more than buyer traits [30]. Moesta: interviews reconstruct a timeline (first thought, passive looking, active looking, deciding); the struggling moment creates demand; anomalies and "irrational" behavior mean context is missing; interview people who already switched [29]. For the user, the analogue is what they do *today*, which is the thing the tool will replace.
 
 **Scope control.** Walking skeleton [33][snippet]; Shape Up appetite and "narrow the problem" [32].
 
@@ -144,16 +143,16 @@ Mohedas et al.: recommended interviewing practices correlated with how much inte
 - **Prototypes as elicitation:** Dieste and Juristo's summary says prototyping showed no positive effect on elicitation and experience appeared irrelevant [2][snippet]; Hickey and Davis found only two of nine experts mentioned prototyping, with caveats (rapid only if truly rapid; needs trust) [1]. Our principle (build a tiny slice, learn from use) conflicts with neither, but the evidence base is old and about analysts, not AI-built one-off apps. I only saw the review's summary, not its data.
 - **Structured vs open interviewing:** Dieste and Juristo favor structured interviews [2][snippet]; Torres and Moesta favor letting the participant steer [25][29]. My staging is semi-structured: fixed goals per stage, free wording and order within stages.
 - **Laddering / 5 whys:** popular but weakly evidenced [35][snippet]; kept short here.
-- **Mom Test rules are for founders validating ideas with third parties.** Here she is both the customer and the person being interviewed about her own life; the analogous social pressure is deference to the AI, not politeness to a founder. That transfer is an inference.
+- **Mom Test rules are for founders validating ideas with third parties.** Here the user is both the customer and the person being interviewed about their own life; the analogous social pressure is deference to the AI, not politeness to a founder. That transfer is an inference.
 - **JTBD prescribes interviewing people who already switched** [29]. Nobody has switched yet; the closest analogue is current workaround behavior.
-- **Contextual inquiry** is well documented by practitioners [22] but I could not open Beyer and Holtzblatt's original; the AI cannot literally observe her.
+- **Contextual inquiry** is well documented by practitioners [22] but I could not open Beyer and Holtzblatt's original; the AI cannot literally observe the user.
 
 ## Conflicts with the guiding principles
 
-- **Data leaves her machine during the interview.** Stage 2 asks for real artifacts (spreadsheets, emails), and every reply goes to the model provider, which cuts against "user data never leaves her machine without her knowing." LLMREI's authors also flag provider data handling as a limitation [6]. Mitigation: ask for redacted or fake-data copies, tell her exactly what is being shared, and never ask for personal identifiers [6]. This should be surfaced to Main as a real tension, not solved by wording.
-- **Ontology first vs discovery.** The AI cannot pre-agree a vocabulary before hearing her stories; the useful glossary comes from her own nouns (Stage 2 exit). Ferrari's finding that ambiguity is a discovery tool [4] suggests not front-loading definitions. Compatible if "ontology first" means "before building", not "before interviewing".
+- **Data leaves the user's machine during the interview.** Stage 2 asks for real artifacts (spreadsheets, emails), and every reply goes to the model provider, which cuts against "user data never leaves their machine without their knowing." LLMREI's authors also flag provider data handling as a limitation [6]. Mitigation: ask for redacted or fake-data copies, tell the user exactly what is being shared, and never ask for personal identifiers [6]. This should be surfaced to Main as a real tension, not solved by wording.
+- **Ontology first vs discovery.** The AI cannot pre-agree a vocabulary before hearing the user's stories; the useful glossary comes from their own nouns (Stage 2 exit). Ferrari's finding that ambiguity is a discovery tool [4] suggests not front-loading definitions. Compatible if "ontology first" means "before building", not "before interviewing".
 - **Sycophancy vs "user is ground truth".** The AI must gently challenge scope, and Shape Up-style "maybe later" [32] is a soft no. Fine, but an over-agreeable model [14][15] will undermine the deferral list unless the skill forbids it explicitly.
-- **No other conflicts with the technology-choice, desktop/local-first or no-admin-rights principles.** Environment questions (Windows/Mac, where files live) must be asked in her terms and are outside this slice.
+- **No other conflicts with the technology-choice, desktop/local-first or no-admin-rights principles.** Environment questions (Windows/Mac, where files live) must be asked in the user's terms and are outside this slice.
 
 ## Sources
 

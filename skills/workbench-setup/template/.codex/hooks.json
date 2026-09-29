@@ -1,0 +1,20 @@
+{
+  "description": "Workbench: brief the AI on the rules and the project's state at the start of every new chat.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "^(startup|clear)$",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh .codex/hooks/session-start.sh",
+            "commandWindows": "powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File .codex/hooks/session-start.ps1",
+            "timeout": 15,
+            "statusMessage": "Getting your project ready",
+            "additionalContextLimit": 4000
+          }
+        ]
+      }
+    ]
+  }
+}

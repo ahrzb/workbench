@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- The Content-Security-Policy is sent as an HTTP header by the main process (src/main.ts), not here. -->
+    <!-- No inline <script> and no style="" attributes: the policy forbids both. -->
+    <title>My tool</title>
+  </head>
+  <body>
+    <header class="toolbar">
+      <h1>My tool</h1>
+      <button id="open" class="primary" type="button">Open a text file…</button>
+      <button id="save" type="button">Save text as…</button>
+    </header>
+
+    <main>
+      <label for="text" class="label">Text</label>
+      <textarea id="text" rows="16" spellcheck="false"></textarea>
+    </main>
+
+    <footer id="status" class="status">Ready.</footer>
+    <script type="module" src="/src/renderer.ts"></script>
+  </body>
+</html>

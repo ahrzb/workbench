@@ -1,0 +1,97 @@
+/* Greyscale, readable. Keep font sizes at 16px or more. */
+:root {
+  color-scheme: light;
+  --ink: #1f1f1f;
+  --muted: #595959;
+  --line: #bdbdbd;
+  --panel: #f2f2f2;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font: 16px/1.5 'Segoe UI', system-ui, sans-serif;
+  color: var(--ink);
+  background: #ffffff;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+}
+
+.toolbar h1 {
+  flex: 1;
+  margin: 0;
+  font-size: 20px;
+}
+
+button {
+  font: inherit;
+  padding: 8px 16px;
+  color: var(--ink);
+  background: #ffffff;
+  border: 1px solid #7a7a7a;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #e6e6e6;
+}
+
+button.primary {
+  color: #ffffff;
+  background: #333333;
+  border-color: #333333;
+}
+
+button.primary:hover {
+  background: #1f1f1f;
+}
+
+:focus-visible {
+  outline: 3px solid #000000;
+  outline-offset: 2px;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  padding: 16px;
+}
+
+.label {
+  margin-bottom: 4px;
+  color: var(--muted);
+}
+
+textarea {
+  flex: 1;
+  width: 100%;
+  padding: 8px;
+  font: inherit;
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 4px;
+  resize: none;
+}
+
+.status {
+  padding: 8px 16px;
+  color: var(--muted);
+  background: var(--panel);
+  border-top: 1px solid var(--line);
+}

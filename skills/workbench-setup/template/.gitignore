@@ -1,0 +1,11 @@
+# Downloaded tools and build output: recreated on demand
+.tools/
+node_modules/
+out/
+.vite/
+tool/
+
+# Save-point history itself, data backups and update downloads stay on this computer, outside save points
+.workbench/history/
+.workbench/backups/
+.workbench/update/

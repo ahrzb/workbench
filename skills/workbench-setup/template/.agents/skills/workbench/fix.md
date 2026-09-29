@@ -1,0 +1,23 @@
+# Fix
+
+For tools built in this project. Trouble with outside software goes out as a forwardable message ([safety.md](safety.md#forwardable-messages)).
+
+## Data first
+
+If data looks wrong or missing: stop building. Restore from the newest dated backup in `.workbench/backups/` first, confirm with the user that it's back, then diagnose. Never trust your own claim about what is recoverable; look.
+
+## Steps
+
+1. **Three questions**, one per message: what did you expect, what happened, what were you doing just before? A screenshot is welcome.
+2. **Reproduce it yourself.** Confirm in their words: "I see it too: when you do X, Y happens. Is that the problem?" Can't reproduce: ask for the file or the exact steps, or watch them do it once.
+3. **Write a check that fails** because of the problem.
+4. **Save point**, then fix. Make the failing check pass and run all checks.
+5. **Use the tool the way they would** to confirm the fix.
+6. **Save point** "<their words for the fix>", update NOTES (Careful, Things that work).
+7. **Hand back** with the build hand-back shape ([build.md](build.md#2-the-loop-one-small-change-at-a-time)); "What I checked" names the check you added.
+
+Error messages the user saw: translate in four lines: what happened (their words), why (one plain sentence), what you're doing, whether they need to do anything. Make clear the problem is the tool's, not theirs.
+
+## Two-strike reset
+
+After two failed attempts at the same problem, stop patching. Go back to the last good save point, restate the problem from what the user expected, and suggest continuing in a new chat. Offer a simpler alternative or a workaround while you rethink.

@@ -1,6 +1,6 @@
 # Showing 2–3 Alternative Mockups Before Building Each Feature
 
-Scope: evidence and rules for the "before each feature, show 2–3 alternative designs; she picks" step, for a non-programmer user, a fixed stack, no-admin install, local-first. Research only.
+Scope: evidence and rules for the "before each feature, show 2–3 alternative designs; the user picks" step. The user is an office worker who uses a computer all day but doesn't write code, and is the expert on their own work. The stack is Electron with an HTML UI (fallback: one self-contained HTML file), no admin rights, local-first ([03a](03a-default-stack-runtime.md)). Because the app renders HTML, an HTML sketch is made of the same material as the final app. Research only.
 
 ## Recommendations
 
@@ -8,41 +8,49 @@ Scope: evidence and rules for the "before each feature, show 2–3 alternative d
 
 2. **Always show more than one. Default to 3 for interaction-model forks and 2 for smaller forks.** Users shown a single design rate it higher and criticise it less, and none of 36 rejected it. Shown three, they criticise more and 3 of 12 explicitly rejected one [2]. Parallel prototyping also gave better results, more divergence and a bigger confidence gain, most of all for novices [1]. Do not exceed 3. NN/g's ceiling for professionals is 3–5 and users fatigue after 2–3 [3]. Show the fewest options that still span the fork. Never show one "polished suggestion" plus a token alternative.
 
-3. **Make the options differ in how she would *use* the thing, not in how it looks.** Freeze colour, fonts, chrome, vocabulary and sample data across options. Vary one named dimension (two at most): layout, flow/steps, interaction model, information density, or what is automated versus manual (section "What alternatives should differ on"). Tohidi's three options were functionally identical but differed in interaction style (round dials, drop-down table, linear sliders) [2]. Options that vary on the same attribute ("alignable") are easier to compare than options that each add different features [12]. AI-generation tools default to varying style: Stitch's "aspects to vary" list includes colour, font and images [22]. Google's Design Variations offers "different aesthetic choices" [23]. Override this.
+3. **Make the options differ in how the user would *use* the thing, not in how it looks.** Freeze colour, fonts, chrome, vocabulary and sample data across options. Vary one named dimension (two at most): layout, flow/steps, interaction model, information density, or what is automated versus manual (section "What alternatives should differ on"). Tohidi's three options were functionally identical but differed in interaction style (round dials, drop-down table, linear sliders) [2]. Options that vary on the same attribute ("alignable") are easier to compare than options that each add different features [12]. AI-generation tools default to varying style: Stitch's "aspects to vary" list includes colour, font and images [22]. Google's Design Variations offers "different aesthetic choices" [23]. Override this.
 
-4. **Force real divergence; do not trust one pass to produce it.** Assign each option a different value on the chosen dimension before generating, then check "would she do the task differently in A vs B?" Generative UI tools converge in layout and visual appearance [16], and AI-generated examples increased fixation on the first example in a controlled study (N=60) [14]. Without an explicit dimension the options will be near-duplicates. Also ask for her own mental picture first (one sentence or a napkin sketch) and add it as an option if it differs, so the AI's first idea does not anchor her. [INFERENCE from 14]
+4. **Force real divergence; do not trust one pass to produce it.** Assign each option a different value on the chosen dimension before generating, then check "would the user do the task differently in A vs B?" Generative UI tools converge in layout and visual appearance [16], and AI-generated examples increased fixation on the first example in a controlled study (N=60) [14]. Without an explicit dimension the options will be near-duplicates. Also ask for the user's own mental picture first (one sentence or a napkin sketch) and add it as an option if it differs, so the AI's first idea does not anchor them. [INFERENCE from 14]
 
-5. **Name each option by its difference, in her words.** "A: everything on one sheet, like your Excel file", "B: one question at a time", not "master-detail" or "wizard". Never expose terms outside the shared vocabulary. Options with many attributes or several screens overwhelm people. Professionals in the GenUI study struggled with "3 questions × 4 options" and "too technical … text-heavy" cards [4][12].
+5. **Name each option by its difference, in the user's words.** "A: everything on one sheet, like your Excel file", "B: one question at a time", not "master-detail" or "wizard". Never expose terms outside the shared vocabulary ([02](02-ontology-vocabulary.md)). Options with many attributes or several screens overwhelm people. Professionals in the GenUI study struggled with "3 questions × 4 options" and "too technical … text-heavy" cards [4][12].
 
-6. **Render each option as one key screen (the screen she will live in), plus a one-line flow.** For step-based options add at most 3–4 small step panels in a row. Each design spanning many screens was the main pain point for previews in the GenUI study [4]. NN/g: parallel versions need not cover everything, "just the top features", at "rough wireframe" level [3].
+6. **Render each option as one key screen (the screen the user will live in), plus a one-line flow.** For step-based options add at most 3–4 small step panels in a row. Each design spanning many screens was the main pain point for previews in the GenUI study [4]. NN/g: parallel versions need not cover everything, "just the top features", at "rough wireframe" level [3].
 
-7. **Rank of mockup formats (default choice first):**
+7. **Default format: one static, self-contained HTML sketch, opened in the browser.** Because the app is HTML, this is honest to the final result and needs no install. One file per feature decision, all options in it (stacked or tabbed, identical chrome), with these properties:
+   - **Greyscale**, system font, dashed borders, a visible **"SKETCH — not the real app"** banner (rec 8).
+   - **Real-looking sample data** in the user's vocabulary: made-up rows, or the user's own rows if the account rules allow (rec 9).
+   - **Nothing external**: no CDN scripts, web fonts, images by URL, analytics. Put a Content-Security-Policy `<meta>` tag at the top of the file so the browser enforces it, for example `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:">` [34] (add `script-src 'unsafe-inline'` only for the clickable variant below). In a local test, a page with this tag made 0 requests to a local server for a linked stylesheet, script, image, web font, CSS background and a `fetch()` call, while the same page without the tag made all 6 [LOCAL].
+   - **Opened for the user** with the file association (`start "" mockups\<feature>.html` on Windows, which runs a file through its registered program [35]). That needs no admin rights [INFERENCE]. If a company laptop opens `.html` in an editor instead of a browser, show the sketch in an Electron window (`win.loadFile`, [36]) once the app exists; for the first feature, tell the user which browser to open it with. [UNVERIFIED on company laptops]
+
+   Other formats, in order of preference:
 
 | Rank | Format | Use when |
 |---|---|---|
-| 1 | Static, self-contained HTML "sketch" (greyscale, her real data), all options in one file, opened in her default browser | Default for almost every feature |
-| 2 | Same file with minimal JS clicks | Only when the difference can't be judged statically (multi-step flow, drag-drop, live filter) |
-| 3 | Throwaway page rendered with the real app's own components and her data | Second and later features, once the app exists |
-| 4 | ASCII/text wireframe in chat | Fallback when a browser can't open; ≤5 elements per option |
-| 5 | SVG wireframe | Not recommended: not honest to the stack |
-| 6 | Mermaid flow diagram | Only for a pure ordering-of-steps question, and only if she asks for a diagram |
+| 1 | Static, self-contained HTML sketch as above, all options in one file | Default for almost every feature |
+| 2 | Same file with minimal inline JS clicks | Only when the difference can't be judged statically (multi-step flow, drag-drop, live filter) |
+| 3 | Throwaway page in the real app's window, built from its own components and the user's data (still greyscale, with the banner) | Second and later features, once the app exists |
+| 4 | ASCII/text wireframe in chat | Only if no HTML file can be opened at all; ≤5 elements per option |
+| 5 | SVG wireframe | Not recommended: shares no code with the app |
+| 6 | Mermaid flow diagram | Only for a pure ordering-of-steps question, and only if the user asks for a diagram |
 | 7 | Prose-only description | Never alone; always the caption under a visual |
 
-   Details and evidence in "Key evidence → Formats (R7)" below [4][6][11][17].
+   The HTML-only fallback (one self-contained HTML file, no runtime, [03a](03a-default-stack-runtime.md)) still renders HTML, so this default holds in both stack tiers. Sketches for other toolkits (tkinter, PySide, Compose and similar) are not needed: those stacks are not used. Details and evidence in "Key evidence → Formats (R7)" below [4][6][11][17].
 
-8. **Style the sketch to look like a sketch, but not crude.** Use grey boxes, system font, dashed borders and a visible "SKETCH — not the real app" banner. Buxton's sketch attributes include a "clear vocabulary" that signals "this is a sketch", "minimal detail", and a refinement level that does not suggest more certainty than exists [7]. Users do judge formal-looking designs as "finished and unchanging" [8], and evaluation of early designs "can mute creative ideas" [30]. Polish also triggers the aesthetic-usability effect, where attractive designs are judged more usable [19]. But do not go so crude that it feels like a letdown: in the 2026 GenUI study professionals rated low-fi lower on "matched my needs" (p<.01) and called it "uninspiring" [4]. Controlled studies show no difference in issues found between low- and high-fidelity [5], so treat sketch styling as a cheap hedge, not a proven necessity. Target: neutral, tidy layout, low visual fidelity, real content.
+8. **Style the sketch to look like a sketch, but not crude.** Use grey boxes, system font, dashed borders and the visible "SKETCH — not the real app" banner. Buxton's sketch attributes include a "clear vocabulary" that signals "this is a sketch", "minimal detail", and a refinement level that does not suggest more certainty than exists [7]. Users do judge formal-looking designs as "finished and unchanging" [8], and evaluation of early designs "can mute creative ideas" [30]. Polish also triggers the aesthetic-usability effect, where attractive designs are judged more usable [19]. But do not go so crude that it feels like a letdown: in the 2026 GenUI study professionals rated low-fi lower on "matched my needs" (p<.01) and called it "uninspiring" [4]. Controlled studies show no difference in issues found between low- and high-fidelity [5], so treat sketch styling as a cheap hedge, not a proven necessity. Target: neutral, tidy layout, low visual fidelity, real content.
 
-9. **Fill mockups with her data and vocabulary, not lorem ipsum.** Use 5–10 real-looking rows built from her own files, names and terms (with her permission and only locally). NN/g defines fidelity on three axes (interactivity, visuals, content) [6]. McCurdy et al. add "data model" as a separate axis and argue for mixed fidelity [11]. The recommended mix is low visual, high content, low-to-medium interactivity. Evidence that real content improves feedback is practitioner opinion; no controlled study found [31]. Rationale: she can judge "does this row look right?" only with her own rows. Also serves the ontology check: wrong words surface immediately. [INFERENCE]
+9. **Fill mockups with realistic data and the user's vocabulary, not lorem ipsum.** Use 5–10 real-looking rows and the user's own names and terms. Where the rows come from follows [08](08-security-compliance.md) rec 2: on a company ChatGPT account the user's own rows are fine (the AI has already seen the files it reads, and the sketch stays on the machine); on a personal plan with work documents, use made-up or public sample rows until IT has answered the forwardable question. Treat a sketch built from real rows like the source files: it is not something to attach or share. [INFERENCE] NN/g defines fidelity on three axes (interactivity, visuals, content) [6]. McCurdy et al. add "data model" as a separate axis and argue for mixed fidelity [11]. The recommended mix is low visual, high content, low-to-medium interactivity. Evidence that real content improves feedback is practitioner opinion; no controlled study found [31]. Rationale: the user can judge "does this row look right?" only with rows that look like theirs. Also serves the ontology check: wrong words surface immediately. [INFERENCE]
 
-10. **Keep mockups honest to what the stack can build.** (a) Build the mockup in the final UI technology (HTML/CSS if the app is a webview or local web UI) with the same component vocabulary. (b) The AI must confirm each option is buildable in the chosen stack before showing it, and show only features that will ship in this iteration. (c) Verify by building, not by stated rationale: in a 120-interface benchmark, >25% of a UI tool's stated design rationales, and 34% for functional requirements, were not implemented [16]. (d) If the stack is not HTML-rendered (native toolkit, terminal), do not use HTML mockups that promise widgets the toolkit lacks; fall back to rank 3 or 4. [INFERENCE from 16; depends on the stack decision]
+10. **Keep mockups honest to what the stack can build.** (a) The sketch is HTML/CSS, the final UI technology, with the same component vocabulary. (b) The AI must confirm each option is buildable in an Electron page (or the HTML-only version) before showing it, and show only features that will ship in this iteration. (c) Verify by building, not by stated rationale: in a 120-interface benchmark, >25% of a UI tool's stated design rationales, and 34% for functional requirements, were not implemented [16]. (d) The stack rules limit what a sketch may promise: a native Open dialog is the only way to read files, no remote content, no listening services ([03a](03a-default-stack-runtime.md), [08](08-security-compliance.md) rec 1). Don't sketch a drag-a-file-from-a-website flow or a live link to a web service. [INFERENCE from 16 and the stack decisions]
 
-11. **Present side by side, with a one-line tradeoff each, and allow mixing.** Template below. Put the options in one view so she can compare directly. Comparing examples helps people extract principles [1]. NN/g's goal is a merged design, not a winner: picking the best of four gave +56%, merging gave +70%, and one more iteration +152% (usability measure vs average of originals) [3].
+11. **Present side by side, with a one-line tradeoff each, and allow mixing.** Template below. Put the options in one view so the user can compare directly. Comparing examples helps people extract principles [1]. NN/g's goal is a merged design, not a winner: picking the best of four gave +56%, merging gave +70%, and one more iteration +152% (usability measure vs average of originals) [3].
 
-12. **Ask for reactions and problems, not designs.** Ask her to run one real task from her week through each option and say what bugs her. In Tohidi, seeing three designs did not produce more substantial suggestions ("usability testing … is a means to identify problems, not provide solutions"), because novices lack the language and hesitate to step into expert territory [2]. Explicitly offer "none of these" and rotate/mark option order as arbitrary, because first-seen versions bias later ones [3][2].
+12. **Ask for reactions and problems, not designs.** Ask the user to run one real task from their week through each option and say what bugs them. In Tohidi, seeing three designs did not produce more substantial suggestions ("usability testing … is a means to identify problems, not provide solutions"), because novices lack the language and hesitate to step into expert territory [2]. Explicitly offer "none of these" and rotate/mark option order as arbitrary, because first-seen versions bias later ones [3][2].
 
-13. **Give the recommendation last, once, labelled as a default.** Choice overload is reduced when a dominant option is available and preference uncertainty is low [12]. She is a novice with high preference uncertainty, so a clear default helps. But users withhold criticism to please the designer [2], so show the options neutrally, ask the open question first, then add "If you have no strong feeling, I'd start with B because …". Whether an AI recommendation suppresses critique is untested [INFERENCE].
+13. **Give the recommendation last, once, labelled as a default.** Choice overload is reduced when a dominant option is available and preference uncertainty is low [12]. The user is expert in their work but new to choosing screen designs, so preference uncertainty about the screens is high and a clear default helps. But users withhold criticism to please the designer [2], so show the options neutrally, ask the open question first, then add "If you have no strong feeling, I'd start with B because …". Whether an AI recommendation suppresses critique is untested [INFERENCE].
 
-14. **Log the decision.** Record chosen option, rejected options, and one-line reason in a small project file (in her vocabulary). This prevents re-litigating and is cheap. [INFERENCE]
+14. **Log the decision.** Record chosen option, rejected options, and one-line reason in a small project file (in the user's vocabulary). This prevents re-litigating and is cheap. [INFERENCE]
+
+15. **For AI features, show results side by side instead of asking which technology.** When the fork is "an AI reads it" versus "plain code does it" (for example PDFs → clean Excel), don't sketch two screens and don't ask the user to choose between technologies. Run the user's own sample both ways and show the two results next to each other, with the outcome facts they care about: accuracy, time, plan usage, where the data goes, offline or not. Use the same sketch conventions (one HTML page, greyscale, banner, nothing external) for the comparison page. This is the project decision to ask the user about outcomes, not technology. The AI path that [08](08-security-compliance.md) rec 5 tested (`codex exec` under the user's sign-in, see also [04a](04a-software-2-llm-extraction.md)) read a made-up invoice in 7.3 s with every field right, so the AI column of such a comparison is real, not imagined [LOCAL, reported in 08]. The pattern is the same as mockups: the user reacts to something visible, and picks by outcome. On a personal plan with work documents, the comparison uses made-up or public samples (rec 9). If the user's real sample is needed, that becomes the forwardable question first. [INFERENCE]
 
 ## Key evidence
 
@@ -54,7 +62,7 @@ Scope: evidence and rules for the "before each feature, show 2–3 alternative d
 
 ### How many options (R2, R5, R13)
 - **Choice overload literature is about large assortments** (Iyengar & Lepper: 6 vs 24 jams; 6 vs 30 essays/chocolates) [12]. **Scheibehenne et al. 2010** meta-analysed 50 experiments and found the effect hard to replicate, with no reliable conditions identified [13]. **Chernev et al. 2015** (99 observations, N=7,202) argue that with moderators the effect is real: it grows with choice-set complexity, task difficulty (number of attributes per option), preference uncertainty (novices) and effort-minimising goals [12]. Alignable attributes and a dominant option reduce it [12]. Browsing vs choosing goals also matter [12].
-- **Implication**: 2–3 options are far below the sizes studied. The real overload risk here is *per-option complexity* and *novice preference uncertainty*, so keep each option to one screen, few attributes, and differ on one aligned dimension. Support: in GenUI, the burden was the number of dimensions/screens per idea, not option count [4].
+- **Implication**: 2–3 options are far below the sizes studied. The real overload risk here is *per-option complexity* and *preference uncertainty about screens*, so keep each option to one screen, few attributes, and differ on one aligned dimension. Support: in GenUI, the burden was the number of dimensions/screens per idea, not option count [4].
 - **AI generation tools** default to 3 variations (Stitch) and expose "creative range" (Refine/Explore/Reimagine) [22][21]. A tech-news summary of Stitch/AI Studio says "usually two to three options" [23] (secondary source).
 
 ### Fidelity (R7, R8, R9)
@@ -69,11 +77,13 @@ Scope: evidence and rules for the "before each feature, show 2–3 alternative d
 - **Balsamiq's sketchy style** [28] is intentional: "don't get hung up on details"; "version 3" heuristic. Practitioner opinion, not evidence.
 
 ### Formats (R7)
-- **Static HTML**: cheapest visual format for an LLM to produce reliably; opens in her existing browser with no install; can share CSS with a web-technology final app. [INFERENCE]
+- **Static HTML**: cheapest visual format for an LLM to produce reliably; opens with no install; shares its CSS and markup with the Electron UI and with the HTML-only fallback. [INFERENCE]
+- **"Nothing external" can be enforced, not just promised.** A CSP delivered in a `<meta http-equiv="Content-Security-Policy">` element is a supported way to apply a policy, and `default-src` is the fallback for every other fetch directive [34]. [LOCAL, 2026-09-29, Windows 11 26200, Edge headless (Chromium; Electron is also Chromium, so the same behaviour is expected there [INFERENCE]), scratch folder deleted afterwards]: a local page linking a stylesheet, script, image, web font, CSS background image and calling `fetch()` to a local Bun server produced 6 requests without the tag and 0 with `default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:`. The page's own inline script still ran. Not tested: clicking a link to an external address (navigation is not a fetch directive [INFERENCE]), so sketches should contain no external links either.
+- **Opening the file**: `start` runs a file through its registered program [35]. Not run here, because it would pop a window on the user's machine [UNVERIFIED for company laptops with different default programs]. Electron can show a local file in its own window with `win.loadFile` [36].
 - **ASCII**: LLMs read ASCII layouts well but write them poorly ("Read-Write Asymmetry") [17]. ASCIIEval: best model 42.77% on recognition of ASCII art [18]. Practitioners report misaligned diagrams past ~5 elements [32]. Also unfamiliar to non-designers and monospace box-drawing may not render well in every Windows terminal [INFERENCE].
-- **SVG**: MindSpan chose SVG because HTML "tends to resemble polished, high-fidelity screens" [4]. That is a real argument, but SVG shares no code with the final app; fix polish with CSS instead.
+- **SVG**: MindSpan chose SVG because HTML "tends to resemble polished, high-fidelity screens" [4]. That is a real argument, but SVG shares no code with the final app; fix polish with CSS instead (rec 8).
 - **Mermaid/flow diagrams**: NN/g notes flowcharts "don't show any UI design" and that new specification formats are hard for stakeholders ("What's old is usually familiar") [20]. Mermaid also needs a renderer (terminals show raw text) [INFERENCE].
-- **AI builder patterns**: Stitch: 3 variants by default, creative-range slider [22]; Figma: agent generates layout/theme/responsive variations on a shared canvas [25]; v0: multiple UI options per prompt (2024 secondary) [27]; Lovable: Plan mode asks clarifying questions, including sample vs live data, before building [26]; Claude Design (Apr 2026): design explorations, interactive prototypes, handoff to Claude Code [24]. All are cloud/account tools (see conflicts), but the patterns to borrow are: side-by-side, generate-N, choose which aspects vary.
+- **AI builder patterns**: Stitch: 3 variants by default, creative-range slider [22]; Figma: agent generates layout/theme/responsive variations on a shared canvas [25]; v0: multiple UI options per prompt (2024 secondary) [27]; Lovable: Plan mode asks clarifying questions, including sample vs live data, before building [26]; Claude Design (Apr 2026): design explorations, interactive prototypes, handoff to Claude Code [24]. All are cloud/account tools (see conflicts), and some are tied to other vendors' assistants, so none applies here; the patterns to borrow are: side-by-side, generate-N, choose which aspects vary.
 
 ### Honesty (R10)
 - **Design Theater** [16]: five generative-UI tools, 120 interfaces: >25% of stated rationales not implemented; 34% of functional requirements; convergence in layout across tools. Stated "this option supports X" is not evidence that X works.
@@ -81,41 +91,43 @@ Scope: evidence and rules for the "before each feature, show 2–3 alternative d
 
 ## What alternatives should differ on
 
-Given fixed technology, vary structure, one dimension per decision. Table of dimensions with example option names in her terms:
+Given fixed technology, vary structure, one dimension per decision. Table of dimensions with example option names in the user's terms:
 
-| Dimension | Example fork (name each in her words) | Note |
+| Dimension | Example fork (name each in the user's words) | Note |
 |---|---|---|
 | Layout / what is visible at once | "Everything on one sheet" vs "list on left, details on right" | Cheapest to judge statically |
 | Flow / steps | "One form" vs "one question at a time" | Show 3–4 step panels [4] |
 | Interaction model | Table vs form vs drag-and-drop vs calendar vs chat | Tohidi's dial/table/timeline is the archetype [2] |
-| Information density | "Just today's items" vs "everything with filters" | Ties to her real data volume |
-| Automated vs manual | "App fills it in, you confirm" vs "you type it" | [INFERENCE]; must be buildable in the stack |
+| Information density | "Just today's items" vs "everything with filters" | Ties to the user's real data volume |
+| Automated vs manual | "The tool fills it in, you confirm" vs "you type it" | [INFERENCE]; must be buildable in the stack. If "fills it in" means an AI reads a document, don't sketch it: show real results side by side (rec 15) |
 | Entry point | Opens on a list vs opens on "add new" | [INFERENCE] |
 
 MindSpan and Luminate both enumerate *design dimensions* first and then options per dimension [4][15]; this skill should do the same silently: pick the dimension that matters for this feature, then write one option per value. Do not vary style. In Stitch-like tools the visual axes are on by default [22].
 
-Ground options in her real task. The GenUI paper's professionals felt structural questions ("flow and whether the right information is placed") were the ones that mattered but were pulled to look-and-feel by polished output [4].
+Ground options in the user's real task. The GenUI paper's professionals felt structural questions ("flow and whether the right information is placed") were the ones that mattered but were pulled to look-and-feel by polished output [4].
 
 ## Presentation template (chat message)
 
 ```
-Before I build "<feature in her words>", here are 3 rough sketches. They're grey on
+Before I build "<feature in the user's words>", here are 3 rough sketches. They're grey on
 purpose — I want to know which way of working fits you, not how it looks.
-Open: mockups/<feature>.html  (I've opened it for you; it works offline and has your
-real <rows/names> in it).
+Open: mockups/<feature>.html  (I've opened it for you; it works offline and has
+<made-up | your real> <rows/names> in it).
 
-  A — <name by difference, her words>     Good: <1 line>   Watch out: <1 line>
+  A — <name by difference, user's words>  Good: <1 line>   Watch out: <1 line>
   B — <name by difference>                Good: ...        Watch out: ...
   C — <name by difference>                Good: ...        Watch out: ...
 
-Try this: pretend it's <one real task from her week>. Which one gets you done fastest?
+Try this: pretend it's <one real task from their week>. Which one gets you done fastest?
 What's the first thing that would bug you in each? "None of these" is a fine answer,
 and mixing is welcome ("A's list with C's ...").
 
 If you've no strong feeling, I'd start with <B> because <one reason>.
 ```
 
-File conventions: one HTML per feature decision, options stacked or tabbed with identical chrome, greyscale, system fonts, "SKETCH — not the real app" banner, her sample data from local files only, **no external requests (no CDN scripts, web fonts, analytics)** so nothing leaves her machine [INFERENCE], opened with the OS default-browser command (`start` on Windows, `open` on macOS) without administrator rights [UNVERIFIED as no doc was consulted; standard OS behaviour].
+For an AI-or-code fork, replace the sketches with the comparison page (rec 15): "I ran your <real sample> two ways. Here they are side by side: what each got right, how long it took, what it uses up on your ChatGPT plan, where the data goes, and whether it works offline."
+
+File conventions: one HTML per feature decision, options stacked or tabbed with identical chrome, greyscale, system fonts, "SKETCH — not the real app" banner, sample data as in rec 9, a CSP `<meta>` tag and **no external requests** so nothing leaves the machine (rec 7), opened for the user with the file association (`start` on Windows) without administrator rights [35][INFERENCE for the last part].
 
 ## Open questions and disagreements
 
@@ -126,15 +138,18 @@ File conventions: one HTML per feature decision, options stacked or tabbed with 
 - **Choice-overload results conflict** [13] vs [12]; both are about far larger assortments than 2–3.
 - **Static vs clickable:** NN/g lists benefits of interactive prototypes (realistic behaviour, workflow testing) [6]; but building them costs more, and Walker found paper vs computer medium equal on issues found [5]. Where to switch is a judgement call.
 - **Familiarity bias:** in Tohidi, the familiar table version was rated easiest but judged least appropriate [2]. Whether an AI should steer non-designers away from the familiar option is unresolved.
+- **Which program opens `.html` on a company laptop** is unchecked. If it is not a browser, the fallback is an Electron window (after the first feature) or telling the user which browser to use. Whether a company policy blocks opening local HTML files is also unknown. [UNVERIFIED]
+- **Does side-by-side outcome comparison (R15) change the choice** compared with a written explanation? Plausible from the "show instead of ask" principle and the mockup evidence above, but untested for this user group. [INFERENCE]
 
 ## Conflicts with the guiding principles
 
-- **Avoid the build trap:** the mockup step adds work before every feature. NN/g says parallel design is costlier and not for all projects [33][3]; professionals in the GenUI study found breadth-first slower with more back-and-forth and some preferred depth-first for speed [4]. Mitigation is R1 (skip for trivial forks), one screen per option, and a time-box. If she gets impatient, the evidence favours building the recommended option and iterating.
-- **Local-first / no accounts:** the AI mockup tools with best-documented variant workflows (Stitch, Figma, v0, Lovable, Claude Design) are cloud, account-bound and in some cases paid [22][25][24][27][26]. Do not send her to them; only borrow their patterns. HTML mockups must load nothing external.
-- **Hard no-admin requirement:** static HTML and browser opening need no install. Renderers for Mermaid, or browser automation for screenshots, may require downloads. Not checked; avoid recommending them. [UNVERIFIED]
-- **Bias to desktop apps / stack first:** R10's "same UI tech" honesty holds cleanly only if the final UI is HTML-rendered (webview/local web). For native toolkits or terminal UIs, HTML mockups can mislead. Depends on the stack decision made elsewhere.
-- **Ontology first:** compatible and reinforcing, but names like "wizard", "master-detail", "kanban" are jargon; option names must use her vocabulary (R5).
-- **User never chooses technology:** no conflict; the fork is about use, not tools.
+- **Avoid the build trap:** the mockup step adds work before every feature. NN/g says parallel design is costlier and not for all projects [33][3]; professionals in the GenUI study found breadth-first slower with more back-and-forth and some preferred depth-first for speed [4]. Mitigation is R1 (skip for trivial forks), one screen per option, and a time-box. If the user gets impatient, the evidence favours building the recommended option and iterating.
+- **Local-first / no accounts:** the AI mockup tools with best-documented variant workflows (Stitch, Figma, v0, Lovable, Claude Design) are cloud, account-bound and in some cases paid [22][25][24][27][26]. Do not send the user to them; only borrow their patterns. HTML mockups must load nothing external, and R7's CSP tag makes the browser enforce that [34][LOCAL].
+- **Hard no-admin requirement:** static HTML and opening it through its file association need no install [35]. Renderers for Mermaid, or browser automation for screenshots, may require downloads. Not checked; avoid recommending them. [UNVERIFIED]
+- **Stack first / honesty of mockups:** resolved by the stack decision. The UI is HTML in both tiers (Electron and the HTML-only fallback), so R10's "same UI technology" honesty holds. If the stack ever changes to a non-HTML toolkit, R7 and R10 need revisiting.
+- **Ontology first:** compatible and reinforcing, but names like "wizard", "master-detail", "kanban" are jargon; option names must use the user's vocabulary (R5).
+- **User never chooses technology:** no conflict; the fork is about use, not tools. R15 keeps it so by comparing outcomes, not technologies.
+- **Nothing sent without the user knowing ([08](08-security-compliance.md) rec 1, 3):** building a sketch from the user's real rows means the AI has read those rows, which is covered by the once-only "anything you show me goes to OpenAI" sentence. On a personal plan with work documents, use made-up rows (R9).
 
 ## Sources
 
@@ -171,3 +186,6 @@ File conventions: one HTML per feature decision, options stacked or tabbed with 
 [31] Marvel blog, *Why Testing with Real Content Is Better Than Lorem Ipsum* (https://marvelapp.com/blog/testing-real-content-better-lorem-ipsum/); UXmatters 2012 (https://www.uxmatters.com/mt/archives/2012/10/tips-on-prototyping-for-usability-testing.php) — search-result content; practitioner opinion, no controlled study found.
 [32] *I got tired of Claude's misaligned ASCII diagrams.* 2026. https://blog.notpritam.in/i-got-tired-of-claude-s-misaligned-ascii-diagrams-so-i-built-claude-canvas — search-result content; practitioner report.
 [33] Nielsen, Faber (NN/g). *Parallel Design and Testing.* https://www.nngroup.com/articles/parallel-design/ — search-result content: "not recommended for all projects".
+[34] MDN. *Content-Security-Policy (CSP) header.* https://developer.mozilla.org/en-US/docs/Web/HTTP/Reference/Headers/Content-Security-Policy — opened 2026-09-29; `default-src` fallback, policy via `<meta http-equiv="Content-Security-Policy">`.
+[35] Microsoft Learn. *start.* https://learn.microsoft.com/en-us/windows-server/administration/windows-commands/start — opened 2026-09-29; files run through their file association.
+[36] Electron docs. *BrowserWindow.* https://www.electronjs.org/docs/latest/api/browser-window — opened 2026-09-29; `win.loadFile('index.html')` loads a local HTML file.

@@ -26,7 +26,7 @@ Tags: `[UNVERIFIED]` means not confirmed from a primary page. `[INFERENCE]` is m
    - On a company account, the company's own policies still apply [2], and Codex use, including the local CLI and IDE, is visible to the company through the Compliance API [1]. Say that once, plainly, so nothing is a surprise.
    - If the user mentions a rule of their own ("patient records must not leave the building"), that rule wins, whatever the account.
 
-3. **Say where data goes in plain words, once, before it first happens.** One sentence at the start of the first session: "Anything you show me here, I send to OpenAI under your ChatGPT account." One more the first time a built tool uses an AI feature: "When you click Read invoice, this invoice goes to OpenAI the same way." After that, only changes are announced. This replaces the per-send consent screen and spend cap proposed in [04a](04a-software-2-llm-extraction.md) R13 and R20, which were written for pay-per-call API keys [INFERENCE].
+3. **Say where data goes in plain words, once, before it first happens.** One sentence at the start of the first session: "Anything you show me here, I send to OpenAI under your ChatGPT account." One more the first time a built tool uses an AI feature: "When you click Read invoice, this invoice goes to OpenAI the same way." After that, only changes are announced. This replaces the per-send consent screen and spend cap from the earlier API-key draft of [04a](04a-software-2-llm-extraction.md), which were written for pay-per-call keys [INFERENCE].
 
 4. **Detect the account type from the local sign-in; ask only if that fails.**
    - `codex login status` prints only "Logged in using ChatGPT" [LOCAL].
@@ -118,7 +118,7 @@ For IT, when the tool should go to a team (rung 4):
 
 - The full set of `chatgpt_plan_type` values, especially the Business and Enterprise spellings, and whether `organizations` reliably marks a company account.
 - What one invoice costs as a share of each plan's Codex allowance (tokens are known: ~8.6k in, ~270 out per page image at low reasoning).
-- Whether `--ignore-user-config` also drops company-managed settings (`requirements.toml`) that IT may rely on; if it does, the tool must not bypass them [UNVERIFIED].
+- Answered in [04a](04a-software-2-llm-extraction.md): `--ignore-user-config` only empties the user config layer; managed `requirements.toml`, cloud bundles and the system config still load, so the tool does not bypass what IT enforces. Still open: whether `--ignore-rules` skips rules that come from managed requirements.
 - Whether a company workspace can switch off Codex Local for members; if so, the skill should detect "Codex not allowed here" and send the user to IT [1] [UNVERIFIED how it shows up locally].
 
 ## Sources

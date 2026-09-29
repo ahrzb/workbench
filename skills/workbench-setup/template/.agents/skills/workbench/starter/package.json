@@ -1,0 +1,29 @@
+{
+  "name": "my-tool",
+  "productName": "MyTool",
+  "version": "1.0.0",
+  "description": "A small local tool",
+  "main": ".vite/build/main.js",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "typecheck": "tsc --noEmit",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.11.2",
+    "@electron-forge/maker-zip": "^7.11.2",
+    "@electron-forge/plugin-fuses": "^7.11.2",
+    "@electron-forge/plugin-vite": "^7.11.2",
+    "@electron/fuses": "^1.8.0",
+    "@types/node": "^24.9.0",
+    "electron": "44.4.5",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1"
+  },
+  "overrides": {
+    "@electron/rebuild": "^4.2.0"
+  }
+}
