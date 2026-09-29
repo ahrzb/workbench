@@ -14,15 +14,19 @@ $allowed = @(
   '^(\.gitignore|\.gitattributes|AGENTS\.md)$'
   '^\.codex/hooks\.json$'
   '^\.codex/hooks/session-start\.(ps1|sh)$'
-  '^\.agents/skills/workbench/[\w./-]+\.(md|ts|mts|mjs|css|html)$'
-  '^\.agents/skills/workbench/starters/[a-z0-9-]+/(package|package-lock|tsconfig)\.json$'
+  '^\.agents/skills/workbench/[\w./-]+\.(md|ts|tsx|mts|mjs|css|html|jsonc|txt)$'
+  '^\.agents/skills/workbench/starters/[a-z0-9-]+/(package|package-lock|tsconfig|components)\.json$'
+  '^\.agents/skills/workbench/starters/web/public/[\w./-]+\.json$'
   '^\.workbench/scripts/(bootstrap\.ps1|run\.cmd|git\.cmd|save\.ps1|save\.sh|account\.ps1|account\.sh)$'
   '^\.workbench/(session-brief\.md|NOTES\.md|VERSION|account)$'
   '^tools/[a-z0-9-]+/(NOTES|CONTEXT)\.md$'
-  '^tools/[a-z0-9-]+/app/(package\.json|package-lock\.json|tsconfig\.json|index\.html|build\.mjs|forge\.config\.ts|forge\.env\.d\.ts|README\.md)$'
+  '^tools/[a-z0-9-]+/app/(package\.json|package-lock\.json|tsconfig\.json|index\.html|build\.mjs|forge\.config\.ts|forge\.env\.d\.ts|vite\.config\.ts|wrangler\.jsonc|components\.json|README\.md)$'
   '^tools/[a-z0-9-]+/app/vite\.(main|preload|renderer)\.config\.mts$'
-  '^tools/[a-z0-9-]+/app/src/[\w./-]+\.(ts|mts|mjs|css|html)$'
+  '^tools/[a-z0-9-]+/app/src/[\w./-]+\.(ts|tsx|mts|mjs|css|html)$'
   '^tools/[a-z0-9-]+/app/test/[\w./-]+\.(ts|mjs)$'
+  '^tools/[a-z0-9-]+/app/scripts/[\w.-]+\.mjs$'
+  # A website's published files: only what is meant to be public goes in public/.
+  '^tools/[a-z0-9-]+/app/public/[\w./-]+\.(txt|xml|json|svg|png|jpg|jpeg|webp|ico|webmanifest)$'
 )
 # Only these places are searched (never node_modules, builds, tools' copies in use, samples or data).
 $places = @('.', '.codex', '.codex\hooks', '.workbench', '.workbench\scripts')
@@ -30,8 +34,8 @@ $recurse = @('.agents\skills\workbench')
 $toolsDir = Join-Path $root 'tools'
 if (Test-Path -LiteralPath $toolsDir -PathType Container) {
   foreach ($t in Get-ChildItem -LiteralPath $toolsDir -Directory -Force) {
-    $places += @("tools\$($t.Name)", "tools\$($t.Name)\app")
-    $recurse += @("tools\$($t.Name)\app\src", "tools\$($t.Name)\app\test")
+    $places += @("tools\$($t.Name)", "tools\$($t.Name)\app", "tools\$($t.Name)\app\scripts")
+    $recurse += @("tools\$($t.Name)\app\src", "tools\$($t.Name)\app\test", "tools\$($t.Name)\app\public")
   }
 }
 

@@ -2,7 +2,7 @@
 
 Serve the need, not the stated solution. The interview finds the need; the loop delivers it in small pieces the user can try.
 
-**A new tool** gets its folder at the start: `tools/<name>/` with a working name from their first words (`resume-search`), a copy of `starters/NOTES.md`, a line under "Tools here" and `Last worked on: <name>` in `.workbench/NOTES.md`. Renaming the folder later is fine (update both NOTES files); the tool's `TOOL_ID`, set once when its app is created, never changes. Everything below is about that one tool.
+**A new tool** gets its folder at the start: `tools/<name>/` with a working name from their first words (`resume-search`), a copy of `.agents/skills/workbench/starters/NOTES.md`, a line under "Tools here" and `Last worked on: <name>` in `.workbench/NOTES.md`. Renaming the folder later is fine (update both NOTES files); the tool's `TOOL_ID`, set once when its app is created, never changes. Everything below is about that one tool.
 
 ## 1. Interview (skip steps the user has already answered)
 

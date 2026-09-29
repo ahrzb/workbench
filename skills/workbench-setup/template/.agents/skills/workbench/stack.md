@@ -18,7 +18,7 @@ Each tool lives in its own folder, `tools/<name>/`: a short name from the user's
 
 ```
 tools/<name>/
-  NOTES.md      its notes (copied from starters/NOTES.md)
+  NOTES.md      its notes (copied from .agents/skills/workbench/starters/NOTES.md)
   CONTEXT.md    its words
   app/          its code (copied from a starter), with its own node_modules
   samples/      files the user gave you for it (never saved)
@@ -54,7 +54,7 @@ Three starters in `starters/`; pick without asking:
 - **`starters/html/`**: one HTML file opened from disk. When programs can't run here (a download or the app is blocked, Smart App Control), or the tool is small and will be shared with a few people. No AI feature, data only in that browser. Its `README.md` says how to build and ship it.
 - **`starters/web/`**: a website, when the user wants one (a portfolio, a page others open in their browser, a form colleagues fill in). React, React Router, React Query, shadcn and Tailwind, hosted on the user's own Cloudflare account, **private behind Cloudflare Access until the user chooses public** ([safety.md](safety.md#websites)). Local checks use a preview on `127.0.0.1` only, stopped as soon as you're done: the one exception to "no ports". Its `README.md` has setup, deploy, private/public and SEO.
 
-- **Start a tool**: create `tools/<name>/`, copy `starters/NOTES.md` into it, copy the starter into `tools/<name>/app/`, and follow the starter's `README.md` (for Electron: set `TOOL_ID` once, never change it; `run.cmd npm.cmd ci`; `run.cmd npx.cmd install-electron --no`). Its `README.md` lists the security settings; keep every one of them. Record `TOOL_ID` in the tool's NOTES under Data.
+- **Start a tool**: create `tools/<name>/`, copy `.agents/skills/workbench/starters/NOTES.md` into it, copy the starter into `tools/<name>/app/`, and follow the starter's `README.md` (for Electron: set `TOOL_ID` once, never change it; `run.cmd npm.cmd ci`; `run.cmd npx.cmd install-electron --no`). Its `README.md` lists the security settings; keep every one of them. Record `TOOL_ID` in the tool's NOTES under Data.
 - Electron + TypeScript, Forge + Vite, npm only. Electron is pinned exactly; updating it is planned work, never a side effect, and done one tool at a time.
 - **No dev server.** To try a change: `npm.cmd run package` and start the packaged exe from `app/out/`. `electron-forge start` opens a local port, so it is never used.
 - **No native modules**: after any dependency change, run the check in `starters/electron/README.md`. They need a compiler, which needs admin.

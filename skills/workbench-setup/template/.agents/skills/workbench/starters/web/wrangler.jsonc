@@ -1,0 +1,23 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // The site's address is <name>.<your-account-subdomain>.workers.dev. Lowercase letters, digits and
+  // dashes, at most 63 characters. Set it once (a short name plus 6 random letters, like the tool id);
+  // renaming later creates a second, separate site.
+  "name": "set-when-copied",
+  // Never newer than the workerd inside the pinned wrangler (4.144.0 -> 2026-09-26), or wrangler refuses.
+  // Raise it together with wrangler.
+  "compatibility_date": "2026-09-26",
+  // No Worker code: Cloudflare serves the built files from dist/ and answers every page address
+  // with index.html, so React Router can handle it.
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  },
+  // Which addresses exist. Both stay false here, so a plain wrangler deploy can never make the site
+  // reachable. Only deploy.mjs switches workers_dev on (a temporary copy of this file), and only after
+  // Cloudflare Access is recorded as on: read README.md ("Private by default") before the first deploy.
+  // preview_urls are extra addresses for test versions; they stay off. Never add "routes" or a custom domain
+  // until the README says how.
+  "workers_dev": false,
+  "preview_urls": false
+}

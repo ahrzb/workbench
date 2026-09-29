@@ -1,0 +1,7 @@
+[
+  { "id": "1", "title": "The Left Hand of Darkness", "author": "Ursula K. Le Guin", "year": 1969 },
+  { "id": "2", "title": "Pride and Prejudice", "author": "Jane Austen", "year": 1813 },
+  { "id": "3", "title": "One Hundred Years of Solitude", "author": "Gabriel Garcia Marquez", "year": 1967 },
+  { "id": "4", "title": "Middlemarch", "author": "George Eliot", "year": 1871 },
+  { "id": "5", "title": "The Dispossessed", "author": "Ursula K. Le Guin", "year": 1974 }
+]

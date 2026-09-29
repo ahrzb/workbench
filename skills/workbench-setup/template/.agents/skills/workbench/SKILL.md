@@ -25,7 +25,7 @@ Infer the route from the user's message and confirm it in one line ("Sounds like
 - [talking.md](talking.md): CONTEXT.md, how to ask, sorting goals, needs and solutions. Read before the interview and whenever you are about to ask something.
 - [safety.md](safety.md): data rules, whose data it is (ask, don't assume), the account check, forwardable messages, when the tool grows and gets shared.
 - [ai-features.md](ai-features.md): when the tool itself should use AI (reading documents, images), and how to offer it.
-- [stack.md](stack.md): how tools are built here: several tools in one project, the two starters (`starters/`), the building blocks (`blocks/`), `.tools/`, save points, packaging.
+- [stack.md](stack.md): how tools are built here: several tools in one project, the starters (`starters/`: Electron, one HTML file, a website), the building blocks (`blocks/`), `.tools/`, save points, packaging.
 
 ## Files you keep up to date
 
