@@ -23,30 +23,30 @@ The failure to avoid is the wall of jargon: several questions at once, full of s
 
 ## Sorting what the user says
 
-Sort silently into six kinds. The user never learns these words; ask only when the kind changes what gets built (need or want? rule or preference?).
+Sort silently into six kinds. The user never learns these words; ask only when the kind changes what gets built (need or want? rule or guideline?).
 
 | Kind | Test | Example |
 |---|---|---|
 | Goal | "What would be different if this worked?" | Month-end takes one day, not three. |
-| Need | "Would you still use it tomorrow without this?" Yes → want. | See which bills are unpaid. |
-| Requirement | "Who says so, and what if we don't?" Nobody → preference. | The boss only reads .xlsx. |
-| Preference | "OK if it were different, if that's simpler?" | Keep it looking like our sheet. |
-| Want | Fails the need test → ideas shelf. | Email the boss automatically. |
+| Need | "Would you still use it tomorrow without this?" Yes -> want. | See which bills are unpaid. |
+| Requirement | "Who says so, and what if we don't?" Nobody -> guideline. | The boss only reads .xlsx. |
+| Guideline | "OK if it were different, if that's simpler?" | Keep it looking like our sheet. |
+| Want | Fails the need test -> ideas shelf. | Email the boss automatically. |
 | Solution | "Is there another way to get the same thing?" | A dashboard. |
 
 Be critical, of your own ideas too:
 - A solution stated as a need: find the need, then keep their solution or offer a simpler one with a reason.
 - A habit stated as a rule: ask who says so. The requirement is the rule ("the boss gets an .xlsx"), not the habit ("we work in Excel").
-- **A rule the data contradicts**: show the counterexamples and ask one question with the likely answers: "You said every bill has an order number, but these 3 don't (Acme 12 Mar, …). Are they handled differently, or should the tool flag them?" Correct `CONTEXT.md` and NOTES with the answer. Same when your own assumption breaks.
+- **A rule the data contradicts**: show the counterexamples and ask one question with the likely answers: "You said every bill has an order number, but these 3 don't (Acme 12 Mar, ...). Are they handled differently, or should the tool flag them?" Correct `CONTEXT.md` and NOTES with the answer. Same when your own assumption breaks.
 - No goal, only features: ask what would be different.
 - Rules nobody mentioned: check the data yourself; unknown company rules become a forwardable message.
 - Every solution you propose names the need it serves.
 
-Keep it in NOTES "What we're after": goal, must haves, rules (who set them), preferences, and each solution with the need it serves. Anything linked to nothing gets questioned or shelved.
+Keep it in NOTES "What we're after": goal, must haves, rules (who set them), guidelines, and each solution with the need it serves. Anything linked to nothing gets questioned or shelved.
 
 ## CONTEXT.md
 
-The user's words for their work, and nothing else. No technical details, plans, decisions or progress (those go in NOTES). Create it when the first word settles; keep it to one screen (about 15–25 entries); it shrinks as often as it grows.
+The user's words for their work, and nothing else. No technical details, plans, decisions or progress (those go in NOTES). Create it when the first word settles; keep it to one screen (about 15-25 entries); it shrinks as often as it grows.
 
 **Names are settled in a short dialogue.** The user has a word: use it; if another is clearer, ask once with the reason ("You call these 'items'. Would 'bill lines' be clearer, since each is a line on a bill? Either is fine."). The user has no word: offer one in a sentence from their work ("I'll call the unpaid bills the 'to-pay list', as in 'the Acme bill is on the to-pay list'. Sound right?"). Their answer decides. Nothing is final: a rename changes screens, files and code in one sweep, and the old word goes to Retired. Say every change in one line: "I added 'chase up' to our words."
 
@@ -78,7 +78,7 @@ _Also said_: invoice
 - "done" for a bill: sent, or paid? I'll ask when it matters.
 
 ## Retired
-- "invoice" → "bill" (you always say bill)
+- "invoice" -> "bill" (you always say bill)
 ```
 
 Add sections only when they get their first entry.

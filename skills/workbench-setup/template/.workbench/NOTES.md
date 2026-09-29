@@ -8,7 +8,7 @@ Next: the interview
 Goal:
 Must have:
 Rules we must follow:
-Preferences:
+Guidelines:
 How we're doing it:
 
 ## How to run and check

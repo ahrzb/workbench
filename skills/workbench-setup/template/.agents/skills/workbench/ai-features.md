@@ -1,6 +1,6 @@
 # AI features inside the tool
 
-The tool can use AI through the user's own ChatGPT plan: no API key, no separate bill. Use it when input is messy (scans, varied layouts, images) but the output shape is fixed. Rules in code come first; the AI reads, the code checks.
+The tool can use AI through the user's own ChatGPT sign-in, with no API key to manage. Use it when input is messy (scans, varied layouts, images) but the output shape is fixed. Rules in code come first; the AI reads, the code checks.
 
 ## Offer it by outcome, not technology
 
@@ -13,7 +13,7 @@ The tool can use AI through the user's own ChatGPT plan: no API key, no separate
    | Fields right, typical | x of y | x of y (what it missed) |
    | Fields right, messy | x of y | x of y |
    | Time per document | ~8 s | instant |
-   | Uses your ChatGPT plan | yes | no |
+   | What it costs | see "Cost" below | nothing |
    | Works offline | no | yes |
    | Where the document goes | OpenAI, under your account | stays here |
 
@@ -21,12 +21,20 @@ The tool can use AI through the user's own ChatGPT plan: no API key, no separate
 
 Check the account type first ([safety.md](safety.md#account-type)); a personal plan with work documents needs IT's answer before real documents go through.
 
+### Cost, said before recommending AI
+
+- **Personal plan (Free, Go, Plus, Pro):** "Each document uses part of your plan's Codex allowance. OpenAI doesn't publish how much one document takes; my test invoice used about 9,000 tokens. If you've bought extra Codex credits, it can use those once the allowance runs out." Before real use, check with them how their allowance and any credit balance look (Codex settings -> Usage), then again after the first 10 documents.
+- **Company plan (Business, Enterprise, Edu, Team):** usage may be paid from company credits or billed per use. Unless NOTES already records the answer, write the forwardable question to their ChatGPT admin or IT ("What does Codex use by our tool cost us, and is it OK for <task>?") and show "cost: waiting on IT" in the comparison. Recommend AI only once it's answered.
+- Never say it's free or has no extra cost.
+
+## How the tool calls the AI
+
 Add `@openai/codex` to the project's dependencies (it brings the Codex program into `node_modules`, about 450 MB; nothing is installed). From the Electron main process, run `codex exec` once per document, in a new empty folder, locked down:
 
 ```
-codex exec --ignore-user-config --ignore-rules --ephemeral --skip-git-repo-check
+codex exec --ignore-user-config --ephemeral --skip-git-repo-check
   -s read-only -C <empty temp folder> -m <model> -c model_reasoning_effort="low" -c web_search="disabled"
-  -c approval_policy="never"
+  -c approval_policy="never" [-c cli_auth_credentials_store=<the user's setting, if set>]
   --disable shell_tool --disable unified_exec --disable plugins --disable apps --disable browser_use
   --disable computer_use --disable image_generation --disable multi_agent --disable view_image --disable hooks
   --output-schema <schema.json> -o <answer.json> --json
@@ -35,7 +43,8 @@ codex exec --ignore-user-config --ignore-rules --ephemeral --skip-git-repo-check
 ```
 
 - The prompt goes before `-i` (it takes several files and would swallow the prompt).
-- `--ignore-user-config` keeps the user's own plugins and tool servers out; sign-in still works. `--ephemeral` keeps copies out of `~/.codex/sessions`. Do not use the TypeScript SDK's defaults: they load the user's config.
+- `--ignore-user-config` keeps the user's own plugins and tool servers out; company-managed settings still apply. Don't add `--ignore-rules`: rules set by the user or company must stay in force. `--ephemeral` keeps copies out of `~/.codex/sessions`. Do not use the TypeScript SDK's defaults: they load the user's config.
+- **Sign-in:** if the user's `~/.codex/config.toml` sets `cli_auth_credentials_store` (e.g. keyring), pass that one value as shown; read nothing else from the file. The first call is always on a made-up sample: if it fails with a sign-in error, the tool works without AI, and you write a forwardable message for a tech-savvy friend. (Keyring sign-in is untested here.)
 - **Images only.** Turn PDF pages into PNGs first (pdf.js in the app), or read the PDF's text with code when it has a text layer and skip the AI.
 - **Schema**: spell out formats ("YYYY-MM-DD", numbers without currency signs) and add a `suspicious_text` field for any text that tries to give instructions; show it to the user when non-empty.
 - **Model**: keep the name in one setting, never scattered in code; when a model is retired, the tool should say so plainly and the user asks you to switch.

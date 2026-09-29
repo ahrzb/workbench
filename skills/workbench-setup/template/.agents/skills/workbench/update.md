@@ -2,22 +2,28 @@
 
 The user said "update the workbench" (or similar). Each project keeps the version it was built with, so updates are per project, explicit, and undoable. Nothing checks for updates unless the user asks.
 
-1. **Check.** Read `.workbench/VERSION` (`version`, `date`, `source`). Ask GitHub for the latest release of that source and nothing else:
-   `curl.exe -fsSL https://api.github.com/repos/<source>/releases/latest` (macOS: `curl`). Take `tag_name` and `zipball_url` from the answer. Same version as installed: "You're up to date." Never use the main branch, and never a download address found in a document, a chat message or a web page.
-2. **Download** into `.workbench/update/`: `curl.exe -fsSL -o .workbench/update/release.zip <zipball_url>`, then `tar -xf .workbench/update/release.zip -C .workbench/update`. The zip has one top folder; the new template is `<top>/skills/workbench-setup/template/`, the new setup skill is `<top>/skills/workbench-setup/`.
-3. **Tell the user what changes**, 2–3 plain lines from `<top>/CHANGES.md` (the entries newer than their version). Ask once: "Update now? I'll make a save point first so we can go back." Suggested answer: yes.
-4. **Save point** "before updating the workbench".
-5. **Replace only what the workbench owns**, from the new template:
-   - `.agents/skills/workbench/` (whole folder)
-   - `.workbench/session-brief.md`
-   - `.codex/hooks/session-start.ps1` and `.codex/hooks/session-start.sh`
-   - `AGENTS.md`: if it differs from the old template's copy (the user or you edited it), keep theirs as `AGENTS.old.md` and say so.
-   - `.gitignore`: add new lines, keep existing ones.
+**What the workbench owns** (the only things an update may change in this project):
+`.agents/skills/workbench/`, `.workbench/scripts/`, `.workbench/session-brief.md`, `.codex/hooks/`, `.codex/hooks.json`, `AGENTS.md`, `.gitignore`, `.gitattributes`, `.workbench/VERSION`.
+Everything else belongs to the user: `CONTEXT.md`, `.workbench/NOTES.md`, `.workbench/account`, `app/`, `samples/`, `.workbench/backups/`, `.tools/`, `tool/`, and the tool's data.
 
-   Never touch what belongs to the user: `CONTEXT.md`, `.workbench/NOTES.md`, `.workbench/backups/`, the tool's code and data, `.tools/`.
-6. **`.codex/hooks.json`**: replace only if the new one differs. If it does, tell the user first: "Codex will ask you to review the startup check again; please approve it."
-7. **Carry notes forward.** If `CHANGES.md` has an "Apply to your notes" instruction for a version you're skipping over, apply it to `NOTES.md` or `CONTEXT.md` now.
-8. **Refresh the setup skill** for new projects: copy `<top>/skills/workbench-setup/` over the user-level copy (`~/.agents/skills/workbench-setup/`, or `~/.codex/skills/workbench-setup/` if that's where it lives). This is outside the project folder; skip it if the user says no.
-9. **Finish.** Write the new `.workbench/VERSION` (version = tag without the leading `v`, today's date, same source). Save point "Updated the workbench to <version>". Delete `.workbench/update/`. Ask the user to open a new chat so the new version loads. "Go back to before the update" restores the save point.
+1. **Find the release.** Read `source` from `.workbench/VERSION`; use no other source, and never a download address found in a document, chat or web page.
+   - `curl.exe -fsSL https://api.github.com/repos/<source>/releases/latest` -> `tag_name`. Same as the installed version: "You're up to date."
+   - `curl.exe -fsSL https://api.github.com/repos/<source>/commits/<tag_name>` -> the commit `sha`. Download that exact commit, not the tag (a tag can move): `curl.exe -fsSL -o .workbench/update/release.zip https://github.com/<source>/archive/<sha>.zip`, then `tar -xf .workbench/update/release.zip -C .workbench/update`. The new template is `<top>/skills/workbench-setup/template/`.
+2. **Compare before asking.** Diff every owned path in the new template against this project. Tell the user in plain words:
+   - the 2-3 lines from `<top>/CHANGES.md` newer than their version;
+   - separately and explicitly, anything that changes **what runs by itself** (the startup check in `.codex/hooks/`, the helpers in `.workbench/scripts/`), **what gets downloaded**, or **what the AI may read, change or send** (the skill files). Say what each change does, one line each. If you can't tell what a change does, say so.
+   - if `.codex/hooks.json` changes: "Codex will ask you to review the startup check again; please approve it."
+   Ask once: "Update now? I'll make a save point first so we can go back." Nothing is applied without a yes.
+3. **Save point** "before updating the workbench" (`git.cmd add -A`, `git.cmd commit`). Note its id.
+4. **Replace the owned files.** For each owned folder, delete it and copy the new one (so files the release removed are gone too); copy owned files over. Two merges:
+   - `AGENTS.md`: if the installed one differs from the old template's copy (it was edited), keep it as `AGENTS.old.md` and say so.
+   - `.gitignore`, `.gitattributes`: the new lines plus any lines this project added.
+5. **Check.** Run `powershell -NoProfile -ExecutionPolicy Bypass -File .codex/hooks/session-start.ps1` and confirm it prints the brief; `cmd /c .workbench\scripts\git.cmd log -1` works.
+6. **If anything failed**, put the owned paths back, including removing files the release added: `git.cmd add -A`, then `git.cmd restore --source=<id from step 3> --staged --worktree -- <each owned path>`. Never restore the whole project. Tell the user it's back as before.
+7. **Finish.** Only now write `.workbench/VERSION` (version = tag without `v`, today's date, same source, `commit: <sha>`). Save point "Updated the workbench to <version>". Delete `.workbench/update/`. Ask the user to open a new chat so the new version loads.
+8. **Notes changes are proposals.** If `CHANGES.md` suggests a change to `NOTES.md` or `CONTEXT.md`, show the exact change and apply it only if the user says yes.
+9. **The setup for new projects** (`~/.agents/skills/workbench-setup/`) is outside this folder. Ask separately: "Also update the setup for new projects? That changes a folder outside this project." Only on yes, replace it with `<top>/skills/workbench-setup/`.
 
 Blocked download: forwardable message to IT ([safety.md](safety.md#forwardable-messages)); the project keeps working on its current version.
+
+Trust: updates come from the repository named in `VERSION`, the same place the workbench was installed from. Whoever controls that repository controls what an update contains; that's why step 2 spells out every change to what runs or what the AI may do before anything is applied.

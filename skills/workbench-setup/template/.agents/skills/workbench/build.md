@@ -6,9 +6,9 @@ Serve the need, not the stated solution. The interview finds the need; the loop 
 
 Read [talking.md](talking.md) first. One question per message, each with your suggested answer.
 
-1. **Frame** (1 message). About 15–20 minutes, one question at a time, about things that actually happened. Say once that what they show you goes to OpenAI under their ChatGPT account, and check the account type ([safety.md](safety.md#account-type)).
+1. **Frame** (1 message). About 15-20 minutes, one question at a time, about things that actually happened. Say once that what they show you goes to OpenAI under their ChatGPT account, and check the account type ([safety.md](safety.md#account-type)).
 2. **One real episode.** "Tell me about the last time you had to do this." If they arrive with a solution ("I need a dashboard"), ask when they last needed it. No episode after a few tries: do one live with them ("open the file and let's do one now").
-3. **Walk the workaround.** What they open, copy, type, check, and who gets the result. Ask for a sample file with private bits swapped for made-up ones (or real, if the account type allows). Collect their words into `CONTEXT.md` as they settle.
+3. **Walk the workaround.** What they open, copy, type, check, and who gets the result. Ask for a sample file with private bits swapped for made-up ones (or real, if the account type allows) and keep it in `samples/`, never in `app/`. Collect their words into `CONTEXT.md` as they settle.
 4. **Stakes.** How often, how long, what goes wrong, what "better" looks like. Record the goal in NOTES "What we're after".
 5. **Slice.** "If this had to be useful by tomorrow morning, what would it only do?" One sentence: "does X for moment Y", plus what it will not do yet (ideas shelf).
 6. **Confirm.** Retell their work in their words and ask "What did I get wrong?" Their real episode becomes the acceptance check.
@@ -17,14 +17,14 @@ Done when NOTES has the goal, the first slice, the acceptance check, and `Interv
 
 **Short version.** When the user arrives with a clear, small, sensible idea, run steps 2, 5 and 6 only. Still find the need behind it.
 
-**Push back when the stated solution is harder than the need.** Always give (1) why, in one sentence, and (2) a simpler alternative that still meets the need. Example: "find issues in our accounts" → "I'll turn the PDFs into clean Excel sheets; then you ask your AI assistant to find the issues. Reading PDFs reliably is the hard part, and judging them is what your assistant is already good at." The tool does the dull, reliable data work; the user's own AI does the judgment. The user decides.
+**Push back when the stated solution is harder than the need.** Always give (1) why, in one sentence, and (2) a simpler alternative that still meets the need. Example: "find issues in our accounts" -> "I'll turn the PDFs into clean Excel sheets; then you ask your AI assistant to find the issues. Reading PDFs reliably is the hard part, and judging them is what your assistant is already good at." The tool does the dull, reliable data work; the user's own AI does the judgment. The user decides.
 
 **Pick how the tool does the work**, simplest first, and stop at the first that fits:
 1. Plain rules in code (the user can state the rule completely).
-2. One AI call per document, checked by code (messy input, fixed output) → [ai-features.md](ai-features.md).
+2. One AI call per document, checked by code (messy input, fixed output) -> [ai-features.md](ai-features.md).
 3. No new tool at all: a formula, an existing feature, or a clean export the user's AI assistant can work with.
 
-**Show options only at a real fork**: 2–3 static HTML sketches side by side with the user's (sample) data, a SKETCH banner, one-line tradeoffs, your recommendation last ([stack.md](stack.md#sketches)).
+**Show options only at a real fork**: 2-3 static HTML sketches side by side with the user's (sample) data, a SKETCH banner, one-line tradeoffs, your recommendation last ([stack.md](stack.md#sketches)).
 
 ## 2. The loop: one small change at a time
 

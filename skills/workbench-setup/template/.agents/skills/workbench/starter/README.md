@@ -22,11 +22,14 @@ Rename the tool: `name`, `productName` (`package.json`), `executableName` (`forg
 ```
 ..\.workbench\scripts\run.cmd npm.cmd ci
 ..\.workbench\scripts\run.cmd npx.cmd install-electron --no
-..\.workbench\scripts\run.cmd npm.cmd start          # dev window; after a main.ts change type `rs` + Enter in that terminal, or restart
 ..\.workbench\scripts\run.cmd npm.cmd test
 ..\.workbench\scripts\run.cmd npm.cmd run typecheck
 ..\.workbench\scripts\run.cmd npm.cmd run package    # -> out\<productName>-win32-x64\
 ```
+
+There is no dev server: `electron-forge start` runs Vite's dev server, which listens on a local port, and the tool opens no ports. To try a change, package it (about 20 s) and start `out\<productName>-win32-x64\<executableName>.exe`.
+
+**Where the tool keeps its data:** `%LOCALAPPDATA%\<productName>\data` (build the path from `process.env.LOCALAPPDATA` in `main.ts`; Electron's default `userData` is the Roaming folder, which can sync). Never inside the project folder.
 
 Always `npm.cmd` / `npx.cmd`, never a bare `npm`. `install-electron --no` fetches the Electron binary now, so a blocked download fails during setup instead of when the user first opens the tool.
 
@@ -36,7 +39,7 @@ Adding a dependency: `..\.workbench\scripts\run.cmd npm.cmd install <pkg>` (firs
 
 - `contextIsolation: true`, `sandbox: true`, `nodeIntegration: false`, `webSecurity: true`, `allowRunningInsecureContent: false`, `devTools` only when not packaged.
 - The page loads from `app://local` (never `file://`, never a remote URL). The CSP is sent as a header: `default-src 'none'; script-src 'self'; ...`. No `unsafe-inline`, no `unsafe-eval`, no remote origin. That means no inline `<script>`, no `style=""` attributes, no CDN fonts or scripts.
-- `session.webRequest.onBeforeRequest` cancels every request that is not `app://local`, `blob:`, `data:` (or the dev server). Do not add hosts. If the tool needs the network, that is a design decision with the user (see `safety.md`), not a code tweak.
+- `session.webRequest.onBeforeRequest` cancels every request that is not `app://local`, `blob:` or `data:`. Do not add hosts. If the tool needs the network, that is a design decision with the user (see `safety.md`), not a code tweak.
 - Spellcheck is off (session, `webPreferences`, download URL). A default Electron app phones Google for a dictionary on first launch.
 - Navigation, redirects, `window.open`, `<webview>` are blocked. All permission requests are denied.
 - `preload.ts` exposes named functions only. Never `ipcRenderer`, `fs`, `require`, or a generic `invoke(channel, ...)`.
@@ -56,4 +59,4 @@ Any real hit means: pick another package, or a pure-JS or WASM alternative. Do n
 
 ## Every build ends with
 
-`npm test`, `npm run package`, then start the packaged exe and confirm it stays running. Before handing over, run the network check from `research/03a` (0 TCP/UDP endpoints owned by the exe's process tree on a fresh profile).
+`npm test`, `npm run package`, then start the packaged exe and confirm it stays running and listens on nothing: `Get-NetTCPConnection -State Listen` and `Get-NetUDPEndpoint` filtered to the exe's process IDs must return nothing.

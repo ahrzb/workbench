@@ -11,7 +11,7 @@ The session brief (injected at chat start, or read from `.workbench/session-brie
 
 Infer the route from the user's message and confirm it in one line ("Sounds like the totals land in the wrong column. I'll look into that."). If it is genuinely unclear, ask one plain question. Never show a menu.
 
-| The user… | Route | Read |
+| The user... | Route | Read |
 |---|---|---|
 | wants something new, a change, or has a problem at work they'd like solved | Build | [build.md](build.md) |
 | says a tool built here misbehaves, lost data, shows an error | Fix | [fix.md](fix.md) |

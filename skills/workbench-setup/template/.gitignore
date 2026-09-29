@@ -1,11 +1,42 @@
-# Downloaded tools and build output: recreated on demand
-.tools/
-node_modules/
-out/
-.vite/
-tool/
+# Save points hold ONLY the tool's source code and the workbench's own files.
+# This is an allowlist: everything is left out unless it is named below, so documents,
+# data, samples, backups, secrets, downloaded tools and build output never enter a save point.
+/*
 
-# Save-point history itself, data backups and update downloads stay on this computer, outside save points
-.workbench/history/
-.workbench/backups/
-.workbench/update/
+!/.gitignore
+!/.gitattributes
+!/AGENTS.md
+!/CONTEXT.md
+!/.agents/
+!/.codex/
+
+!/.workbench/
+/.workbench/*
+!/.workbench/scripts/
+!/.workbench/session-brief.md
+!/.workbench/NOTES.md
+!/.workbench/VERSION
+!/.workbench/account
+
+# The tool: named config files, and only code files inside src/ and test/.
+!/app/
+/app/*
+!/app/package.json
+!/app/package-lock.json
+!/app/tsconfig.json
+!/app/index.html
+!/app/forge.config.ts
+!/app/forge.env.d.ts
+!/app/vite.main.config.mts
+!/app/vite.preload.config.mts
+!/app/vite.renderer.config.mts
+!/app/README.md
+!/app/src/
+!/app/test/
+/app/src/**/*.*
+/app/test/**/*.*
+!/app/src/**/*.ts
+!/app/src/**/*.css
+!/app/src/**/*.html
+!/app/test/**/*.ts
+!/app/test/**/*.mjs

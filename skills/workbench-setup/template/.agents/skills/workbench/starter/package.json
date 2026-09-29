@@ -7,7 +7,6 @@
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
-    "start": "electron-forge start",
     "package": "electron-forge package",
     "typecheck": "tsc --noEmit",
     "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test test/*.test.mjs"
