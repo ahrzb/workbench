@@ -23,8 +23,6 @@ Check the account type first ([safety.md](safety.md#account-type)); a personal p
 
 Add `@openai/codex` to the project's dependencies (it brings the Codex program into `node_modules`, about 450 MB; nothing is installed). From the Electron main process, run `codex exec` once per document, in a new empty folder, locked down:
 
-Add `@openai/codex` to the project's dependencies (it brings the Codex program into `node_modules`; nothing is installed). From the Electron main process, run `codex exec` once per document, in a new empty folder, locked down:
-
 ```
 codex exec --ignore-user-config --ignore-rules --ephemeral --skip-git-repo-check
   -s read-only -C <empty temp folder> -m <model> -c model_reasoning_effort="low" -c web_search="disabled"

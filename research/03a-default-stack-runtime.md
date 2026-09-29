@@ -66,9 +66,10 @@ Tags: `[UNVERIFIED]` means I could not confirm it from a page I opened. `[INFERE
 10. **No native Node modules, ever.**
     - Anything without a prebuilt binary compiles with node-gyp, which needs the VS C++ Build Tools on Windows or the Xcode CLT on macOS [32]; both need admin [52][51-CLT]. Prebuilt downloads also come from GitHub [INFERENCE].
     - Check after every dependency change:
-      - `package-lock.json` entries with `"hasInstallScript": true` [33];
-      - any `binding.gyp` or `*.node` file under `node_modules` [33].
-    - The starter allows exactly two install-script packages: `electron-winstaller` (only used by `make`) and `fsevents` (optional, macOS only) [LOCAL lockfile].
+      - `package-lock.json` entries with `"hasInstallScript": true` other than `fsevents` [33];
+      - any `binding.gyp` under `node_modules` [33];
+      - `*.node` files outside the known prebuilt packages `@rolldown/binding-*`, `lightningcss-*` and `@electron-internal/extract-zip`. Those ship compiled inside the npm package and need no compiler, so they are fine. A new `*.node` from a package that also has an install script or a `binding.gyp` means it compiles or downloads a binary.
+    - The starter allows exactly one install-script package: `fsevents` (optional, macOS only). It dropped Squirrel (`maker-squirrel`, `electron-squirrel-startup`), so `electron-winstaller` is gone too [starter README].
     - SQLite without a native module is covered in [03b](03b-data-storage.md).
 11. **Install by terminal, never by browser.**
     - Files fetched with `curl.exe`/`Invoke-WebRequest` or macOS `curl` get no Mark-of-the-Web or quarantine flag [9][44]. SmartScreen fires only on files that have Mark-of-the-Web [47], and Gatekeeper checks only quarantined files [44]. Everything the agent builds on the user's machine is local too.
@@ -78,7 +79,7 @@ Tags: `[UNVERIFIED]` means I could not confirm it from a page I opened. `[INFERE
     - `.workbench\scripts\run.cmd npm.cmd run package` gives `out/<App>-win32-x64/`, which runs from the folder with no Node at runtime [B]. Run it right there: the shortcut points at `out\<App>-win32-x64\<App>.exe` (macOS: the `.app` in `out/`, [INFERENCE]). The app is not copied into any per-user program folder, `~/Applications` or the Start menu.
     - If the user keeps using the app while the AI builds a change, first copy the folder to `<project>/tool/<App>/` and point the shortcut there, so the next package step does not replace a running program [INFERENCE]. This costs about another 390 MB.
     - **The desktop shortcut is the only thing outside the project.** Create it with PowerShell's `WScript.Shell` `CreateShortcut`, at `[Environment]::GetFolderPath('Desktop')` (may be OneDrive-redirected). Tested [LOCAL] in a scratch folder only, not on the real Desktop: the `.lnk` was written and read back with the right target. Under Constrained Language Mode COM objects are limited to a short allow-list [11], so this may fail there [INFERENCE]. Then use Electron's `shell.writeShortcutLink` [UNVERIFIED: not tested], or skip the shortcut and tell the user to open the `.exe` in the project folder. Deleting the project folder and that one shortcut removes everything.
-    - Skip `make`: the Squirrel installer is 147 MiB and installs a 501 MB copy [B]. It leaves `Update.exe` behind after uninstall [28][B], and Group Policy can block it from `%LocalAppData%` [28]. Use it only for sharing, and sharing is an IT conversation (signing).
+    - Skip `make`: the Squirrel installer is 147 MiB and installs a 501 MB copy [B]. It leaves `Update.exe` behind after uninstall [28][B], and Group Policy can block it from `%LocalAppData%` [28]. The starter no longer includes the Squirrel maker. Use it only for sharing, and sharing is an IT conversation (signing).
     - **Disk budget, measured [LOCAL]:** a project with no shared caches took 72 s for the whole in-project run (`npm ci`, `install-electron`, tests, packaging) and about **1.45 GB**:
       - Node `.tools/node` 107 MB
       - npm cache 90 MB
@@ -159,9 +160,12 @@ Tags: `[UNVERIFIED]` means I could not confirm it from a page I opened. `[INFERE
 
 **Git (for the build loop's invisible undo; revisited in [06](06-build-loop.md))**
 
-24. **Git without admin — tiers.**
-    1. If `git` already works, use it.
-    2. **Windows:** MinGit (`MinGit-<ver>-64-bit.zip`) or PortableGit (`-y -gm2 -InstallPath=<project>\.tools\git`) from the Git for Windows release page. Both unpack without admin [51-GfW][51-MinGit][51-Zip], so they go into `.tools\git`, and the launcher adds `.tools\git\cmd` to PATH [INFERENCE]. MinGit has no bash/Perl, which is enough for add/commit/restore [51-MinGit].
+24. **Git without admin — tiers. Save points live in `.workbench\history`, not `.git`.**
+    - **Why not `.git`:** Codex's Windows sandbox keeps `.git` read-only and runs commands as a separate user (CodexSandboxOffline). That caused "dubious ownership" and permission errors [LOCAL, tested 2026-09-29 with `codex exec -s workspace-write`].
+    - **How:** the AI never runs `git init` or a bare `git`. It calls `.workbench\scripts\git.cmd` (from the skill's template), which runs git with `--git-dir=.workbench\history --work-tree=<project> -c safe.directory=*`, so the history sits in a folder the sandbox can write.
+    - **Which git binary:**
+    1. `git.cmd` prefers `.tools\git\cmd\git.exe` if it exists; otherwise it uses `git` from PATH. If `git` already works, that is enough.
+    2. **Windows:** MinGit (`MinGit-<ver>-64-bit.zip`) or PortableGit (`-y -gm2 -InstallPath=<project>\.tools\git`) from the Git for Windows release page. Both unpack without admin [51-GfW][51-MinGit][51-Zip], so they go into `.tools\git`, and `bootstrap.ps1` downloads MinGit there only when git is missing. MinGit has no bash/Perl, which is enough for add/commit/restore [51-MinGit].
     3. **macOS:** Apple's git comes only with the Xcode CLT, and installing those asks for admin [51-gitscm][51-CLT]. Never run `git --version` blindly, because the `/usr/bin/git` stub can pop the CLT installer dialog: check `xcode-select -p` first.
     4. **No git binary:** **isomorphic-git** (pure JS, npm-installable) now fits the stack natively [51-iso]. The earlier draft's dulwich was the Python equivalent.
     5. If everything else fails: timestamped folder snapshots.
