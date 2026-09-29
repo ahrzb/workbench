@@ -1,0 +1,41 @@
+{
+  "name": "resume-parser-electron",
+  "productName": "Resume Parser",
+  "version": "1.0.0",
+  "description": "Local resume parser: reads PDF/DOCX/TXT resumes, shows a table, exports to Excel. No network.",
+  "main": ".vite/build/main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "typecheck": "tsc --noEmit",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test test/parser.test.mjs"
+  },
+  "keywords": [],
+  "author": {
+    "name": "AmirHossein Rouzbahani",
+    "email": "ahrzb5@gmail.com"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "@electron-forge/cli": "^7.11.2",
+    "@electron-forge/maker-squirrel": "^7.11.2",
+    "@electron-forge/maker-zip": "^7.11.2",
+    "@electron-forge/plugin-fuses": "^7.11.2",
+    "@electron-forge/plugin-vite": "^7.11.2",
+    "@electron/fuses": "^1.8.0",
+    "@types/electron-squirrel-startup": "^1.0.2",
+    "@types/node": "^24.9.0",
+    "electron": "44.4.5",
+    "jszip": "^3.10.2",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1"
+  },
+  "dependencies": {
+    "electron-squirrel-startup": "^1.0.1",
+    "exceljs": "^4.4.0",
+    "mammoth": "^1.13.0",
+    "pdfjs-dist": "^6.3.289"
+  }
+}

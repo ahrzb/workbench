@@ -1,0 +1,285 @@
+:root {
+  --blue: #1d4ed8;
+  --border: #d7dce5;
+  --uncertain-bg: #fff6d6;
+  --uncertain-line: #e6b400;
+  --missing-bg: #fde8e8;
+  --missing-line: #e05a5a;
+  --edited-bg: #e8f0fe;
+  --edited-line: #3b6fd8;
+  color-scheme: light;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 14px;
+  color: #1c2333;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border);
+}
+
+.toolbar h1 {
+  font-size: 18px;
+  margin: 0 12px 0 0;
+}
+
+button {
+  font: inherit;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  background: #fff;
+  color: var(--blue);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: #f3f6fd;
+}
+
+button.primary {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
+}
+
+button.primary:hover:not(:disabled) {
+  background: #1a44bd;
+}
+
+button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.legend {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #56607a;
+}
+
+.chip {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 3px;
+  border: 2px solid;
+  margin-left: 10px;
+}
+
+.chip.uncertain {
+  border-color: var(--uncertain-line);
+  background: var(--uncertain-bg);
+}
+
+.chip.not_found {
+  border-color: var(--missing-line);
+  background: var(--missing-bg);
+}
+
+.chip.edited {
+  border-color: var(--edited-line);
+  background: var(--edited-bg);
+}
+
+.skills-panel {
+  border-bottom: 1px solid var(--border);
+  padding: 8px 18px;
+}
+
+.skills-panel summary {
+  cursor: pointer;
+  padding: 2px 0;
+}
+
+.skills-body {
+  padding-top: 8px;
+}
+
+.skills-body textarea {
+  width: 100%;
+  font: inherit;
+  padding: 6px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  resize: vertical;
+}
+
+.skills-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.hint {
+  color: #56607a;
+}
+
+.split {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.table-wrap {
+  flex: 1;
+  min-width: 0;
+  overflow: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 1050px;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+col.c-id { width: 4%; }
+col.c-file { width: 10%; }
+col.c-name { width: 10%; }
+col.c-email { width: 16%; }
+col.c-phone { width: 11%; }
+col.c-linkedin { width: 12%; }
+col.c-github { width: 10%; }
+col.c-other { width: 10%; }
+col.c-skills { width: 11%; }
+col.c-years { width: 6%; }
+
+th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  text-align: left;
+  background: #f1f4fa;
+  padding: 12px 8px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600;
+}
+
+td {
+  padding: 6px 4px;
+  vertical-align: middle;
+}
+
+tbody tr {
+  cursor: default;
+}
+
+tbody tr.selected {
+  background: #f1f5fd;
+}
+
+td.id {
+  padding-left: 8px;
+  color: #56607a;
+}
+
+td.file {
+  padding: 6px 8px;
+  color: #56607a;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+}
+
+td.file-problem {
+  background: var(--missing-bg);
+}
+
+.problem {
+  margin-top: 4px;
+  color: #c0392b;
+  font-weight: 700;
+}
+
+input.cell {
+  width: 100%;
+  font: inherit;
+  padding: 8px 8px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  text-overflow: ellipsis;
+}
+
+input.cell:hover {
+  border-color: var(--border);
+}
+
+input.cell:focus {
+  outline: 2px solid var(--blue);
+  outline-offset: -1px;
+  background: #fff;
+  text-overflow: clip;
+}
+
+input.cell.uncertain {
+  background: var(--uncertain-bg);
+  border-color: var(--uncertain-line);
+}
+
+input.cell.not_found {
+  background: var(--missing-bg);
+  border-color: var(--missing-line);
+}
+
+input.cell.edited {
+  background: var(--edited-bg);
+  border-color: var(--edited-line);
+}
+
+.empty {
+  padding: 28px 18px;
+  color: #56607a;
+}
+
+.raw {
+  width: 300px;
+  flex: none;
+  border-left: 1px solid var(--border);
+  background: #fafbfd;
+  padding: 14px 16px;
+  overflow: auto;
+}
+
+.raw h2 {
+  font-size: 14px;
+  margin: 0 0 10px;
+}
+
+.raw pre {
+  margin: 0;
+  font: 12px/1.5 Consolas, 'Cascadia Mono', monospace;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.status {
+  padding: 8px 18px;
+  border-top: 1px solid var(--border);
+  color: #56607a;
+  font-size: 13px;
+}

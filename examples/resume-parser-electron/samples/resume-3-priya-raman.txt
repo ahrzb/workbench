@@ -1,0 +1,20 @@
+Contact: priya.raman@example.com | Mobile: +91 98765 43210
+Priya Raman
+Data Analyst
+GitHub: github.com/priyaraman-demo
+Portfolio: www.priyaraman.example.net/portfolio
+
+SUMMARY
+Data analyst with 6+ years of experience turning messy spreadsheets into dashboards.
+
+SKILLS
+Python, SQL, Tableau, Power BI, Excel, Data Analysis, Agile, Git
+
+WORK HISTORY
+Data Analyst, Northwind Demo Co. (Aug 2019 - Present)
+  * Built weekly sales dashboards in Tableau; automated cleaning in Python.
+Junior Analyst, Contoso Demo Ltd. (Jul 2017 - Jul 2019)
+  * Reported on churn with SQL and Excel.
+
+EDUCATION
+M.Sc. Statistics, Demo University, 2015 - 2017

@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <!-- The Content-Security-Policy is sent as an HTTP header by the main process (src/main.ts), not here. -->
+    <title>Resume Parser (Electron)</title>
+  </head>
+  <body>
+    <header class="toolbar">
+      <h1>Resume Parser</h1>
+      <button id="open" class="primary" type="button">Open resumes…</button>
+      <button id="export" type="button">Export to Excel</button>
+      <button id="clear" type="button">Clear table</button>
+      <span class="legend">
+        <span class="chip uncertain"></span>uncertain
+        <span class="chip not_found"></span>not found
+        <span class="chip edited"></span>edited by you
+      </span>
+    </header>
+
+    <details id="skills-panel" class="skills-panel">
+      <summary id="skills-summary">Skill list</summary>
+      <div class="skills-body">
+        <textarea id="skills-text" rows="6" spellcheck="false" aria-label="Skill list, one per line"></textarea>
+        <div class="skills-actions">
+          <button id="skills-save" type="button">Save &amp; re-scan</button>
+          <button id="skills-reset" type="button">Restore defaults</button>
+          <span id="skills-hint" class="hint">One skill per line. Matching ignores upper/lower case.</span>
+        </div>
+      </div>
+    </details>
+
+    <main class="split">
+      <section class="table-wrap">
+        <table id="table">
+          <colgroup>
+            <col class="c-id" /><col class="c-file" /><col class="c-name" /><col class="c-email" /><col class="c-phone" />
+            <col class="c-linkedin" /><col class="c-github" /><col class="c-other" /><col class="c-skills" /><col class="c-years" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th>#</th><th>File</th><th>Name</th><th>Email</th><th>Phone</th>
+              <th>LinkedIn</th><th>GitHub</th><th>Other links</th><th>Matching skills</th><th>Years</th>
+            </tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+        <p id="empty" class="empty">Click <b>Open resumes…</b> and pick PDF, Word (.docx) or text files. Nothing leaves this computer.</p>
+      </section>
+      <aside class="raw">
+        <h2 id="raw-title">Extracted text</h2>
+        <pre id="raw-text">Click a row to see the text that was read from that file.</pre>
+      </aside>
+    </main>
+
+    <footer id="status" class="status">Ready.</footer>
+    <script type="module" src="/src/renderer.ts"></script>
+  </body>
+</html>

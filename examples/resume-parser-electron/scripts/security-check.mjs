@@ -1,0 +1,21 @@
+// Runs inside the real packaged window (through --remote-debugging-port that I set) and tries to break the rules.
+import { connect } from './cdp.mjs';
+const c = await connect(Number(process.argv[2] ?? 9444), 30000);
+const run = (label, expr) => c.evaluate(expr).then((v) => console.log(label.padEnd(46), JSON.stringify(v)), (e) => console.log(label.padEnd(46), 'ERROR', String(e.message).slice(0, 200)));
+await run('page origin', 'location.origin');
+await run('require / process / ipcRenderer / fs', 'typeof require + "," + typeof process + "," + typeof ipcRenderer + "," + typeof fs');
+await run('exposed API keys', 'Object.keys(window.resumeApi)');
+await run('CSP response header for the page', `fetch(location.href).then(r => r.headers.get('content-security-policy'))`);
+await run('fetch https://example.com', `fetch('https://example.com/').then(r => 'LOADED ' + r.status, e => 'blocked: ' + e.message)`);
+await run('fetch http://127.0.0.1:1/', `fetch('http://127.0.0.1:1/').then(r => 'LOADED', e => 'blocked: ' + e.message)`);
+await run('new Worker(blob) allowed only via worker-src blob:', `(() => { try { const w = new Worker(URL.createObjectURL(new Blob(['1'])) ); w.terminate(); return 'created (blob: is allowed for pdf.js)'; } catch (e) { return 'blocked ' + e.message; } })()`);
+await run('inline script via eval', `(() => { try { return eval('1+1'); } catch (e) { return 'blocked: ' + e.message; } })()`);
+await run('window.open("https://example.com")', `window.open('https://example.com') === null ? 'null (denied)' : 'OPENED'`);
+await run('navigate top window to https://example.com', `(async () => { location.href = 'https://example.com/'; await new Promise(r => setTimeout(r, 1500)); return 'still at ' + location.href; })()`);
+await run('<a target=_blank> click', `(() => { const a = document.createElement('a'); a.href = 'https://example.com'; a.target = '_blank'; document.body.append(a); a.click(); a.remove(); return 'clicked'; })()`);
+await run('inject <script src=https://example.com/x.js>', `new Promise(r => { const s = document.createElement('script'); s.src = 'https://example.com/x.js'; s.onload = () => r('LOADED'); s.onerror = () => r('blocked'); document.head.append(s); })`);
+await run('inject <img src=https://example.com/x.png>', `new Promise(r => { const s = new Image(); s.onload = () => r('LOADED'); s.onerror = () => r('blocked'); s.src = 'https://example.com/x.png'; })`);
+await run('inline style attribute (CSP style-src)', `(() => { const d = document.createElement('div'); d.setAttribute('style', 'color:red'); document.body.append(d); const v = getComputedStyle(d).color; d.remove(); return v; })()`);
+await run('set skills with 10000 bad entries via API', `window.resumeApi.saveSkills('x'.repeat(10)).then(() => 'ACCEPTED', e => 'rejected: ' + e.message.slice(-60))`);
+await run('saveXlsx with junk bytes type', `window.resumeApi.saveXlsx('not bytes', 'x.xlsx').then(r => JSON.stringify(r), e => 'rejected: ' + e.message)`);
+c.close(); process.exit(0);

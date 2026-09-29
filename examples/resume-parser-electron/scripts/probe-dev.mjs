@@ -1,0 +1,13 @@
+import { connect } from './cdp.mjs';
+const c = await connect(9333, 90000);
+console.log('url', c.url);
+const title = await c.evaluate('document.title');
+console.log('title', title, 'api', await c.evaluate('typeof window.resumeApi + " " + Object.keys(window.resumeApi||{}).join(",")'));
+console.log('require/process exposed?', await c.evaluate('typeof require + " " + typeof process + " " + typeof ipcRenderer'));
+c.events.filter(e=>e.method==='Runtime.exceptionThrown'||e.method==='Log.entryAdded').forEach(e=>console.log(JSON.stringify(e).slice(0,300)));
+await c.evaluate("document.getElementById('open').click()");
+await new Promise(r=>setTimeout(r,4000));
+console.log('rows', await c.evaluate('document.querySelectorAll("#rows tr").length'));
+console.log('status', await c.evaluate('document.getElementById("status").textContent'));
+console.log(await c.evaluate('[...document.querySelectorAll("#rows tr")].map(tr=>[...tr.querySelectorAll("input")].map(i=>i.value).join(" | ")+" || "+tr.cells[1].textContent).join("\\n")'));
+c.close();
