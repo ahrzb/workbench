@@ -15,18 +15,18 @@ Tags: `[UNVERIFIED]` means not confirmed from a primary page. `[INFERENCE]` is m
    - The Electron hardening from [03a](03a-default-stack-runtime.md) is the baseline for every app: sandboxed renderer, no remote content, spellcheck download off, native Open dialog as the only way to read files.
    - Sharing the tool with other people, or letting it hold other people's data, is allowed and supported (rec 8). The AI says the project is growing, what that adds to the user's responsibilities, and helps them do it right.
 
-2. **The account type decides the data question, and the skill checks it rather than asking.** Everything the user shows the building agent, and every AI feature inside their tool (the Codex SDK, see rec 5), goes to OpenAI under the same ChatGPT sign-in. So one rule covers both.
+2. **Ask whose data it is; don't assume. Then the account type decides what to say.** Everything the user shows the building agent, and every AI feature inside their tool (the Codex SDK, see rec 5), goes to OpenAI under the same ChatGPT sign-in, so one rule covers both. But many projects are the user's own (a hobby, a club, their own job hunt), and treating every file as sensitive work data made the skill preachy in testing (v0.1.0: "made-up samples until IT approves" before anyone had asked what the files were). So the first time real files come up, the AI asks once, unless it's already clear: "Is this for your job, or something of your own?"
 
-   | Signed in with | Work data | Personal data |
+   | Signed in with | Work data | Their own data |
    |---|---|---|
-   | Company account (Business, Enterprise, Edu, Team) | Fine, no question. The company has already approved Codex and these plans are not used for training by default [1][2]. | Fine. |
-   | Personal plan (Free, Go, Plus, Pro) | Forwardable question to IT or their manager before real work documents are used (rec 6). Until the answer comes, build and demo with made-up or public sample files. | Fine. Tell the user once that personal plans may train on content unless "Improve the model for everyone" is turned off, and where that setting is [1][2]. |
+   | Company account (Business, Enterprise, Edu, Team) | Fine, nothing to say. These plans are not used for training by default [1][2]. | Fine. |
+   | Personal plan (Free, Go, Plus, Pro) | One line, then the user's call (they know their company's rules): "you're on your personal ChatGPT account, so work files go to OpenAI under that account; if that's fine at your company we'll use the real ones, if you're not sure I'll use look-alikes and write IT a two-line question." Recorded in NOTES; not raised again. | Fine, nothing to say. |
    | API key | Not the normal path for this persona. Treat like a company account only if the key is the company's. | Fine. |
 
-   - On a company account, the company's own policies still apply [2], and Codex use, including the local CLI and IDE, is visible to the company through the Compliance API [1]. Say that once, plainly, so nothing is a surprise.
+   - Only if the user asks: personal plans may train on content unless "Improve the model for everyone" is off [1][2]; company Codex use is visible to the company through the Compliance API [1].
    - If the user mentions a rule of their own ("patient records must not leave the building"), that rule wins, whatever the account.
 
-3. **Say where data goes in plain words, once, before it first happens.** One sentence at the start of the first session: "Anything you show me here, I send to OpenAI under your ChatGPT account." One more the first time a built tool uses an AI feature: "When you click Read invoice, this invoice goes to OpenAI the same way." After that, only changes are announced. This replaces the per-send consent screen and spend cap from the earlier API-key draft of [04a](04a-software-2-llm-extraction.md), which were written for pay-per-call keys [INFERENCE].
+3. **Say where data goes only when it matters.** No up-front privacy sentence in the chat: the user knows they're talking to ChatGPT. The one line in rec 2 covers work files on a personal plan. The first time a built tool uses an AI feature, one line: "When you click Read invoice, this invoice goes to OpenAI through your ChatGPT account." After that, only changes are announced. This replaces the per-send consent screen and spend cap from the earlier API-key draft of [04a](04a-software-2-llm-extraction.md), which were written for pay-per-call keys [INFERENCE].
 
 4. **Detect the account type from the local sign-in; ask only if that fails. Shipped as an account gate: the check also tells *which* account.**
    - `codex login status` prints only "Logged in using ChatGPT" [LOCAL].

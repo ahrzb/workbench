@@ -53,7 +53,7 @@ When programs can't run at all (blocked by policy, Smart App Control) or for sha
 
 ## Sketches
 
-At a real fork, one static HTML file with 2-3 options side by side: greyscale, a "SKETCH - not the real app" banner, sample data from the user's work (real rows only if the account type allows), all inline, and this in `<head>` so it loads nothing external:
+At a real fork, one static HTML file with 2-3 options side by side: greyscale, a "SKETCH - not the real app" banner, sample data from the user's work (real rows as "Whose data" in `safety.md` allows), all inline, and this in `<head>` so it loads nothing external:
 
 ```html
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:">

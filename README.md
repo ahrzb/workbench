@@ -12,13 +12,13 @@ Needs the Codex app, CLI or IDE extension, signed in with ChatGPT.
 
 Open Codex anywhere and paste:
 
-> Install the workbench-setup skill: download https://github.com/ahrzb/workbench/archive/refs/tags/v0.1.0.zip, unpack it, and copy its `skills/workbench-setup` folder to `~/.agents/skills/workbench-setup`. Then delete the download.
+> Install the workbench-setup skill: download https://github.com/ahrzb/workbench/archive/refs/tags/v0.1.1.zip, unpack it, and copy its `skills/workbench-setup` folder to `~/.agents/skills/workbench-setup` (replace it if it's already there). Then delete the download.
 
 ## Use
 
 1. Make an empty folder named after the work (e.g. `Supplier bills`) and open Codex in it.
 2. Say **"Set this up as a workbench."** Approve the one prompt.
-3. Open a **new chat** in the same folder and type **hi**. Approve "trust this folder" and the startup check if Codex asks.
+3. Open a **new chat** in the same folder. Under the message box, click **Review hooks** and choose **Allow selected** (in the terminal version, type `/hooks`). If Codex asks to trust the folder, say yes. Then type **hi**.
 4. Talk about your work. Later: "something's wrong with my tool", or "update the workbench".
 
 ## What's in this repo
@@ -39,4 +39,4 @@ Projects update from the latest **tagged GitHub release** (see `update.md`). To 
 
 ## Status
 
-v0.1.0 is built and tested on Windows 11 (setup, first chat, save points, account check, starter build, packaged AI call) and reviewed adversarially by GPT reviewers over three rounds; the last round's fixes are tested but not re-reviewed. macOS paths are written but untested. Not yet released: the repository is private and no `v0.1.0` tag exists, so the install line above works only after both.
+v0.1.1 is built and tested on Windows 11 (setup, first chat, save points, account check, starter build, packaged AI call) and reviewed adversarially by GPT reviewers over three rounds; the last round's fixes are tested but not re-reviewed. The desktop app's **Review hooks** button is named from the app's own text; clicking it is not yet tested. macOS paths are written but untested. The repository is private, so the install line above works only once it's public.

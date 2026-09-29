@@ -24,6 +24,7 @@ How we're doing it:
 ## Data
 Where it is:
 Backups:
+Whose data: (not asked yet)
 ChatGPT account: (not checked yet)
 
 ## Careful

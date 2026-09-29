@@ -19,8 +19,8 @@ sequenceDiagram
   participant Work as Chat 2+ (work)
   User->>Setup: "Set this up as a workbench"
   Setup->>Codex: copy project template (needs 1 approval), record account, first save point
-  Setup->>User: "Open a new chat here, approve the startup check, say hi"
-  User->>Codex: new chat, trust folder, approve hook
+  Setup->>User: "Open a new chat here, click Review hooks, Allow selected"
+  User->>Codex: new chat, trust folder if asked, Review hooks -> Allow selected
   User->>Work: "hi"
   Codex->>Work: SessionStart hook injects brief + notes + last save points
   Work->>User: WELCOME: what, where we left off, next step
@@ -48,6 +48,7 @@ sequenceDiagram
    - **Approve writing the settings folders [LOCAL].** In the default sandbox, writes to `.codex/` and `.agents/` were rejected ("writing outside of the project; rejected by user approval settings"). Only `AGENTS.md` and `git init` succeeded. In the app the user gets an approval prompt instead [38]. So the setup agent copies the whole project template in **one** shell command, to ask once rather than once per file.
    - **Trust the folder.** Project hooks load only when the project's `.codex/` layer is trusted [1][2]. For a folder with no git checkout, no root marker and no `.codex/`, the app does not persist trust at chat start, and does not pre-approve config added later [32]. So the setup chat's own trust doesn't carry over; `git init` plus the new chat is what makes the folder trustable [INFERENCE]. The shipped setup makes no `.git` (its history is `.workbench/history`), so whether trust needs a real repository is untested. Tested [LOCAL]: trusted folder + unreviewed hook = skipped.
    - **Review the startup check.** Each hook is trusted by the hash of its definition. It is reviewed with `/hooks` in the CLI or through an in-app flow, and is skipped until then [1][24][22]. Any later edit to `hooks.json` needs a new review [24]. So the template's hook must be final, and dynamic content belongs in the files it reads, never in the hook definition.
+     - **Nothing prompts for it: the user has to know where to click.** In the first hands-on run in the desktop app (v0.1.0, Codex Desktop 0.158.0-alpha.2), setup copied `.codex/hooks.json`, the folder was trusted, but the next chat ran no hook and `~/.codex/config.toml` had no `[hooks.state]` entry: the hook was never reviewed, and the `AGENTS.md` backstop's "if Codex asked you to review…" tip didn't help, because Codex doesn't ask [LOCAL]. The app's own text (read from `app.asar` of OpenAI.Codex 26.924.1866.0) shows the flow: a **Review hooks** action in the message box, tooltip "Review hooks · 1 needs approval", opening a "Review hooks" dialog whose button is **Allow selected**; a Hooks section in Settings with "Trust all" [LOCAL]. The button's placement on screen and when it appears were not seen. So since v0.1.1 setup ends with exactly that instruction, and the backstop repeats it in every chat until the hook runs.
    - The agent must never self-approve: no `--dangerously-bypass-hook-trust`, and no editing `~/.codex/config.toml` trust entries.
 8. **Where the skill comes from before the folder has it: a one-time, user-level install of a small setup skill.**
    - Codex loads user skills from `~/.agents/skills` and repo skills from `<repo>/.agents/skills`, and triggers them implicitly from their `description` [4]. A user-level `workbench-setup` skill whose description matches "set this up as a workbench" makes step 2 of the user's workflow work as they would phrase it.
@@ -208,7 +209,7 @@ This folder is a workbench project: an office worker who doesn't write code is b
 
 At the start of every new chat:
 - If your context already contains "Workbench session brief", the startup hook ran: follow that brief.
-- Otherwise the hook did not run (folder or hook not yet approved). Read `.workbench/session-brief.md`, `CONTEXT.md` and `.workbench/NOTES.md` yourself, run `git log -5 --format="%ad  %s" --date=short`, and follow the brief. After the welcome, add one line: "Tip: if Codex asked you to review a startup check for this folder, approve it so I can get ready faster."
+- Otherwise the hook did not run (folder or hook not yet approved). Read `.workbench/session-brief.md`, `CONTEXT.md` and `.workbench/NOTES.md` yourself, run `git log -5 --format="%ad  %s" --date=short`, and follow the brief. After the welcome, add one line: "One thing to switch on: under the message box, click **Review hooks** and choose **Allow selected**. Then I'll be ready by myself in every new chat."
 ```
 
 **Observed welcome** (hook trusted, sample notes, first message "hi") [LOCAL]:
@@ -219,10 +220,11 @@ At the start of every new chat:
 
 ### Setup chat's closing message (template)
 
-> Your project folder is ready. Three quick things, then we start:
-> 1. Open a **new chat** in this same folder.
-> 2. If Codex asks whether to trust this folder, choose **Trust**. If it asks you to review a **startup check**, approve it. It only reads your project notes.
-> 3. Type **hi**. I'll welcome you and we'll begin with a few questions about the task you want help with.
+> Done. Now open a new chat in this folder.
+> Under the message box you'll see **Review hooks**: click it and choose **Allow selected**.
+> That lets me pick up where we left off at the start of every chat.
+
+(v0.1.0 said "if it asks you to review a startup check, approve it"; Codex never asks, so the hook stayed off.)
 
 ## Key evidence
 

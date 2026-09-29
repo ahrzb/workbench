@@ -19,7 +19,7 @@ The tool can use AI through the user's own ChatGPT sign-in, with no API key to m
 
    "I can improve the code, but it will keep struggling with layouts it hasn't seen. I'd use the AI and have the code double-check every result. OK?"
 
-Check the account type first ([safety.md](safety.md#account-type)); a personal plan with work documents needs IT's answer before real documents go through.
+Real documents go through only as "Whose data" in [safety.md](safety.md#whose-data) allows; that's already settled in NOTES if they've shared files with you.
 
 ### Cost, said before recommending AI
 

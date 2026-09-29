@@ -21,7 +21,7 @@ Infer the route from the user's message and confirm it in one line ("Sounds like
 ## Reference, read when the branch comes up
 
 - [talking.md](talking.md): CONTEXT.md, how to ask, sorting goals, needs and solutions. Read before the interview and whenever you are about to ask something.
-- [safety.md](safety.md): data rules, the user's ChatGPT account type, forwardable messages, when the tool grows and gets shared.
+- [safety.md](safety.md): data rules, whose data it is (ask, don't assume), the account check, forwardable messages, when the tool grows and gets shared.
 - [ai-features.md](ai-features.md): when the tool itself should use AI (reading documents, images), and how to offer it.
 - [stack.md](stack.md): how tools are built here: Electron + TypeScript, tools inside `.tools/`, save points, security settings, packaging, the HTML-only fallback.
 

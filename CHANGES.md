@@ -2,6 +2,11 @@
 
 Written for the people using the workbench. The AI reads the entries newer than a project's version when it updates.
 
+## 0.1.1 (2026-09-29)
+
+- The startup check now actually gets switched on: setup ends by showing where to allow it (**Review hooks** under the message box, then **Allow selected**), and until it's allowed every new chat reminds you once.
+- Less fuss about data. The workbench no longer assumes your files are sensitive or for work. When real files first come up, it asks once whether they're for your job or your own. Your own files: no more to say. Work files on a personal ChatGPT account: one short heads-up, and it's your call.
+
 ## 0.1.0 (2026-09-29)
 
 First version.
