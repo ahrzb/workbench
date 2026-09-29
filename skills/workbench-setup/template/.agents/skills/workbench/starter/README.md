@@ -29,7 +29,7 @@ Rename the tool: `name`, `productName` (`package.json`), `executableName` (`forg
 
 There is no dev server: `electron-forge start` runs Vite's dev server, which listens on a local port, and the tool opens no ports. To try a change, package it (about 20 s) and start `out\<productName>-win32-x64\<executableName>.exe`.
 
-**Where the tool keeps its data:** `%LOCALAPPDATA%\<productName>\data` (build the path from `process.env.LOCALAPPDATA` in `main.ts`; Electron's default `userData` is the Roaming folder, which can sync). Never inside the project folder.
+**Where the tool keeps its data:** `dataDir()` in `main.ts`: `%LOCALAPPDATA%\<productName>\data` (Electron's default `userData` is the Roaming folder, which can sync), or `WORKBENCH_DATA_DIR` when the workbench tests a version against a copy of the data. Never inside the project folder.
 
 Always `npm.cmd` / `npx.cmd`, never a bare `npm`. `install-electron --no` fetches the Electron binary now, so a blocked download fails during setup instead of when the user first opens the tool.
 

@@ -18,6 +18,15 @@ const TEXT_EXTENSIONS = ['txt', 'md', 'csv'];
 // Debug-only behaviour must be gated on this. A packaged app (app.isPackaged) has no DevTools.
 const DEBUG = !app.isPackaged;
 
+/**
+ * Where the tool keeps its own data: %LOCALAPPDATA%\<App>\data (local, never synced; Electron's
+ * default userData is the Roaming folder). WORKBENCH_DATA_DIR points a run at a copy instead,
+ * which is how the workbench checks an older version against the user's current data.
+ */
+export function dataDir(): string {
+  return process.env.WORKBENCH_DATA_DIR || path.join(process.env.LOCALAPPDATA ?? app.getPath('appData'), app.getName(), 'data');
+}
+
 // Strict production policy. No remote origin appears anywhere. style-src has no
 // 'unsafe-inline': the page sets no inline style attributes.
 const CSP_PROD = [

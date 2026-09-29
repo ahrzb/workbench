@@ -19,14 +19,15 @@ git, run by you; the user never sees a git command. They say "go back to before 
 - **Always through `.workbench\scripts\git.cmd`** (Windows), never plain `git`. It keeps the history in `.workbench\history\` instead of `.git`, because Codex's sandbox keeps `.git` read-only and may run commands as a separate Windows user; with plain `.git` every save point would need the user's approval. It also sets the identity and uses `.tools\git` when git isn't installed. macOS: `git --git-dir=.workbench/history --work-tree=. -c safe.directory='*' -c user.name=Workbench -c user.email=workbench@localhost ...`.
 - **What a save point holds:** only what the project's `.gitignore` allows, which is an allowlist: the tool's code (named config files in `app/`, code files in `app/src/` and `app/test/`) and the workbench's own files. Documents, samples, data, backups, secrets, tools and builds are never in it. New code folders or file types in `app/` need a line in `.gitignore`; never a data file type.
 - One save point before and one after every change: `git.cmd add -A`, then `git.cmd commit -qm "<their words>"` ("before: newest bills on top", "newest bills on top").
-- **"Go back"** means the tool on their desktop is back, not just the code:
-  1. Show them what they'll get back and what goes away; their data is not part of it (data questions go through [fix.md](fix.md#data-first)).
+- **"Go back"** means the tool on their desktop is back and still works with their current data:
+  1. Show them what they'll get back and what goes away. Their data is never rolled back as part of this.
   2. `git.cmd restore --source=<save point> --staged --worktree -- .`
   3. From `app/`: `run.cmd npm.cmd ci`, `run.cmd npm.cmd test`, `run.cmd npm.cmd run package`.
-  4. Replace `tool/<App>/` as in "Ship it" (ask them to close the tool first).
-  5. Start it and check the thing they described, then save point "went back to <their words>" so history never disappears, and hand back.
-- Data backups are separate: `.workbench/backups/`, dated copies, never in save points.
-- No git at all (macOS without the Command Line Tools): copy the allowlisted files to `.workbench/snapshots/<yyyy-mm-dd-hhmm>-<their words>/` instead, and list those as save points.
+  4. **Check the older version against a copy of their current data** before it replaces anything: copy the data folder, start `app/out/...exe` with `WORKBENCH_DATA_DIR` set to the copy (the starter's `dataDir()` honours it; keep that in every tool), and do the thing they use most. If it can't read the data (the data format changed after that save point), stop and say so plainly, with the choices: keep the current version and fix forward (suggested), convert the data back (only with a tested conversion, on a copy first), or go back and restore an older data backup, naming exactly what would be lost. They choose.
+  5. Replace `tool/<App>/` as in "Ship it" (ask them to close the tool first), start it, check the thing they described, then save point "went back to <their words>" so history never disappears, and hand back.
+- **Changing how data is stored** (a new column, a renamed field, a new file layout) is its own change: the tool keeps a data version number, upgrades old data on start after backing it up, and the change isn't done until the previous version's data opens correctly in the new one.
+- Data backups are separate: in the backup folder outside the project ([safety.md](safety.md#data)), never in save points.
+- **No git at all** (macOS without the Command Line Tools): save points are snapshots. Save = copy every file the `.gitignore` allowlist would keep into `.workbench/snapshots/<yyyy-mm-dd-hhmm>-<their words>/`. Go back = delete those same allowlisted files from the project and copy the snapshot's files back, then steps 3-5 above. The snapshot names are the save-point list.
 
 ## The app
 

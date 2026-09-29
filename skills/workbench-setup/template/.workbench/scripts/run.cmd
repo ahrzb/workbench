@@ -8,5 +8,8 @@ set "npm_config_cache=%ROOT%\.tools\npm-cache"
 set "npm_config_userconfig=%ROOT%\.tools\npmrc"
 set "npm_config_update_notifier=false"
 set "npm_config_fund=false"
+rem Packages never run their own install scripts (they'd run with the user's permissions).
+rem `npm test` / `npm run package` still run the project's own named scripts.
+set "npm_config_ignore_scripts=true"
 set "electron_config_cache=%ROOT%\.tools\electron-cache"
 %*

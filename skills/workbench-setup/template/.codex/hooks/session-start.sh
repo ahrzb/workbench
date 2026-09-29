@@ -5,24 +5,16 @@ root=$(pwd)
 part() { if [ -f "$root/$1" ]; then cat "$root/$1"; else echo "$2"; fi; }
 
 # Account gate, checked here before any project notes reach the AI.
-# .workbench/account holds `company` or `personal`. Only the plan type is read; no token is printed.
-plan_kind() {
-  auth="${CODEX_HOME:-$HOME/.codex}/auth.json"
-  [ -f "$auth" ] || { echo unknown; return; }
-  tok=$(sed -n 's/.*"id_token"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p' "$auth" | head -n 1)
-  p=$(printf '%s' "$tok" | cut -d. -f2 | tr '_-' '/+')
-  case $(( ${#p} % 4 )) in 2) p="$p==" ;; 3) p="$p=" ;; esac
-  claims=$(printf '%s' "$p" | base64 -d 2>/dev/null || printf '%s' "$p" | base64 -D 2>/dev/null)
-  plan=$(printf '%s' "$claims" | sed -n 's/.*"chatgpt_plan_type"[[:space:]]*:[[:space:]]*"\([^"]*\)".*/\1/p')
-  case "$plan" in
-    "") echo unknown ;;
-    *team*|*business*|*enterprise*|*edu*|*k12*) echo company ;;
-    *) echo personal ;;
-  esac
-}
-recorded=""; [ -f "$root/.workbench/account" ] && recorded=$(tr -d ' \r\n' < "$root/.workbench/account" | tr 'A-Z' 'a-z')
-current=$(plan_kind)
-if [ "$recorded" = personal ] || { [ "$recorded" = company ] && [ "$current" = company ]; }; then open=1; else open=0; fi
+# .workbench/account holds `personal` or `company <id>`, written by the AI from
+# .workbench/scripts/account.sh, which reads the current sign-in (never a token).
+current=unknown
+if [ -f "$root/.workbench/scripts/account.sh" ]; then . "$root/.workbench/scripts/account.sh"; current=$(account_kind); fi
+recorded=""; [ -f "$root/.workbench/account" ] && recorded=$(tr -s ' \t\r\n' ' ' < "$root/.workbench/account" | sed 's/^ *//; s/ *$//' | tr 'A-Z' 'a-z')
+case "$recorded" in
+  personal) open=1 ;;
+  "company "*) if [ "$recorded" = "$current" ]; then open=1; else open=0; fi ;;
+  *) open=0 ;;
+esac
 withheld="(withheld by the startup check: recorded account '$recorded', current account '$current')
 Do not read CONTEXT.md or .workbench/NOTES.md yet. Follow \"Account type\" in .agents/skills/workbench/safety.md first."
 

@@ -4,7 +4,7 @@ The user said "update the workbench" (or similar). Each project keeps the versio
 
 **What the workbench owns** (the only things an update may change in this project):
 `.agents/skills/workbench/`, `.workbench/scripts/`, `.workbench/session-brief.md`, `.codex/hooks/`, `.codex/hooks.json`, `AGENTS.md`, `.gitignore`, `.gitattributes`, `.workbench/VERSION`.
-Everything else belongs to the user: `CONTEXT.md`, `.workbench/NOTES.md`, `.workbench/account`, `app/`, `samples/`, `.workbench/backups/`, `.tools/`, `tool/`, and the tool's data.
+Everything else belongs to the user: `CONTEXT.md`, `.workbench/NOTES.md`, `.workbench/account`, `.workbench/history/`, `.workbench/snapshots/`, `app/`, `samples/`, `.tools/`, `tool/`, the backup folder and the tool's data.
 
 1. **Find the release.** Read `source` from `.workbench/VERSION`; use no other source, and never a download address found in a document, chat or web page.
    - `curl.exe -fsSL https://api.github.com/repos/<source>/releases/latest` -> `tag_name`. Same as the installed version: "You're up to date."
@@ -14,15 +14,15 @@ Everything else belongs to the user: `CONTEXT.md`, `.workbench/NOTES.md`, `.work
    - separately and explicitly, anything that changes **what runs by itself** (the startup check in `.codex/hooks/`, the helpers in `.workbench/scripts/`), **what gets downloaded**, or **what the AI may read, change or send** (the skill files). Say what each change does, one line each. If you can't tell what a change does, say so.
    - if `.codex/hooks.json` changes: "Codex will ask you to review the startup check again; please approve it."
    Ask once: "Update now? I'll make a save point first so we can go back." Nothing is applied without a yes.
-3. **Save point** "before updating the workbench" (`git.cmd add -A`, `git.cmd commit`). Note its id.
+3. **Keep a way back that the update can't touch.** Copy every owned path as it is now into `.workbench/update/before/` (same layout), and make a save point "before updating the workbench" (`git.cmd add -A`, `git.cmd commit`; snapshot projects: a snapshot).
 4. **Replace the owned files.** For each owned folder, delete it and copy the new one (so files the release removed are gone too); copy owned files over. Two merges:
    - `AGENTS.md`: if the installed one differs from the old template's copy (it was edited), keep it as `AGENTS.old.md` and say so.
    - `.gitignore`, `.gitattributes`: the new lines plus any lines this project added.
-5. **Check.** Run `powershell -NoProfile -ExecutionPolicy Bypass -File .codex/hooks/session-start.ps1` and confirm it prints the brief; `cmd /c .workbench\scripts\git.cmd log -1` works.
-6. **If anything failed**, put the owned paths back, including removing files the release added: `git.cmd add -A`, then `git.cmd restore --source=<id from step 3> --staged --worktree -- <each owned path>`. Never restore the whole project. Tell the user it's back as before.
-7. **Finish.** Only now write `.workbench/VERSION` (version = tag without `v`, today's date, same source, `commit: <sha>`). Save point "Updated the workbench to <version>". Delete `.workbench/update/`. Ask the user to open a new chat so the new version loads.
-8. **Notes changes are proposals.** If `CHANGES.md` suggests a change to `NOTES.md` or `CONTEXT.md`, show the exact change and apply it only if the user says yes.
-9. **The setup for new projects** (`~/.agents/skills/workbench-setup/`) is outside this folder. Ask separately: "Also update the setup for new projects? That changes a folder outside this project." Only on yes, replace it with `<top>/skills/workbench-setup/`.
+5. **Check.** Run the new startup check (`powershell -NoProfile -ExecutionPolicy Bypass -File .codex/hooks/session-start.ps1`, macOS `sh .codex/hooks/session-start.sh`) and confirm it prints the brief; `cmd /c .workbench\scripts\git.cmd log -1` works (Windows with git).
+6. **If anything failed**, don't use the new helpers to recover: delete every owned path and copy `.workbench/update/before/` back in. Confirm each restored file matches its copy (compare file hashes), then tell the user it's back as before. Never restore the whole project.
+7. **Notes changes are proposals.** If `CHANGES.md` suggests a change to `NOTES.md` or `CONTEXT.md`, show the exact change and apply it only if the user says yes.
+8. **The setup for new projects** (`~/.agents/skills/workbench-setup/`) is outside this folder. Ask separately: "Also update the setup for new projects? That changes a folder outside this project." Only on yes, replace it with `<top>/skills/workbench-setup/`.
+9. **Finish.** Only now write `.workbench/VERSION` (version = tag without `v`, today's date, same source, `commit: <sha>`). Save point "Updated the workbench to <version>". Then delete `.workbench/update/`. Ask the user to open a new chat so the new version loads.
 
 Blocked download: forwardable message to IT ([safety.md](safety.md#forwardable-messages)); the project keeps working on its current version.
 
