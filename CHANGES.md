@@ -2,6 +2,10 @@
 
 Written for the people using the workbench. The AI reads the entries newer than a project's version when it updates.
 
+## 0.1.2 (2026-09-29)
+
+- Nothing is installed on your computer any more, not even the setup: it goes into the project folder, sets it up, and removes itself. Starting a project is one pasted line (see the README).
+
 ## 0.1.1 (2026-09-29)
 
 - The startup check now actually gets switched on: setup ends by showing where to allow it (**Review hooks** under the message box, then **Allow selected**), and until it's allowed every new chat reminds you once.

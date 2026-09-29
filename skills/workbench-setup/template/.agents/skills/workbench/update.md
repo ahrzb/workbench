@@ -21,8 +21,7 @@ Everything else belongs to the user: `CONTEXT.md`, `.workbench/NOTES.md`, `.work
 5. **Check.** Run the new startup check (`powershell -NoProfile -ExecutionPolicy Bypass -File .codex/hooks/session-start.ps1`, macOS `sh .codex/hooks/session-start.sh`) and confirm it prints the brief; `cmd /c .workbench\scripts\git.cmd log -1` works (Windows with git).
 6. **If anything failed**, don't use the new helpers to recover: delete every owned path and copy `.workbench/update/before/` back in. Confirm each restored file matches its copy (compare file hashes), then tell the user it's back as before. Never restore the whole project.
 7. **Notes changes are proposals.** If `CHANGES.md` suggests a change to `NOTES.md` or `CONTEXT.md`, show the exact change and apply it only if the user says yes.
-8. **The setup for new projects** (`~/.agents/skills/workbench-setup/`) is outside this folder. Ask separately: "Also update the setup for new projects? That changes a folder outside this project." Only on yes, replace it with `<top>/skills/workbench-setup/`.
-9. **Finish.** Only now write `.workbench/VERSION` (version = tag without `v`, today's date, same source, `commit: <sha>`). Save point "Updated the workbench to <version>". Then delete `.workbench/update/`. Ask the user to open a new chat so the new version loads.
+8. **Finish.** Only now write `.workbench/VERSION` (version = tag without `v`, today's date, same source, `commit: <sha>`). Save point "Updated the workbench to <version>". Then delete `.workbench/update/`. Ask the user to open a new chat so the new version loads.
 
 Blocked download: forwardable message to IT ([safety.md](safety.md#forwardable-messages)); the project keeps working on its current version.
 

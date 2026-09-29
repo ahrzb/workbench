@@ -6,18 +6,15 @@ A skill for Codex (ChatGPT) that helps office workers build small tools for thei
 - **Local and quiet.** Tools open no network ports and have no accounts or cloud of their own. AI features, when the user wants them, run through their own ChatGPT plan.
 - **No technical questions.** The AI makes the technical choices and checks the machine itself. What only IT can answer becomes a message the user can forward.
 
-## Install (once per computer)
+## Start a project
 
-Needs the Codex app, CLI or IDE extension, signed in with ChatGPT.
-
-Open Codex anywhere and paste:
-
-> Install the workbench-setup skill: download https://github.com/ahrzb/workbench/archive/refs/tags/v0.1.1.zip, unpack it, and copy its `skills/workbench-setup` folder to `~/.agents/skills/workbench-setup` (replace it if it's already there). Then delete the download.
-
-## Use
+Needs the Codex app, CLI or IDE extension, signed in with ChatGPT. Nothing is installed on the computer: the setup goes into the project folder and removes itself when it's done.
 
 1. Make an empty folder named after the work (e.g. `Supplier bills`) and open Codex in it.
-2. Say **"Set this up as a workbench."** Approve the one prompt.
+2. Paste this, and approve what Codex asks:
+
+   > Set this folder up as a workbench: download https://github.com/ahrzb/workbench/archive/refs/tags/v0.1.2.zip, unpack it, copy its `skills/workbench-setup` folder to `.agents/skills/workbench-setup` in this folder, and delete the download. Then read `.agents/skills/workbench-setup/SKILL.md` and follow it.
+
 3. Open a **new chat** in the same folder. Under the message box, click **Review hooks** and choose **Allow selected** (in the terminal version, type `/hooks`). If Codex asks to trust the folder, say yes. Then type **hi**.
 4. Talk about your work. Later: "something's wrong with my tool", or "update the workbench".
 
