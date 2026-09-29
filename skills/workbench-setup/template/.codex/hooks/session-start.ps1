@@ -11,7 +11,7 @@ function Read-Part($rel, $whenMissing) {
 }
 
 # Account gate, checked here before any project notes reach the AI.
-# .workbench/account holds `personal` or `company <id>`, written by the AI from
+# .workbench/account holds `personal <id>` or `company <id>`, written by the AI from
 # .workbench\scripts\account.ps1, which reads the current sign-in (never a token).
 $current = 'unknown'
 $helper = Join-Path $root '.workbench\scripts\account.ps1'
@@ -22,8 +22,19 @@ $recorded = ((Read-Part '.workbench/account' '') -replace '\s+', ' ').Trim().ToL
 $open = ($current -ne 'unknown' -and $recorded -eq $current) -or ($recorded -eq 'unverified' -and $current -eq 'unknown')
 $withheld = @"
 (withheld by the startup check: recorded account '$recorded', current account '$current')
-Do not read CONTEXT.md or .workbench/NOTES.md yet. Follow "Account type" in .agents/skills/workbench/safety.md first.
+Do not read .workbench/NOTES.md or any tool's NOTES.md or CONTEXT.md yet. Follow "Account type" in .agents/skills/workbench/safety.md first.
 "@
+
+# The tool worked on last: "Last worked on: <folder>" in .workbench/NOTES.md, a folder in tools/.
+$last = ''
+if ($open) {
+  foreach ($line in ((Read-Part '.workbench/NOTES.md' '') -split "`r?`n")) {
+    if ($line -cmatch '^Last worked on:\s*([a-z0-9-]+)\s*$') {
+      if (Test-Path -LiteralPath (Join-Path $root "tools\$($Matches[1])") -PathType Container) { $last = $Matches[1] }
+      break
+    }
+  }
+}
 
 # Save points live in .workbench\history (see .workbench\scripts\git.cmd), not .git.
 $git = Join-Path $root '.tools\git\cmd\git.exe'
@@ -33,8 +44,18 @@ $saves = (& $git @gitArgs log -5 --format='%ad  %s' --date=short 2>$null) -join 
 if (-not $saves) { $saves = '(no save points yet)' }
 $unsaved = @(& $git @gitArgs status --porcelain 2>$null).Count
 
-$words = if ($open) { Read-Part 'CONTEXT.md' '(no shared words yet)' } else { $withheld }
-$notes = if ($open) { Read-Part '.workbench/NOTES.md' '(missing: .workbench/NOTES.md)' } else { $withheld }
+$project = if ($open) { Read-Part '.workbench/NOTES.md' '(missing: .workbench/NOTES.md)' } else { $withheld }
+$toolPart = if (-not $open) { $withheld }
+  elseif (-not $last) { '(no tool worked on yet)' }
+  else {
+@"
+### Our words (tools/$last/CONTEXT.md)
+$(Read-Part "tools/$last/CONTEXT.md" '(no shared words yet)')
+
+### Its notes (tools/$last/NOTES.md)
+$(Read-Part "tools/$last/NOTES.md" "(missing: tools/$last/NOTES.md)")
+"@
+  }
 
 @"
 # Workbench session brief (from the startup hook)
@@ -44,11 +65,11 @@ $(Read-Part '.workbench/session-brief.md' '(missing: .workbench/session-brief.md
 ## ChatGPT account
 Recorded for this project: $(if ($recorded) { $recorded } else { '(not checked yet)' }). Signed in now: $current.
 
-## Our words (CONTEXT.md)
-$words
+## This project's tools (.workbench/NOTES.md)
+$project
 
-## Project notes (.workbench/NOTES.md)
-$notes
+## The tool worked on last: $(if ($last) { $last } else { '(none)' })
+$toolPart
 
 ## Workbench version
 $(Read-Part '.workbench/VERSION' '(unknown)')

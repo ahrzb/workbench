@@ -16,7 +16,14 @@ open=0
 if [ "$current" != unknown ] && [ "$recorded" = "$current" ]; then open=1; fi
 if [ "$recorded" = unverified ] && [ "$current" = unknown ]; then open=1; fi
 withheld="(withheld by the startup check: recorded account '$recorded', current account '$current')
-Do not read CONTEXT.md or .workbench/NOTES.md yet. Follow \"Account type\" in .agents/skills/workbench/safety.md first."
+Do not read .workbench/NOTES.md or any tool's NOTES.md or CONTEXT.md yet. Follow \"Account type\" in .agents/skills/workbench/safety.md first."
+
+# The tool worked on last: "Last worked on: <folder>" in .workbench/NOTES.md, a folder in tools/.
+last=""
+if [ $open = 1 ] && [ -f "$root/.workbench/NOTES.md" ]; then
+  last=$(sed -n 's/^Last worked on:[[:space:]]*\([a-z0-9-]*\)[[:space:]]*$/\1/p' "$root/.workbench/NOTES.md" | head -n 1)
+  [ -n "$last" ] && [ -d "$root/tools/$last" ] || last=""
+fi
 
 if [ -x "$root/.tools/git/bin/git" ]; then git_bin="$root/.tools/git/bin/git"
 elif g=$(command -v git) && { [ "$g" != /usr/bin/git ] || xcode-select -p >/dev/null 2>&1; }; then git_bin=$g
@@ -26,10 +33,15 @@ echo "# Workbench session brief (from the startup hook)"; echo
 part .workbench/session-brief.md "(missing: .workbench/session-brief.md)"; echo
 echo "## ChatGPT account"
 echo "Recorded for this project: ${recorded:-(not checked yet)}. Signed in now: $current."; echo
-echo "## Our words (CONTEXT.md)"
-if [ $open = 1 ]; then part CONTEXT.md "(no shared words yet)"; else echo "$withheld"; fi; echo
-echo "## Project notes (.workbench/NOTES.md)"
+echo "## This project's tools (.workbench/NOTES.md)"
 if [ $open = 1 ]; then part .workbench/NOTES.md "(missing: .workbench/NOTES.md)"; else echo "$withheld"; fi; echo
+echo "## The tool worked on last: ${last:-(none)}"
+if [ $open != 1 ]; then echo "$withheld"
+elif [ -z "$last" ]; then echo "(no tool worked on yet)"
+else
+  echo "### Our words (tools/$last/CONTEXT.md)"; part "tools/$last/CONTEXT.md" "(no shared words yet)"; echo
+  echo "### Its notes (tools/$last/NOTES.md)"; part "tools/$last/NOTES.md" "(missing: tools/$last/NOTES.md)"
+fi; echo
 echo "## Workbench version"; part .workbench/VERSION "(unknown)"; echo
 echo "## Last save points"
 if [ -n "$git_bin" ] && [ -d "$root/.workbench/history" ]; then

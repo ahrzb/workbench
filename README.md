@@ -1,9 +1,9 @@
 # Workbench
 
-A skill for Codex (ChatGPT) that helps office workers build small tools for their own work: turn a pile of PDFs into a clean spreadsheet, check a monthly report, keep a list that Excel keeps getting wrong. The user describes their work in their own words; Codex does the building, on their own computer.
+A skill for Codex (ChatGPT) that helps office workers build small tools for their own work: turn a pile of PDFs into a clean spreadsheet, check a monthly report, keep a list that Excel keeps getting wrong, put up a small website. The user describes their work in their own words; Codex does the building, on their own computer. One project folder holds as many tools as they like.
 
-- **No admin rights, nothing installed.** Everything a tool needs downloads into its own project folder. The only thing outside it is a desktop shortcut.
-- **Local and quiet.** Tools open no network ports and have no accounts or cloud of their own. AI features, when the user wants them, run through their own ChatGPT plan.
+- **No admin rights, nothing installed.** Everything the tools need downloads into the project folder. The only things outside it are a desktop shortcut per tool and each tool's own data folder.
+- **Local and quiet.** Tools on the computer open no network ports and have no accounts or cloud of their own. AI features, when the user wants them, run through their own ChatGPT plan. A website is the one exception: it lives on the user's own Cloudflare account, private until they choose to make it public.
 - **No technical questions.** The AI makes the technical choices and checks the machine itself. What only IT can answer becomes a message the user can forward.
 
 ## Start a project
@@ -13,19 +13,21 @@ Needs the Codex app, CLI or IDE extension, signed in with ChatGPT. Nothing is in
 1. Make an empty folder named after the work (e.g. `Supplier bills`) and open Codex in it.
 2. Paste this, and approve what Codex asks:
 
-   > Set this folder up as a workbench: download https://github.com/ahrzb/workbench/archive/refs/tags/v0.1.2.zip, unpack it, copy its `skills/workbench-setup` folder to `.agents/skills/workbench-setup` in this folder, and delete the download. Then read `.agents/skills/workbench-setup/SKILL.md` and follow it.
+   > Set this folder up as a workbench: download https://github.com/ahrzb/workbench/archive/refs/tags/v0.2.0.zip, unpack it, copy its `skills/workbench-setup` folder to `.agents/skills/workbench-setup` in this folder, and delete the download. Then read `.agents/skills/workbench-setup/SKILL.md` and follow it.
 
 3. Open a **new chat** in the same folder. Under the message box, click **Review hooks** and choose **Allow selected** (in the terminal version, type `/hooks`). If Codex asks to trust the folder, say yes. Then type **hi**.
-4. Talk about your work. Later: "something's wrong with my tool", or "update the workbench".
+4. Talk about your work. Later: another tool in the same folder ("something new: ..."), "something's wrong with the bills tool", or "update the workbench".
 
 ## What's in this repo
 
 | Path | What |
 |---|---|
 | `skills/workbench-setup/` | The one-time setup skill, and `template/`: everything a new project gets |
-| `skills/workbench-setup/template/.agents/skills/workbench/` | The workbench skill itself: build, fix, update, how to talk, safety, AI features, the stack and the Electron starter |
+| `skills/workbench-setup/template/.agents/skills/workbench/` | The workbench skill itself: build, fix, update, how to talk, safety, AI features and the stack |
+| `.../workbench/starters/` | Starting points for a tool: `electron/` (desktop program, the default), `html/` (one HTML file), `web/` (a website on Cloudflare), and `NOTES.md` (each tool's notes) |
+| `.../workbench/blocks/` | Tested pieces a tool copies in: `data-safety/` (backups, data versions), `excel/` (xlsx and csv), `ai-read/` (AI reads a document, code checks it) |
 | `research/` | The research behind every decision, with sources ([research/README.md](research/README.md)) |
-| `examples/resume-parser-electron/` | The bake-off app the starter was cut from |
+| `examples/resume-parser-electron/` | The bake-off app the Electron starter was cut from |
 | `CHANGES.md` | What changed in each version, in plain words |
 
 ## Releasing
@@ -36,4 +38,4 @@ Projects update from the latest **tagged GitHub release** (see `update.md`). To 
 
 ## Status
 
-v0.1.2 is built and tested on Windows 11 (setup, first chat, save points, account check, starter build, packaged AI call) and reviewed adversarially by GPT reviewers over three rounds; the last round's fixes are tested but not re-reviewed. The desktop app's **Review hooks** button is named from the app's own text; clicking it is not yet tested. macOS paths are written but untested. The repository is private, so the line under "Start a project" works only once it's public.
+v0.2.0 is built and tested on Windows 11: setup, first chat, several tools in one project (welcome, switching, a new tool, going back on one tool), save points, account check, both desktop starters and all three blocks (each with its own tests, packaged and run), and a packaged AI call. v0.1 was reviewed adversarially by GPT reviewers over three rounds; v0.2's additions are not reviewed yet. Not tested: deploying a website to a real Cloudflare account and its Access setup, the desktop app's **Review hooks** button, and macOS. The repository is private, so the line under "Start a project" works only once it's public.

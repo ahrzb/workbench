@@ -1,0 +1,37 @@
+/* Backups screen. Uses the variables from index.css. */
+[hidden] {
+  display: none !important;
+}
+
+.backups-panel {
+  padding: 16px;
+  max-height: 40vh;
+  border-top: 1px solid var(--line);
+  overflow: auto;
+}
+
+.backups-panel h2 {
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+
+.backups-intro,
+.backups-note {
+  margin: 4px 0 12px;
+  color: var(--muted);
+}
+
+.backups-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.backups-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}

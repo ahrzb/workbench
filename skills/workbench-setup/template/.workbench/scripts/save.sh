@@ -6,23 +6,25 @@
 # permitted files into .workbench/snapshots/<date>-<message>/.
 root=$(cd "$(dirname "$0")/../.." && pwd)
 cd "$root" || exit 1
-allowed='^(\.gitignore|\.gitattributes|AGENTS\.md|CONTEXT\.md)$
+# Each tool lives in tools/<name>/ (name: lowercase letters, digits, hyphens).
+allowed='^(\.gitignore|\.gitattributes|AGENTS\.md)$
 ^\.codex/hooks\.json$
 ^\.codex/hooks/session-start\.(ps1|sh)$
 ^\.agents/skills/workbench/[A-Za-z0-9_./-]+\.(md|ts|mts|mjs|css|html)$
-^\.agents/skills/workbench/starter/(package|package-lock|tsconfig)\.json$
+^\.agents/skills/workbench/starters/[a-z0-9-]+/(package|package-lock|tsconfig)\.json$
 ^\.workbench/scripts/(bootstrap\.ps1|run\.cmd|git\.cmd|save\.ps1|save\.sh|account\.ps1|account\.sh)$
 ^\.workbench/(session-brief\.md|NOTES\.md|VERSION|account)$
-^app/(package\.json|package-lock\.json|tsconfig\.json|index\.html|forge\.config\.ts|forge\.env\.d\.ts|README\.md)$
-^app/vite\.(main|preload|renderer)\.config\.mts$
-^app/src/[A-Za-z0-9_./-]+\.(ts|css|html)$
-^app/test/[A-Za-z0-9_./-]+\.(ts|mjs)$'
+^tools/[a-z0-9-]+/(NOTES|CONTEXT)\.md$
+^tools/[a-z0-9-]+/app/(package\.json|package-lock\.json|tsconfig\.json|index\.html|build\.mjs|forge\.config\.ts|forge\.env\.d\.ts|README\.md)$
+^tools/[a-z0-9-]+/app/vite\.(main|preload|renderer)\.config\.mts$
+^tools/[a-z0-9-]+/app/src/[A-Za-z0-9_./-]+\.(ts|mts|mjs|css|html)$
+^tools/[a-z0-9-]+/app/test/[A-Za-z0-9_./-]+\.(ts|mjs)$'
 
 list() {
   { find . -maxdepth 1 -type f
-    for d in .codex .codex/hooks .workbench .workbench/scripts app; do [ -d "$d" ] && find "$d" -maxdepth 1 -type f; done
-    for d in .agents/skills/workbench app/src app/test; do [ -d "$d" ] && find "$d" -type f -not -path '*/node_modules/*'; done
-  } | sed 's|^\./||' | grep -v '\(^\|/\)\.env' | grep -E "$allowed" | sort -u
+    for d in .codex .codex/hooks .workbench .workbench/scripts tools/*/ tools/*/app; do [ -d "$d" ] && find "$d" -maxdepth 1 -type f; done
+    for d in .agents/skills/workbench tools/*/app/src tools/*/app/test; do [ -d "$d" ] && find "$d" -type f -not -path '*/node_modules/*'; done
+  } | sed 's|^\./||; s|//|/|g' | grep -v '\(^\|/\)\.env' | grep -E "$allowed" | sort -u
 }
 
 if [ "$1" = "--list" ]; then list; exit 0; fi

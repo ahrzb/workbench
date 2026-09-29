@@ -2,6 +2,14 @@
 
 Written for the people using the workbench. The AI reads the entries newer than a project's version when it updates.
 
+## 0.2.0 (2026-09-30)
+
+- One project, many tools. Keep all your tools in one folder: each has its own notes and words, and "go back" only ever touches the tool you're talking about.
+- Websites: ask for a site and it's built with you and put on your own Cloudflare account, private to the people you name until you decide to make it public.
+- A one-file version of a tool, for computers where programs can't run or for sharing with a few people without warnings.
+- Sturdier tools: tested ready-made pieces for keeping your data safe (automatic backups, safe upgrades), reading and writing Excel files, and having AI read documents with every answer checked.
+- Backups of a tool's data now sit next to that tool's data.
+
 ## 0.1.2 (2026-09-29)
 
 - Nothing is installed on your computer any more, not even the setup: it goes into the project folder, sets it up, and removes itself. Starting a project is one pasted line (see the README).

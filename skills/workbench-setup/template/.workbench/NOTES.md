@@ -1,32 +1,10 @@
-# Project notes
+# Workbench notes
 
-What it is: (not decided yet)
-Interview: not started
-Next: the interview
+Last worked on: (none yet)
 
-## What we're after
-Goal:
-Must have:
-Rules we must follow:
-Guidelines:
-How we're doing it:
-
-## How to run and check
-
-## Things that work
-
-## Ideas shelf
+## Tools here
 
 ## Waiting on
 
-## Decisions
-
 ## Data
-Where it is:
-Backups:
-Whose data: (not asked yet)
 ChatGPT account: (not checked yet)
-
-## Careful
-
-## For the AI

@@ -1,0 +1,10 @@
+{
+  "name": "html-starter",
+  "private": true,
+  "version": "0.0.0",
+  "description": "One self-contained HTML file. No dependencies: package.json only gives the scripts a name.",
+  "scripts": {
+    "test": "node --test test/*.test.mjs",
+    "build": "node build.mjs"
+  }
+}

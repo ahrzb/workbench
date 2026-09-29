@@ -46,7 +46,7 @@ Keep it in NOTES "What we're after": goal, must haves, rules (who set them), gui
 
 ## CONTEXT.md
 
-The user's words for their work, and nothing else. No technical details, plans, decisions or progress (those go in NOTES). Create it when the first word settles; keep it to one screen (about 15-25 entries); it shrinks as often as it grows.
+Each tool has its own, `tools/<name>/CONTEXT.md`: the user's words for that work, and nothing else. No technical details, plans, decisions or progress (those go in the tool's NOTES). Create it when the first word settles; keep it to one screen (about 15-25 entries); it shrinks as often as it grows. Two tools may use the same word differently; that's fine, each file speaks for its own tool.
 
 **Names are settled in a short dialogue.** The user has a word: use it; if another is clearer, ask once with the reason ("You call these 'items'. Would 'bill lines' be clearer, since each is a line on a bill? Either is fine."). The user has no word: offer one in a sentence from their work ("I'll call the unpaid bills the 'to-pay list', as in 'the Acme bill is on the to-pay list'. Sound right?"). Their answer decides. Nothing is final: a rename changes screens, files and code in one sweep, and the old word goes to Retired. Say every change in one line: "I added 'chase up' to our words."
 

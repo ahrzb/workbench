@@ -21,12 +21,12 @@ What they can answer faster than the AI can check: where something is, which exa
 
 ### A. The file
 
-1. **One file, `CONTEXT.md`, at the project root, in the user's words.** It is the shared language of the project: what their things are called, what they do with them, and their "when … then …" rules. The AI reads it at the start of every chat (the startup hook injects it, [07](07-codex-host.md)) and before every message it sends. The user can open and edit it; it is written to be read by them.
+1. **One file per tool, `tools/<name>/CONTEXT.md`, in the user's words.** It is the shared language of that tool: what their things are called, what they do with them, and their "when … then …" rules. (v0.1.x had a single `CONTEXT.md` at the project root; since v0.2.0 one project can hold several tools, each with its own file.) The AI reads the one for the tool being worked on at the start of every chat (the startup hook injects the last-worked-on tool's file, [07](07-codex-host.md)) and before every message it sends. The user can open and edit it; it is written to be read by them. Two tools may use the same word differently ("item" on a bill and "item" in a stock list); each file holds that tool's meaning, and the AI does not carry a word from one tool's file into another.
    - Matt Pocock's skills used the same name and have since renamed it `GLOSSARY.md` [5]; we keep `CONTEXT.md` because the user asked for it and because nothing else in this project reads the other name.
 
 2. **A glossary and nothing else.** No technical details, no decisions log, no to-do list, no spec. Matt's most-reported problem is models treating "write to the glossary" as permission to store every answer, until the file becomes a running spec of hundreds of lines [2]. Where the other things go:
-   - progress, ideas shelf, "Waiting on", where data lives: `.workbench/NOTES.md` ([06](06-build-loop.md), [08](08-security-compliance.md));
-   - how the user's words map to screens, files and code: the "For the AI" section of `.workbench/NOTES.md`, never shown to the user ([02](02-ontology-vocabulary.md) rec 4).
+   - progress, ideas shelf, "Waiting on", where data lives: the tool's `NOTES.md` (`tools/<name>/NOTES.md`; the project list is `.workbench/NOTES.md`) ([06](06-build-loop.md), [08](08-security-compliance.md));
+   - how the user's words map to screens, files and code: the "For the AI" section of the tool's `NOTES.md`, never shown to the user ([02](02-ontology-vocabulary.md) rec 4).
 
 3. **Names are settled in a short dialogue; the AI adapts to the user, never the reverse.** Picking a name in your head is hard; testing one in a sentence is easy. So:
    - **The user has a word:** use it. If the AI thinks another word is clearer, it just asks, once, with the reason: "You call these 'items'. Would 'bill lines' be clearer, since each one is a line on a bill? Either is fine." Whatever the user says, that's the word.
@@ -96,7 +96,7 @@ What they can answer faster than the AI can check: where something is, which exa
 
 20. **Sort silently; ask only when the kind changes what gets built.** The user never has to learn these six words. The AI asks only when the answer changes scope (need or want?) or flexibility (rule or preference?), one question at a time, with its suggested answer: "Sending it to your boss automatically: would you still use the tool without that for now? I'd suggest yes, and I'll put it on the ideas shelf."
 
-21. **Write it down and keep the links.** In `.workbench/NOTES.md`, under "What we're after" (template in [06](06-build-loop.md)), in the user's words with the date. Every solution names the need it serves, every need serves the goal, every requirement says who set it. Anything that links to nothing is questioned or moves to the ideas shelf. The list changes as the user tries the tool ([06](06-build-loop.md) rec 10): new needs get added, and a solution that doesn't serve its need gets replaced rather than patched.
+21. **Write it down and keep the links.** In the tool's `NOTES.md` (`tools/<name>/NOTES.md`), under "What we're after" (template in [06](06-build-loop.md)), in the user's words with the date. Every solution names the need it serves, every need serves the goal, every requirement says who set it. Anything that links to nothing is questioned or moves to the ideas shelf. The list changes as the user tries the tool ([06](06-build-loop.md) rec 10): new needs get added, and a solution that doesn't serve its need gets replaced rather than patched.
 
 ## Template
 

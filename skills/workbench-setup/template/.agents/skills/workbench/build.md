@@ -2,13 +2,15 @@
 
 Serve the need, not the stated solution. The interview finds the need; the loop delivers it in small pieces the user can try.
 
+**A new tool** gets its folder at the start: `tools/<name>/` with a working name from their first words (`resume-search`), a copy of `starters/NOTES.md`, a line under "Tools here" and `Last worked on: <name>` in `.workbench/NOTES.md`. Renaming the folder later is fine (update both NOTES files); the tool's `TOOL_ID`, set once when its app is created, never changes. Everything below is about that one tool.
+
 ## 1. Interview (skip steps the user has already answered)
 
 Read [talking.md](talking.md) first. One question per message, each with your suggested answer.
 
 1. **Frame** (1 message). About 15-20 minutes, one question at a time, about things that actually happened.
 2. **One real episode.** "Tell me about the last time you had to do this." If they arrive with a solution ("I need a dashboard"), ask when they last needed it. No episode after a few tries: do one live with them ("open the file and let's do one now").
-3. **Walk the workaround.** What they open, copy, type, check, and who gets the result. Ask for a real example file (a copy is fine) and keep it in `samples/`, never in `app/`. The first time real files come up, settle "Whose data" in [safety.md](safety.md#whose-data) with one question. Collect their words into `CONTEXT.md` as they settle.
+3. **Walk the workaround.** What they open, copy, type, check, and who gets the result. Ask for a real example file (a copy is fine) and keep it in `tools/<name>/samples/`, never in `app/`. The first time real files come up for this tool, settle "Whose data" in [safety.md](safety.md#whose-data) with one question. Collect their words into the tool's `CONTEXT.md` as they settle.
 4. **Stakes.** How often, how long, what goes wrong, what "better" looks like. Record the goal in NOTES "What we're after".
 5. **Slice.** "If this had to be useful by tomorrow morning, what would it only do?" One sentence: "does X for moment Y", plus what it will not do yet (ideas shelf).
 6. **Confirm.** Retell their work in their words and ask "What did I get wrong?" Their real episode becomes the acceptance check.

@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- build.mjs replaces the three markers below with the Content-Security-Policy (with sha256 hashes), the CSS and the JS. -->
+    <!-- This file alone shows nothing useful: open out/<title>.html, the built file. -->
+    <!-- build:csp -->
+    <title>My tool</title>
+    <!-- build:css -->
+  </head>
+  <body>
+    <header class="toolbar">
+      <h1>My tool</h1>
+      <button id="open" class="primary" type="button">Open a text file...</button>
+      <button id="save" type="button">Save text as...</button>
+    </header>
+
+    <main>
+      <label class="check"><input id="wrap" type="checkbox" /> Wrap long lines</label>
+      <label for="text" class="label">Text</label>
+      <textarea id="text" rows="12" spellcheck="false"></textarea>
+
+      <h2>Recent files</h2>
+      <ul id="recent"></ul>
+
+      <h2>Backup</h2>
+      <p class="label">This page keeps its settings and list in this browser only. Save a backup file now and then; restore it here or in another browser.</p>
+      <div class="row">
+        <button id="export-backup" type="button">Export backup</button>
+        <button id="restore-backup" type="button">Restore backup...</button>
+      </div>
+    </main>
+
+    <footer id="status" class="status" role="status">Loading...</footer>
+    <noscript>This tool needs JavaScript switched on in the browser.</noscript>
+    <!-- build:js -->
+  </body>
+</html>

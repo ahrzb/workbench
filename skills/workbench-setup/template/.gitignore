@@ -1,12 +1,12 @@
-# Save points hold ONLY the tool's source code and the workbench's own files.
+# Save points hold ONLY the tools' source code and notes, and the workbench's own files.
 # This is an allowlist: everything is left out unless it is named below, so documents,
 # data, samples, backups, secrets, downloaded tools and build output never enter a save point.
+# (A second layer: .workbench/scripts/save.ps1 and save.sh save an explicit list of files.)
 /*
 
 !/.gitignore
 !/.gitattributes
 !/AGENTS.md
-!/CONTEXT.md
 
 # The workbench's own files: named files, and only text file types in the skill folder.
 !/.codex/
@@ -28,9 +28,9 @@
 !/.agents/skills/workbench/**/*.mjs
 !/.agents/skills/workbench/**/*.css
 !/.agents/skills/workbench/**/*.html
-!/.agents/skills/workbench/starter/package.json
-!/.agents/skills/workbench/starter/package-lock.json
-!/.agents/skills/workbench/starter/tsconfig.json
+!/.agents/skills/workbench/starters/*/package.json
+!/.agents/skills/workbench/starters/*/package-lock.json
+!/.agents/skills/workbench/starters/*/tsconfig.json
 !/.workbench/
 /.workbench/*
 !/.workbench/scripts/
@@ -47,25 +47,33 @@
 !/.workbench/scripts/save.sh
 !/.workbench/account
 
-# The tool: named config files, and only code files inside src/ and test/.
-!/app/
-/app/*
-!/app/package.json
-!/app/package-lock.json
-!/app/tsconfig.json
-!/app/index.html
-!/app/forge.config.ts
-!/app/forge.env.d.ts
-!/app/vite.main.config.mts
-!/app/vite.preload.config.mts
-!/app/vite.renderer.config.mts
-!/app/README.md
-!/app/src/
-!/app/test/
-/app/src/**/*.*
-/app/test/**/*.*
-!/app/src/**/*.ts
-!/app/src/**/*.css
-!/app/src/**/*.html
-!/app/test/**/*.ts
-!/app/test/**/*.mjs
+# Each tool in tools/<name>/: its notes and words, named config files, and only code files
+# inside app/src/ and app/test/. Never samples/, current/, out/ or node_modules/.
+!/tools/
+/tools/*/*
+!/tools/*/NOTES.md
+!/tools/*/CONTEXT.md
+!/tools/*/app/
+/tools/*/app/*
+!/tools/*/app/package.json
+!/tools/*/app/package-lock.json
+!/tools/*/app/tsconfig.json
+!/tools/*/app/index.html
+!/tools/*/app/build.mjs
+!/tools/*/app/forge.config.ts
+!/tools/*/app/forge.env.d.ts
+!/tools/*/app/vite.main.config.mts
+!/tools/*/app/vite.preload.config.mts
+!/tools/*/app/vite.renderer.config.mts
+!/tools/*/app/README.md
+!/tools/*/app/src/
+!/tools/*/app/test/
+/tools/*/app/src/**/*.*
+/tools/*/app/test/**/*.*
+!/tools/*/app/src/**/*.ts
+!/tools/*/app/src/**/*.mts
+!/tools/*/app/src/**/*.mjs
+!/tools/*/app/src/**/*.css
+!/tools/*/app/src/**/*.html
+!/tools/*/app/test/**/*.ts
+!/tools/*/app/test/**/*.mjs

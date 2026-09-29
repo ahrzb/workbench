@@ -1,6 +1,6 @@
 # Starter: hardened Electron + TypeScript
 
-For the AI, not the user. Copy everything in this folder into `<project>/app/` and work there. Never scaffold with `create-electron-app`: its template is stale and not hardened.
+For the AI, not the user. Copy everything in this folder into `tools/<name>/app/` and work there. Never scaffold with `create-electron-app`: its template is stale and not hardened.
 
 ## Files
 
@@ -17,14 +17,14 @@ For the AI, not the user. Copy everything in this folder into `<project>/app/` a
 
 Rename the tool: `name`, `productName` (`package.json`), `executableName` (`forge.config.ts`), `<title>` and `<h1>` (`index.html`). The packaged exe is `out\<productName>-win32-x64\<executableName>.exe`.
 
-## Run (from `app\`)
+## Run (from `tools\<name>\app\`)
 
 ```
-..\.workbench\scripts\run.cmd npm.cmd ci
-..\.workbench\scripts\run.cmd npx.cmd install-electron --no
-..\.workbench\scripts\run.cmd npm.cmd test
-..\.workbench\scripts\run.cmd npm.cmd run typecheck
-..\.workbench\scripts\run.cmd npm.cmd run package    # -> out\<productName>-win32-x64\
+..\..\..\.workbench\scripts\run.cmd npm.cmd ci
+..\..\..\.workbench\scripts\run.cmd npx.cmd install-electron --no
+..\..\..\.workbench\scripts\run.cmd npm.cmd test
+..\..\..\.workbench\scripts\run.cmd npm.cmd run typecheck
+..\..\..\.workbench\scripts\run.cmd npm.cmd run package    # -> out\<productName>-win32-x64\
 ```
 
 There is no dev server: `electron-forge start` runs Vite's dev server, which listens on a local port, and the tool opens no ports. To try a change, package it (about 20 s) and start `out\<productName>-win32-x64\<executableName>.exe`.
@@ -33,7 +33,7 @@ There is no dev server: `electron-forge start` runs Vite's dev server, which lis
 
 Always `npm.cmd` / `npx.cmd`, never a bare `npm`. `install-electron --no` fetches the Electron binary now, so a blocked download fails during setup instead of when the user first opens the tool.
 
-Adding a dependency: `..\.workbench\scripts\run.cmd npm.cmd install <pkg>` (first ask whether the tool really needs it), then the native-module check below, then `npm test` and `npm run package`.
+Adding a dependency: `..\..\..\.workbench\scripts\run.cmd npm.cmd install <pkg>@<version> --save-exact` (first ask whether the tool really needs it, and whether a block in `blocks/` already does it), then the native-module check below, then `npm test` and `npm run package`.
 
 ## Never loosen (all in `src/main.ts` unless noted)
 
@@ -44,7 +44,7 @@ Adding a dependency: `..\.workbench\scripts\run.cmd npm.cmd install <pkg>` (firs
 - Navigation, redirects, `window.open`, `<webview>` are blocked. All permission requests are denied.
 - `preload.ts` exposes named functions only. Never `ipcRenderer`, `fs`, `require`, or a generic `invoke(channel, ...)`.
 - Every IPC handler calls `assertTrusted(event)` and validates its arguments (type, size). The page never sends a file path: main reads only what the native Open dialog returned and writes only what the Save dialog returned, with exclusive create (`wx`), so an original is never overwritten. Keep the size caps.
-- Untrusted file formats (PDF, DOCX, images) are parsed in the sandboxed renderer, not in main.
+- Untrusted file formats (PDF, DOCX, images) are parsed in the sandboxed renderer, not in main. One exception: spreadsheets (xlsx, csv) are read in main by the `excel` block, behind its size and zip checks.
 - Debug hooks (env variables, DevTools) must be gated on `!app.isPackaged`.
 - Fuses in `forge.config.ts`: `RunAsNode` off, `EnableNodeOptionsEnvironmentVariable` off, `EnableNodeCliInspectArguments` off, `GrantFileProtocolExtraPrivileges` off, cookie encryption on, ASAR integrity on, only-load-from-ASAR on.
 - No native Node modules (they need a compiler, which needs admin).
@@ -53,7 +53,7 @@ Adding a dependency: `..\.workbench\scripts\run.cmd npm.cmd install <pkg>` (firs
 
 1. `package-lock.json`: entries with `"hasInstallScript": true`. Starter baseline: only `fsevents` (optional, macOS only). Anything new needs a look at what its install script does.
 2. `binding.gyp` files anywhere under `node_modules`. Baseline: none.
-3. `*.node` files. Baseline, all prebuilt inside the npm package and fine: `@rolldown/binding-*`, `lightningcss-*`, `@electron-internal/extract-zip`. A new `*.node` from a package that also has an install script or a `binding.gyp` means it compiles or downloads a binary.
+3. `*.node` files. Baseline, all prebuilt inside the npm package and fine: `@rolldown/binding-*`, `lightningcss-*`, `@electron-internal/extract-zip`, and with the `ai-read` block `@napi-rs/canvas-*` (optional for `pdfjs-dist`, never loaded or packaged). A new `*.node` from a package that also has an install script or a `binding.gyp` means it compiles or downloads a binary.
 
 Any real hit means: pick another package, or a pure-JS or WASM alternative. Do not install a compiler.
 
