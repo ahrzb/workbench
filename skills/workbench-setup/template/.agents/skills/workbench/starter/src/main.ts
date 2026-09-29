@@ -19,12 +19,19 @@ const TEXT_EXTENSIONS = ['txt', 'md', 'csv'];
 const DEBUG = !app.isPackaged;
 
 /**
- * Where the tool keeps its own data: %LOCALAPPDATA%\<App>\data (local, never synced; Electron's
- * default userData is the Roaming folder). WORKBENCH_DATA_DIR points a run at a copy instead,
- * which is how the workbench checks an older version against the user's current data.
+ * The tool's permanent identity for its data. Set once when the starter is copied (a short name
+ * plus random letters, e.g. 'bills-k3f9x2') and never changed, even when the tool is renamed:
+ * renaming must not lose the data, and two tools with the same name must not share it.
+ */
+const TOOL_ID = 'set-when-copied';
+
+/**
+ * Where the tool keeps its own data: %LOCALAPPDATA%\WorkbenchTools\<TOOL_ID>\data (local, never
+ * synced; Electron's default userData is the Roaming folder). WORKBENCH_DATA_DIR points a run at a
+ * copy instead, which is how the workbench checks an older version against the user's current data.
  */
 export function dataDir(): string {
-  return process.env.WORKBENCH_DATA_DIR || path.join(process.env.LOCALAPPDATA ?? app.getPath('appData'), app.getName(), 'data');
+  return process.env.WORKBENCH_DATA_DIR || path.join(process.env.LOCALAPPDATA ?? app.getPath('appData'), 'WorkbenchTools', TOOL_ID, 'data');
 }
 
 // Strict production policy. No remote origin appears anywhere. style-src has no

@@ -17,7 +17,9 @@ $current = 'unknown'
 $helper = Join-Path $root '.workbench\scripts\account.ps1'
 if (Test-Path -LiteralPath $helper) { . $helper; $current = Get-AccountKind }
 $recorded = ((Read-Part '.workbench/account' '') -replace '\s+', ' ').Trim().ToLower()
-$open = ($recorded -eq 'personal') -or ($recorded -like 'company *' -and $recorded -eq $current)
+# Open only for the very same account; `unverified` projects (sign-in kept in the keyring, so no
+# account can be read) open only while it still can't be read.
+$open = ($current -ne 'unknown' -and $recorded -eq $current) -or ($recorded -eq 'unverified' -and $current -eq 'unknown')
 $withheld = @"
 (withheld by the startup check: recorded account '$recorded', current account '$current')
 Do not read CONTEXT.md or .workbench/NOTES.md yet. Follow "Account type" in .agents/skills/workbench/safety.md first.

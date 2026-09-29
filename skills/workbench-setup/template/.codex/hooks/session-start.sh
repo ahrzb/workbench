@@ -10,11 +10,11 @@ part() { if [ -f "$root/$1" ]; then cat "$root/$1"; else echo "$2"; fi; }
 current=unknown
 if [ -f "$root/.workbench/scripts/account.sh" ]; then . "$root/.workbench/scripts/account.sh"; current=$(account_kind); fi
 recorded=""; [ -f "$root/.workbench/account" ] && recorded=$(tr -s ' \t\r\n' ' ' < "$root/.workbench/account" | sed 's/^ *//; s/ *$//' | tr 'A-Z' 'a-z')
-case "$recorded" in
-  personal) open=1 ;;
-  "company "*) if [ "$recorded" = "$current" ]; then open=1; else open=0; fi ;;
-  *) open=0 ;;
-esac
+# Open only for the very same account; `unverified` projects (sign-in in the keyring) only while
+# no account can be read.
+open=0
+if [ "$current" != unknown ] && [ "$recorded" = "$current" ]; then open=1; fi
+if [ "$recorded" = unverified ] && [ "$current" = unknown ]; then open=1; fi
 withheld="(withheld by the startup check: recorded account '$recorded', current account '$current')
 Do not read CONTEXT.md or .workbench/NOTES.md yet. Follow \"Account type\" in .agents/skills/workbench/safety.md first."
 

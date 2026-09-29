@@ -57,3 +57,7 @@ codex exec --ignore-user-config --ephemeral --skip-git-repo-check
 - Then the sums: line amounts add up to the net, net + tax = total; dates valid and in order; IBAN checksum; duplicates against earlier documents.
 - Anything that fails goes to the user as "please check this one", never silently into their sheet.
 - The AI's answer never triggers anything by itself (no emails, payments, deletions); a person confirms first.
+
+## When programs can't run at all
+
+If the tool can't run on this computer (blocked by policy or Smart App Control), the HTML-only version can't call the AI either. Say so honestly and offer the split that still meets the need: the user asks ChatGPT (their approved account) to read the document with a ready-made prompt you give them, which returns the same fields as a short JSON block; they paste that into the HTML version, which runs the same checks and flags anything doubtful. Slower per document, but the checking and the clean output stay.

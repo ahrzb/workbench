@@ -14,7 +14,7 @@ Everything else belongs to the user: `CONTEXT.md`, `.workbench/NOTES.md`, `.work
    - separately and explicitly, anything that changes **what runs by itself** (the startup check in `.codex/hooks/`, the helpers in `.workbench/scripts/`), **what gets downloaded**, or **what the AI may read, change or send** (the skill files). Say what each change does, one line each. If you can't tell what a change does, say so.
    - if `.codex/hooks.json` changes: "Codex will ask you to review the startup check again; please approve it."
    Ask once: "Update now? I'll make a save point first so we can go back." Nothing is applied without a yes.
-3. **Keep a way back that the update can't touch.** Copy every owned path as it is now into `.workbench/update/before/` (same layout), and make a save point "before updating the workbench" (`git.cmd add -A`, `git.cmd commit`; snapshot projects: a snapshot).
+3. **Keep a way back that the update can't touch.** Copy every owned path as it is now into `.workbench/update/before/` (same layout), and make a save point "before updating the workbench" (`save.ps1` / `save.sh`).
 4. **Replace the owned files.** For each owned folder, delete it and copy the new one (so files the release removed are gone too); copy owned files over. Two merges:
    - `AGENTS.md`: if the installed one differs from the old template's copy (it was edited), keep it as `AGENTS.old.md` and say so.
    - `.gitignore`, `.gitattributes`: the new lines plus any lines this project added.

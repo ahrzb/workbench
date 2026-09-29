@@ -34,3 +34,9 @@ Open Codex anywhere and paste:
 ## Releasing
 
 Projects update from the latest **tagged GitHub release** (see `update.md`). To release: add a `CHANGES.md` entry, set `.workbench/VERSION` in the template to the new version and date, commit, then tag `vX.Y.Z` and publish a GitHub release for it. Keep `.codex/hooks.json` unchanged across releases unless you must: any change makes every user review the startup check again.
+
+**Trust.** Whoever can publish a release in this repository decides what runs in every project that updates. The update step shows the user, in plain words, every change to what runs automatically or what the AI may do, and downloads the exact release commit, but it doesn't verify a signature yet. Signed releases (a pinned maintainer key, checked before applying) are the next hardening step.
+
+## Status
+
+v0.1.0 is built and tested on Windows 11 (setup, first chat, save points, account check, starter build, packaged AI call) and reviewed adversarially by GPT reviewers over three rounds; the last round's fixes are tested but not re-reviewed. macOS paths are written but untested. Not yet released: the repository is private and no `v0.1.0` tag exists, so the install line above works only after both.

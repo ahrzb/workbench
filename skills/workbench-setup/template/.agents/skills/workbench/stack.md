@@ -16,9 +16,8 @@ Nothing is installed on the computer and nothing needs admin rights. Everything 
 
 git, run by you; the user never sees a git command. They say "go back to before the dates change" and you do it.
 
-- **Always through `.workbench\scripts\git.cmd`** (Windows), never plain `git`. It keeps the history in `.workbench\history\` instead of `.git`, because Codex's sandbox keeps `.git` read-only and may run commands as a separate Windows user; with plain `.git` every save point would need the user's approval. It also sets the identity and uses `.tools\git` when git isn't installed. macOS: `git --git-dir=.workbench/history --work-tree=. -c safe.directory='*' -c user.name=Workbench -c user.email=workbench@localhost ...`.
-- **What a save point holds:** only what the project's `.gitignore` allows, which is an allowlist: the tool's code (named config files in `app/`, code files in `app/src/` and `app/test/`) and the workbench's own files. Documents, samples, data, backups, secrets, tools and builds are never in it. New code folders or file types in `app/` need a line in `.gitignore`; never a data file type.
-- One save point before and one after every change: `git.cmd add -A`, then `git.cmd commit -qm "<their words>"` ("before: newest bills on top", "newest bills on top").
+- **Save with `.workbench\scripts\save.ps1 "<their words>"`** (macOS: `sh .workbench/scripts/save.sh "<their words>"`), one before and one after every change ("before: newest bills on top", "newest bills on top"). It saves an explicit list of permitted files: the tool's code (named config files in `app/`, code files in `app/src/` and `app/test/`) and the workbench's own files. Documents, samples, data, backups, secrets, tools and builds are never in it, whatever any `.gitignore` says. A new kind of code file needs a line in both save scripts; never a data file type. `save.ps1 -List` shows what would be saved.
+- Everything else goes through `.workbench\scripts\git.cmd`, never plain `git`: it keeps the history in `.workbench\history\` instead of `.git`, because Codex's sandbox keeps `.git` read-only and may run commands as a separate Windows user (plain `.git` would need the user's approval every time). It also uses `.tools\git` when git isn't installed. macOS: `git --git-dir=.workbench/history --work-tree=. -c safe.directory='*' ...`, only if `xcode-select -p` succeeds.
 - **"Go back"** means the tool on their desktop is back and still works with their current data:
   1. Show them what they'll get back and what goes away. Their data is never rolled back as part of this.
   2. `git.cmd restore --source=<save point> --staged --worktree -- .`
@@ -27,16 +26,16 @@ git, run by you; the user never sees a git command. They say "go back to before 
   5. Replace `tool/<App>/` as in "Ship it" (ask them to close the tool first), start it, check the thing they described, then save point "went back to <their words>" so history never disappears, and hand back.
 - **Changing how data is stored** (a new column, a renamed field, a new file layout) is its own change: the tool keeps a data version number, upgrades old data on start after backing it up, and the change isn't done until the previous version's data opens correctly in the new one.
 - Data backups are separate: in the backup folder outside the project ([safety.md](safety.md#data)), never in save points.
-- **No git at all** (macOS without the Command Line Tools): save points are snapshots. Save = copy every file the `.gitignore` allowlist would keep into `.workbench/snapshots/<yyyy-mm-dd-hhmm>-<their words>/`. Go back = delete those same allowlisted files from the project and copy the snapshot's files back, then steps 3-5 above. The snapshot names are the save-point list.
+- **No git at all** (macOS without the Command Line Tools): `save.sh` makes snapshots in `.workbench/snapshots/<yyyy-mm-dd-hhmm>-<their words>/` instead. Go back = delete the files `save.sh --list` shows, copy the snapshot's files back, then steps 3-5 above. The snapshot names are the save-point list.
 
 ## The app
 
-- **Start from `starter/`** in this skill folder: copy it to `app/` in the project, then `.workbench\scripts\run.cmd npm.cmd ci` and `.workbench\scripts\run.cmd npx.cmd install-electron --no` from `app/`. Its `README.md` lists the security settings; keep every one of them.
+- **Start from `starter/`** in this skill folder: copy it to `app/` in the project, set `TOOL_ID` in `app/src/main.ts` once (see its README; never change it later), then `.workbench\scripts\run.cmd npm.cmd ci` and `.workbench\scripts\run.cmd npx.cmd install-electron --no` from `app/`. Its `README.md` lists the security settings; keep every one of them.
 - Electron + TypeScript, Forge + Vite, npm only. Electron is pinned exactly; updating it is planned work, never a side effect.
 - **No dev server.** To try a change: `npm.cmd run package` and start the packaged exe from `app/out/`. `electron-forge start` opens a local port, so it is never used.
 - **No native modules**: after any dependency change, run the check in `starter/README.md`. They need a compiler, which needs admin.
 - The tool opens no network ports and loads nothing remote. The only network use is a feature the user agreed to, such as an AI call ([ai-features.md](ai-features.md)).
-- Data: the tool keeps its own data in `%LOCALAPPDATA%\<App>\data` (SQLite through `node:sqlite` when the tool owns the data, in the main process); it reads the user's files where they are and writes new ones (xlsx through ExcelJS, csv with plain code). Never write to the user's originals ([safety.md](safety.md#data)).
+- Data: the tool keeps its own data in `dataDir()`, `%LOCALAPPDATA%\WorkbenchTools\<TOOL_ID>\data` (SQLite through `node:sqlite` when the tool owns the data, in the main process); it reads the user's files where they are and writes new ones (xlsx through ExcelJS, csv with plain code). Never write to the user's originals ([safety.md](safety.md#data)).
 - Checks: a quick automated check per delivered change (`npm.cmd test`), plus using the packaged app the way the user would.
 
 ## Ship it on this computer
@@ -46,7 +45,7 @@ git, run by you; the user never sees a git command. They say "go back to before 
 3. Desktop shortcut to `tool\<App>\<App>.exe` (PowerShell `WScript.Shell` -> `CreateShortcut` at `[Environment]::GetFolderPath('Desktop')`). If that fails, tell the user where the exe is.
 4. Never run `make` or an installer for this; installers are for sharing ([safety.md](safety.md#sharing-ladder)).
 
-About 1.5 GB per project. Removing a tool completely: delete the project folder, the shortcut and `%LOCALAPPDATA%\<App>`; ask before deleting the data.
+About 1.5 GB per project. Removing a tool completely: delete the project folder, the shortcut, its data folder `%LOCALAPPDATA%\WorkbenchTools\<TOOL_ID>` and its backups `%LOCALAPPDATA%\Workbench\backups\<project folder name>`; ask before deleting any data.
 
 ## HTML-only version
 

@@ -43,6 +43,8 @@
 !/.workbench/session-brief.md
 !/.workbench/NOTES.md
 !/.workbench/VERSION
+!/.workbench/scripts/save.ps1
+!/.workbench/scripts/save.sh
 !/.workbench/account
 
 # The tool: named config files, and only code files inside src/ and test/.

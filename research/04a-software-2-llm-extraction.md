@@ -58,14 +58,14 @@ Research date: 2026-09-29. Rewritten the same day around the decision that AI fe
 15. **The call itself.** The command that worked, with what each part is for:
 
     ```
-    codex exec --ignore-user-config --ignore-rules --ephemeral --skip-git-repo-check
+    codex exec --ignore-user-config --ephemeral --skip-git-repo-check
       -s read-only -C <empty folder> -m <model from config>
       --disable shell_tool --disable unified_exec --disable plugins --disable apps
       --disable browser_use --disable computer_use --disable image_generation
       --disable multi_agent --disable view_image --disable hooks
       --output-schema <schema.json> -o <result.json> --json "<prompt>" [-i <page.png> …]
     ```
-    - `--ignore-user-config`: don't load `$CODEX_HOME/config.toml` (the user's own MCP servers, plugins and habits); "auth still uses `CODEX_HOME`" [6][5]. `--ignore-rules`: skip user and project execpolicy `.rules` [6][5]. `--ephemeral`: no session file; without it the document's contents are saved under `~/.codex/sessions` ([08](08-security-compliance.md) rec 5 [LOCAL]). `--skip-git-repo-check`: required outside a Git repo [5].
+    - `--ignore-user-config`: don't load `$CODEX_HOME/config.toml` (the user's own MCP servers, plugins and habits); "auth still uses `CODEX_HOME`" [6][5]. `--ephemeral`: no session file; without it the document's contents are saved under `~/.codex/sessions` ([08](08-security-compliance.md) rec 5 [LOCAL]). `--skip-git-repo-check`: required outside a Git repo [5]. `--ignore-rules` (skip user and project execpolicy `.rules`) is deliberately **not** used: rules set by the user or their company stay in force, and the shell tools they'd govern are disabled anyway. The shipped call also adds `--disable code_mode_host` (otherwise an error item reports the missing code-mode host in a packaged tool [LOCAL]).
     - `-C <empty folder>`: a fresh empty temp folder for every call, deleted afterwards, so there is nothing else to read. After a call the folder was still empty [LOCAL].
     - The `--disable` list switches off every tool the model could use; the extraction needs none. Feature names are from the tested version and can change, so the tool runs the same smoke check the AI ran (R21) after each Codex update.
     - `-o <file>` receives the final message, which is the JSON result; parse that file, not stdout [5]. `--json` prints events; from them read `turn.completed.usage` (token counts) and detect `turn.failed`/`error` [5] [LOCAL]. Exit code 0 plus a valid `-o` file is success; anything else is "AI unavailable" (R7).
@@ -157,7 +157,7 @@ llama.cpp release assets include Windows x64 CPU/Vulkan zips and macOS arm64/x64
 - [ ] Account type known (read from the sign-in, [08](08-security-compliance.md) rec 4): company account, or a personal plan with a recorded "IT said fine"; otherwise made-up or public samples only (R16) [10].
 - [ ] The user has been told once, in plain words, where the data goes (R16).
 - [ ] No API key anywhere: the tool uses the existing ChatGPT sign-in and never reads or copies the token (R4).
-- [ ] The call uses the full flag set of R15: `--ignore-user-config --ignore-rules --ephemeral`, empty `-C` folder, read-only sandbox, all tools disabled, schema output; one document per call.
+- [ ] The call uses the full flag set of R15: `--ignore-user-config --ephemeral` (never `--ignore-rules`), empty `-C` folder, read-only sandbox, all tools disabled, schema output; one document per call.
 - [ ] Minimum data: pages as images, only the pages needed, metadata dropped by rendering, no whole folders, no personal data in the schema (R17).
 - [ ] Validator (empty/zero first) and human review before anything acts on results (R9–R11, R21).
 - [ ] Development and demos use synthetic/public sample files unless the account check allows real ones; the coding agent's own data flow was disclosed (R16, [08](08-security-compliance.md) rec 3).

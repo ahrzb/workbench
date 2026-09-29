@@ -3,7 +3,7 @@
 ## Data
 
 - The user's original files are read-only. The tool reads them and writes new files.
-- Documents and samples never go into `app/` or the project root. Samples the user gives you live in `samples/`; the tool's own data lives in its data folder (`%LOCALAPPDATA%\<App>\data`). Save points take only code and the workbench's own files (the `.gitignore` is an allowlist), so none of these ever enter a save point or a shared copy.
+- Documents and samples never go into `app/` or the project root. Samples the user gives you live in `samples/`; the tool's own data lives in its data folder (`%LOCALAPPDATA%\WorkbenchTools\<TOOL_ID>\data`). Save points take only an explicit list of code and workbench files, so none of these ever enter a save point or a shared copy.
 - Before any change that touches real data, copy it to the backup folder outside the project, `%LOCALAPPDATA%\Workbench\backups\<project folder name>\<yyyy-mm-dd-hhmm>\` (macOS: `~/Library/Application Support/Workbench/backups/...`), and say so in one line. It's local and never synced, even if the project folder is. Wrong-looking data is handled in [fix.md](fix.md#data-first): never overwrite current data with a backup without the user's OK.
 - Never run bulk delete or overwrite commands against the user's only copy.
 - Match spreadsheet columns by header, never by position; keep IDs as text; treat a library warning on load as a stop sign.
@@ -14,13 +14,13 @@
 
 Everything the user shows you, and every AI feature inside their tool, goes to OpenAI under their ChatGPT sign-in. The account type decides what data may be used; check it rather than asking.
 
-- Run `powershell -NoProfile -ExecutionPolicy Bypass -File .workbench\scripts\account.ps1` (macOS: `sh .workbench/scripts/account.sh`). It prints `personal`, `company <id>` or `unknown`, reading only the sign-in mode, the plan type and the account id; never print, copy or store a token yourself.
+- Run `powershell -NoProfile -ExecutionPolicy Bypass -File .workbench\scripts\account.ps1` (macOS: `sh .workbench/scripts/account.sh`). It prints `personal <id>`, `company <id>` or `unknown`, reading only the sign-in mode, the plan type and the account id from Codex's sign-in file; never print, copy or store a token yourself.
 - `company <id>` (Business, Enterprise, Edu, Team): work data is fine. Say once that their company can see Codex use and that company rules still apply.
-- `personal` (Free, Go, Plus, Pro) with work documents: send the forwardable question to IT before real work documents are used; meanwhile build with made-up or public samples. Personal data on a personal plan is fine; mention once that "Improve the model for everyone" is on by default and where to turn it off (ChatGPT -> Settings -> Data controls).
-- `unknown` (signed in another way, or it can't be read): ask once, "Do you sign in to ChatGPT with your work account?", and treat the answer as unconfirmed: use made-up samples until the helper can confirm it.
+- `personal <id>` (Free, Go, Plus, Pro) with work documents: send the forwardable question to IT before real work documents are used; meanwhile build with made-up or public samples. Personal data on a personal plan is fine; mention once that "Improve the model for everyone" is on by default and where to turn it off (ChatGPT -> Settings -> Data controls).
+- `unknown`: Codex keeps this sign-in in the system keyring (or uses an API key), so it can't be read. Ask once: "Do you sign in to ChatGPT with your work account?" Treat a yes as a company account and a no as personal, and record `unverified`. Say once, plainly, that switching accounts later won't be noticed automatically in this project.
 - A rule the user states ("patient records never leave the building") beats all of this.
 
-Record the helper's exact output in `.workbench/account` (`personal` or `company <id>`), and in words in NOTES under Data -> ChatGPT account. The startup check compares that line with the current sign-in and withholds `CONTEXT.md` and `NOTES.md` unless it's `personal`, or the very same company account. When it says it withheld them: run the helper; if the account differs from the one this project was built with, tell the user in one line and don't read the notes or any real documents until they've confirmed which account to use.
+Record the helper's exact output (or `unverified`) in `.workbench/account`, and in words in NOTES under Data -> ChatGPT account. The startup check withholds `CONTEXT.md` and `NOTES.md` unless the current sign-in is the very same account, or the project is `unverified` and the sign-in still can't be read. When it says it withheld them: run the helper; if it's a different account from the one this project was built with, tell the user in one line and don't read the notes or any real documents until they've confirmed which account to use; then record the new line.
 
 ## Forwardable messages
 
