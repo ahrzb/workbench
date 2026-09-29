@@ -48,7 +48,7 @@ Scope: how an AI agent should interview an office worker who cannot name what th
 
 | Stage | Purpose | Exit criteria |
 |---|---|---|
-| 0. Frame (1 exchange) | Set expectations: ~20 min, one question at a time, "I'll ask about things that happened, not what you want", "say skip any time", nothing leaves the user's computer without their okay [22 primer][26] | They agree. |
+| 0. Frame (1 exchange) | Set expectations: ~20 min, one question at a time, "I'll ask about things that happened, not what you want", "say skip any time", say once that what they show the AI goes to OpenAI under their ChatGPT account (see [08](08-security-compliance.md)) [22 primer][26] | They agree. |
 | 1. Find the episode (2–3) | Pick one recent annoying, repetitive or error-prone thing | One concrete recent episode with date-ish anchor, trigger, and outcome. |
 | 2. Walk the workaround (3–5) | See real inputs, steps, tools and hand-offs; harvest vocabulary | AI can restate 4–8 steps and they say what's wrong; a glossary of 5–10 of the user's nouns with their definitions; they have shown or described the real file or email. |
 | 3. Stakes (2–3) | Frequency, time, consequence, 2–3 "why does that matter" rungs | Stated in the user's words: how often, roughly how long, what goes wrong or gets delayed, and what "better" looks like. |

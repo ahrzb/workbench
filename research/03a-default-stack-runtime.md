@@ -164,11 +164,11 @@ Tags: `[UNVERIFIED]` means I could not confirm it from a page I opened. `[INFERE
     - **Why not `.git`:** Codex's Windows sandbox keeps `.git` read-only and runs commands as a separate user (CodexSandboxOffline). That caused "dubious ownership" and permission errors [LOCAL, tested 2026-09-29 with `codex exec -s workspace-write`].
     - **How:** the AI never runs `git init` or a bare `git`. It calls `.workbench\scripts\git.cmd` (from the skill's template), which runs git with `--git-dir=.workbench\history --work-tree=<project> -c safe.directory=*`, so the history sits in a folder the sandbox can write.
     - **Which git binary:**
-    1. `git.cmd` prefers `.tools\git\cmd\git.exe` if it exists; otherwise it uses `git` from PATH. If `git` already works, that is enough.
-    2. **Windows:** MinGit (`MinGit-<ver>-64-bit.zip`) or PortableGit (`-y -gm2 -InstallPath=<project>\.tools\git`) from the Git for Windows release page. Both unpack without admin [51-GfW][51-MinGit][51-Zip], so they go into `.tools\git`, and `bootstrap.ps1` downloads MinGit there only when git is missing. MinGit has no bash/Perl, which is enough for add/commit/restore [51-MinGit].
-    3. **macOS:** Apple's git comes only with the Xcode CLT, and installing those asks for admin [51-gitscm][51-CLT]. Never run `git --version` blindly, because the `/usr/bin/git` stub can pop the CLT installer dialog: check `xcode-select -p` first.
-    4. **No git binary:** **isomorphic-git** (pure JS, npm-installable) now fits the stack natively [51-iso]. The earlier draft's dulwich was the Python equivalent.
-    5. If everything else fails: timestamped folder snapshots.
+      1. `git.cmd` prefers `.tools\git\cmd\git.exe` if it exists; otherwise it uses `git` from PATH. If `git` already works, that is enough.
+      2. **Windows:** MinGit (`MinGit-<ver>-64-bit.zip`) or PortableGit (`-y -gm2 -InstallPath=<project>\.tools\git`) from the Git for Windows release page. Both unpack without admin [51-GfW][51-MinGit][51-Zip], so they go into `.tools\git`, and `bootstrap.ps1` downloads MinGit there only when git is missing. MinGit has no bash/Perl, which is enough for add/commit/restore [51-MinGit].
+      3. **macOS:** Apple's git comes only with the Xcode CLT, and installing those asks for admin [51-gitscm][51-CLT]. Never run `git --version` blindly, because the `/usr/bin/git` stub can pop the CLT installer dialog: check `xcode-select -p` first.
+      4. **No git binary:** **isomorphic-git** (pure JS, npm-installable) now fits the stack natively [51-iso]. The earlier draft's dulwich was the Python equivalent.
+      5. If everything else fails: timestamped folder snapshots.
 
 ## Bake-off summary
 
@@ -330,6 +330,7 @@ Work top to bottom and stop at the first tier whose smoke test passes. Tell the 
 - `npm ci` and an override `npm install` with no git on PATH and a fresh cache, followed by test, package and launch;
 - the bake-off `package-lock.json` (`git+ssh` node-gyp and `hasInstallScript` entries).
 - the in-project run: `npm ci`, `install-electron`, tests and packaging from `.tools\` with nothing installed, 72 s and about 1.45 GB (Node 107 MB, npm cache 90 MB, Electron cache 158 MB, `node_modules` 699 MB, `out` 388 MB). These figures come from the project's own test run; for this note I re-ran only the Node download, hash check, unpack, launcher and `npm config get` paths, plus a `.lnk` creation in a scratch folder, and deleted the scratch folders afterwards.
+- `git` inside Codex's Windows sandbox (`codex exec -s workspace-write`, 2026-09-29): `.git` read-only, commands run as a separate user (CodexSandboxOffline), "dubious ownership" and permission errors. Result supplied by the main agent's test; I did not repeat it. The starter's install-script and prebuilt-`*.node` baseline comes from its README (`skills/workbench-setup/template/.agents/skills/workbench/starter/README.md`).
 
 [1] Node.js Release schedule, https://raw.githubusercontent.com/nodejs/Release/main/schedule.json — v24 LTS dates, v26 LTS date.
 [2] Node.js dist, https://nodejs.org/dist/index.json and https://nodejs.org/dist/latest-v24.x/ — zip/tarball files, SHASUMS256, zip contents (`npm.ps1`).

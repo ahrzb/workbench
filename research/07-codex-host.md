@@ -1,29 +1,29 @@
 # Host: ChatGPT / Codex, project setup and the startup hook
 
-Scope: she uses only OpenAI's products, ChatGPT and Codex (the Codex desktop app, CLI or IDE extension). This note covers how the skill gets into a project folder, and how every new chat starts with a welcome that orients both her and the AI. Research date 2026-09-29.
+Scope: the user uses only OpenAI's products, ChatGPT and Codex (the Codex desktop app, CLI or IDE extension). This note covers how the skill gets into a project folder, and how every new chat starts with a welcome that orients both the user and the AI. Research date 2026-09-29.
 
 Tags: `[UNVERIFIED]` means not confirmed from a primary page. `[INFERENCE]` is my reasoning. `[LOCAL]` means tested on this machine: Windows 11 26200, Codex CLI 0.157.1, driven with `codex exec` against a real ChatGPT sign-in. The Codex desktop app's UI was not tested.
 
-## Her workflow (as specified by the user)
+## The user's workflow (as specified by the user)
 
-1. She creates an empty folder and opens Codex in it.
-2. She asks: "Set this up as a workbench."
-3. The agent installs the skill and the startup check into the folder, then asks her to start a **new chat in the same folder**.
+1. The user creates an empty folder and opens Codex in it.
+2. The user asks: "Set this up as a workbench."
+3. The agent installs the skill and the startup check into the folder, then asks the user to start a **new chat in the same folder**.
 4. From then on, each new chat opens with a short welcome: what the project is, where we left off, and the one next step. In a brand-new project, the next step is the interview.
 
 ```mermaid
 sequenceDiagram
-  participant She
+  participant User
   participant Setup as Chat 1 (setup)
   participant Codex
   participant Work as Chat 2+ (work)
-  She->>Setup: "Set this up as a workbench"
+  User->>Setup: "Set this up as a workbench"
   Setup->>Codex: git init, copy project template (needs 1 approval)
-  Setup->>She: "Open a new chat here, approve the startup check, say hi"
-  She->>Codex: new chat, trust folder, approve hook
-  She->>Work: "hi"
+  Setup->>User: "Open a new chat here, approve the startup check, say hi"
+  User->>Codex: new chat, trust folder, approve hook
+  User->>Work: "hi"
   Codex->>Work: SessionStart hook injects brief + notes + last save points
-  Work->>She: WELCOME: what, where we left off, next step
+  Work->>User: WELCOME: what, where we left off, next step
 ```
 
 ## Recommendations
@@ -31,12 +31,12 @@ sequenceDiagram
 1. **Use two layers: a SessionStart hook for fresh state, and `AGENTS.md` as the backstop.** Both were tested [LOCAL]:
    - **Hook trusted.** The hook injected the brief, the notes and the last 5 save points. The first reply was the welcome, with no tool calls: 7 s and about 17k input tokens.
    - **Hook not trusted (untrusted folder or unreviewed hook).** The hook was skipped *silently*; `codex exec` gave no warning. `AGENTS.md` still loaded in the untrusted folder. It told the AI to read the same files itself, and the welcome still came, but slower: 28 s, about 51k input tokens and 4 tool calls. The model also narrated what it was doing first.
-   - So the hook is the fast, clean path and `AGENTS.md` guarantees the welcome whatever she clicked. Docs agree: `AGENTS.md` is rebuilt at the start of every session, and a hook is needed only for computed content [3][1].
-2. **The hook fires on her first message, not when she opens the chat.** `startup` is queued when the chat is created and runs at the start of the first turn [26][29][42]. That is why the setup chat's last instruction is "open a new chat here and type **hi**". Whatever she types first gets the welcome in reply; the brief says so.
-3. **Match `startup|clear` only.** Those are brand-new chats and cleared contexts. `resume` and `compact` would re-greet her mid-work [1][29]. After compaction the AI keeps its own summary. Re-injecting the rules on `compact` is a possible later addition (open question).
+   - So the hook is the fast, clean path and `AGENTS.md` guarantees the welcome whatever the user clicked. Docs agree: `AGENTS.md` is rebuilt at the start of every session, and a hook is needed only for computed content [3][1].
+2. **The hook fires on the user's first message, not when they open the chat.** `startup` is queued when the chat is created and runs at the start of the first turn [26][29][42]. That is why the setup chat's last instruction is "open a new chat here and type **hi**". Whatever they type first gets the welcome in reply; the brief says so.
+3. **Match `startup|clear` only.** Those are brand-new chats and cleared contexts. `resume` and `compact` would re-greet them mid-work [1][29]. After compaction the AI keeps its own summary. Re-injecting the rules on `compact` is a possible later addition (open question).
 4. **Plain text on stdout, not JSON.**
    - Plain stdout becomes developer context that only the model sees [1][26]. Tested [LOCAL].
-   - JSON `systemMessage` would show her a line, but the UI renders it as a *warning* [1][30]. To a non-programmer that looks like an error, so skip it. The AI's welcome is the user-facing message.
+   - JSON `systemMessage` would show the user a line, but the UI renders it as a *warning* [1][30]. To a non-programmer that looks like an error, so skip it. The AI's welcome is the user-facing message.
    - Keep the output under ~2,500 tokens (the default cap) or set `additionalContextLimit`. Overflow is spilled to a temp file and only a preview is injected [1][25]. The prototype sets 4000.
 5. **Windows: a Windows PowerShell 5.1 script via `commandWindows`, no Node.** The hook must work before Node is installed, because setup and the interview come before any build.
    - Hook commands run through the session shell, which is PowerShell on Windows, not cmd [23][35]. Use no cmd syntax, and never a quoted program path as the first token (openai/codex#46454) [33].
@@ -44,17 +44,17 @@ sequenceDiagram
    - Set UTF-8 output explicitly, because Codex decodes stdout as UTF-8 [23].
    - Known bug: if the session shell resolves to the Microsoft Store `pwsh.exe`, all command hooks fail with os error 5 (#47810, open) [34]. `AGENTS.md` covers that case.
 6. **macOS: a POSIX `sh` script that never calls `/usr/bin/git` unless the CLT exists.** The git stub pops the Xcode tools installer, which asks for admin [03a rec 24]. The script checks `xcode-select -p` or a non-stub git first. Untested (no Mac).
-7. **Setup needs three clicks from her. Say so up front, in her words.**
-   - **Approve writing the settings folders [LOCAL].** In the default sandbox, writes to `.codex/` and `.agents/` were rejected ("writing outside of the project; rejected by user approval settings"). Only `AGENTS.md` and `git init` succeeded. In the app she gets an approval prompt instead [38]. So the setup agent copies the whole project template in **one** shell command, to ask once rather than once per file.
+7. **Setup needs three clicks from the user. Say so up front, in their words.**
+   - **Approve writing the settings folders [LOCAL].** In the default sandbox, writes to `.codex/` and `.agents/` were rejected ("writing outside of the project; rejected by user approval settings"). Only `AGENTS.md` and `git init` succeeded. In the app the user gets an approval prompt instead [38]. So the setup agent copies the whole project template in **one** shell command, to ask once rather than once per file.
    - **Trust the folder.** Project hooks load only when the project's `.codex/` layer is trusted [1][2]. For a folder with no git checkout, no root marker and no `.codex/`, the app does not persist trust at chat start, and does not pre-approve config added later [32]. So the setup chat's own trust doesn't carry over; `git init` plus the new chat is what makes the folder trustable [INFERENCE]. Tested [LOCAL]: trusted folder + unreviewed hook = skipped.
    - **Review the startup check.** Each hook is trusted by the hash of its definition. It is reviewed with `/hooks` in the CLI or through an in-app flow, and is skipped until then [1][24][22]. Any later edit to `hooks.json` needs a new review [24]. So the template's hook must be final, and dynamic content belongs in the files it reads, never in the hook definition.
    - The agent must never self-approve: no `--dangerously-bypass-hook-trust`, and no editing `~/.codex/config.toml` trust entries.
 8. **Where the skill comes from before the folder has it: a one-time, user-level install of a small setup skill.**
-   - Codex loads user skills from `~/.agents/skills` and repo skills from `<repo>/.agents/skills`, and triggers them implicitly from their `description` [4]. A user-level `workbench-setup` skill whose description matches "set this up as a workbench" makes step 2 of her workflow work as she'd phrase it.
+   - Codex loads user skills from `~/.agents/skills` and repo skills from `<repo>/.agents/skills`, and triggers them implicitly from their `description` [4]. A user-level `workbench-setup` skill whose description matches "set this up as a workbench" makes step 2 of the user's workflow work as they would phrase it.
    - Its job is to copy `assets/project-template/` into the folder and nothing else. The full `workbench` skill lives in the project (`.agents/skills/workbench/`), so each project keeps the version it was built with.
-   - How she installs it once: via Codex's `$skill-installer` from the published repo, or a plugin marketplace (`codex plugin marketplace add owner/repo`) [4][7]. Exact install wording is [UNVERIFIED]; test it when the skill repo exists.
-   - Skills can't ship hooks; plugins can [4][6]. A plugin's hooks would run in **every** Codex session on her machine, though, so the hook belongs in the project template, not in a plugin [INFERENCE].
-9. **What she needs installed.**
+   - How the user installs it once: via Codex's `$skill-installer` from the published repo, or a plugin marketplace (`codex plugin marketplace add owner/repo`) [4][7]. Exact install wording is [UNVERIFIED]; test it when the skill repo exists.
+   - Skills can't ship hooks; plugins can [4][6]. A plugin's hooks would run in **every** Codex session on the user's machine, though, so the hook belongs in the project template, not in a plugin [INFERENCE].
+9. **What the user needs installed.**
    - The Codex CLI installer is per-user (`%LOCALAPPDATA%`, user PATH, no admin) [16].
    - The Windows *app* comes from the Microsoft Store, and its enterprise docs say "an administrator must approve the installation" [15]. So on a managed laptop the app may be blocked where the CLI is not [UNVERIFIED for personal PCs].
    - Codex's recommended "elevated" Windows sandbox needs one admin-approved setup; without it Codex falls back to the unelevated sandbox, which needs no admin [10].
@@ -81,7 +81,7 @@ sequenceDiagram
 ## Project template (what setup copies)
 
 ```
-<her folder>/
+<the user's folder>/
   AGENTS.md                                 # backstop: how to start a chat if the hook didn't run
   CONTEXT.md                                # the user's words for their work (09); created with the first word
   .agents/skills/workbench/SKILL.md ...     # the full skill (interview, vocabulary, build loop)
@@ -126,7 +126,7 @@ The relative paths assume Codex starts at the project root. The app's primary fo
 
 ```powershell
 # SessionStart hook (Windows). Needs only Windows PowerShell 5.1: no Node, no Python.
-# Plain text on stdout becomes context for the AI only; she never sees it.
+# Plain text on stdout becomes context for the AI only; the user never sees it.
 $ErrorActionPreference = 'SilentlyContinue'
 [Console]::OutputEncoding = New-Object System.Text.UTF8Encoding $false
 
@@ -185,12 +185,12 @@ else echo "(git not available; see snapshots)"; fi
 You are helping an office worker build a small tool on their own computer. They use a computer all day but don't write code, and they know their own work better than anyone: ask them about it when that's quicker than checking (see 09 "Who the user is"). Follow the workbench skill in `.agents/skills/workbench/`.
 
 Rules that never change:
-- Nothing may need administrator rights. Nothing leaves this computer unless she agreed to it.
-- She never chooses technology. Use the words in CONTEXT.md, never jargon. Ask only what she can answer from her own work, one question at a time, with your suggested answer (see 09).
-- One small change at a time: show a sketch first, build it, let her try it, then make a save point.
+- Nothing may need administrator rights. Nothing leaves this computer without the user knowing where it goes.
+- The user never chooses technology. Use the words in CONTEXT.md, never jargon. Ask only what they can answer from their own work, one question at a time, with your suggested answer (see 09).
+- One small change at a time: show a sketch first, build it, let them try it, then make a save point.
 
-First reply of this chat (do this before anything else, whatever she wrote):
-1. Greet her with a welcome in 4 short lines or fewer: what this project is (from NOTES.md, or "a new project" if NOTES.md is empty), where we left off (from the last save points), and the single next step.
+First reply of this chat (do this before anything else, whatever the user wrote):
+1. Greet the user with a welcome in 4 short lines or fewer: what this project is (from NOTES.md, or "a new project" if NOTES.md is empty), where they left off (from the last save points), and the single next step.
 2. If NOTES.md says the interview is not done, the next step is the interview: ask your first interview question.
 3. Otherwise ask: "Shall we continue with <next item>, or is something not working?"
 ```
@@ -242,8 +242,8 @@ At the start of every new chat:
 
 ## Conflicts with the guiding principles
 
-- **"The user never deals with technology."** Setup asks her for three approvals (write settings, trust folder, review startup check). They can't be avoided without the agent bypassing Codex's own safety gates, which it must not do. Mitigation: warn her once, in plain words, and use the `AGENTS.md` backstop so a missed click costs speed, not function.
-- **"Local-first."** The hook sends her project notes and save-point titles to the model provider. Every chat does the same anyway. The notes must never contain her data, only descriptions of it [INFERENCE].
+- **"The user never deals with technology."** Setup asks the user for three approvals (write settings, trust folder, review startup check). They can't be avoided without the agent bypassing Codex's own safety gates, which it must not do. Mitigation: warn the user once, in plain words, and use the `AGENTS.md` backstop so a missed click costs speed, not function.
+- **"Local-first."** The hook sends the user's project notes and save-point titles to the model provider. Every chat does the same anyway. The notes must never contain the user's data, only descriptions of it [INFERENCE].
 
 ## Sources
 
