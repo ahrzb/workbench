@@ -1,6 +1,6 @@
 ---
 name: workbench-setup
-description: Sets up the folder it's installed in (`.agents/skills/workbench-setup/` inside the project) as a workbench project, where someone who doesn't write code builds small tools for their job or for themselves with Codex. Use when the user asks to set this folder up as a workbench.
+description: Sets up the folder it's installed in (`.agents/skills/workbench-setup/` inside the project) as a workbench project, where someone who doesn't write code builds small tools with Codex, with safeguards and a method. Use when the user asks to set this folder up as a workbench.
 ---
 
 # Set up a workbench
@@ -11,7 +11,7 @@ This skill lives inside the project folder it sets up, at `.agents/skills/workbe
 
 1. **Check the folder.** Run `pwd`/`Get-Location` and list it. This skill folder and an unpacked download of it don't count as the user's files.
    - Already has `.workbench/`: it's set up. Delete this skill folder, say so, and ask them to open a new chat here.
-   - It's their home folder, Desktop, Documents, Downloads or a drive root, or it holds unrelated files: suggest a new empty folder with a name from their work (e.g. `Supplier bills`). Delete this skill folder (and `.agents/` if that leaves it empty) so nothing stays behind, and stop until they open Codex in the new folder and paste the install line again.
+   - It's their home folder, Desktop, Documents, Downloads or a drive root, or it holds unrelated files: suggest a new empty folder named after what the tool is for (e.g. `Club members`). Delete this skill folder (and `.agents/` if that leaves it empty) so nothing stays behind, and stop until they open Codex in the new folder and paste the install line again.
    - It's inside a synced or shared place (a path under `$env:OneDrive`, `$env:OneDriveCommercial`, a folder named like `OneDrive`, `Dropbox`, `Google Drive`, `iCloud`, `Box`, or a network path starting with `\\`): suggest a local folder instead, `%USERPROFILE%\Workbench\<name>` (macOS: `~/Workbench/<name>`), because notes and the tool's code would sync from there. Delete this skill folder as above and stop.
 2. **Say what happens, in 2 lines:** "I'll add the workbench files to this folder. Codex will ask you to approve that once."
 3. **Copy the template and remove this skill folder in one command, with approval.** The template is the `template/` folder inside this skill folder. Codex protects `.agents/` once it exists, so this command writes into a protected folder: run it with approval from the start (ask for escalated permissions; reason, in plain words: "Add the workbench files to this folder and remove the setup files").

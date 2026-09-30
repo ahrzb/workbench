@@ -1,4 +1,4 @@
-# The Build Loop: Iterating One Feature at a Time with an Office Worker Who Doesn't Code
+# The Build Loop: Iterating One Feature at a Time with a Non-Technical User Who Doesn't Code
 
 Scope: what happens after the interview. The AI builds a first slice, then grows the app with the user one small change at a time. This file covers the shape of one iteration, scope-creep handling, keeping the user unstuck, and knowing when to stop. Evidence tags: **[study]** = peer-reviewed or measured, **[doc]** = official tool documentation, **[practice]** = practitioner writing or incident report, **[inference]** = my synthesis, not directly sourced, **[LOCAL]** = tested on this machine (Windows 11, no admin), **[UNVERIFIED]** = not confirmed from a primary source. The user-facing word is "save point"; "commit" stays inside the tooling.
 
@@ -19,7 +19,7 @@ Scope: what happens after the interview. The AI builds a first slice, then grows
 8. **Verify before claiming, and say what was verified.** Without explicit prompting, Claude "would fail to recognize that the feature didn't work end-to-end", marked features done prematurely, and later sessions "declared the job done" early; accuracy improved when it tested as a human user would [10]. Willison: without tests "your agent might claim something works without having actually tested it at all, plus any new change could break an unrelated feature" [3]. Claude Code docs: "Have Claude show evidence rather than asserting success" and "If you can't verify it, don't ship it" [9]. Keep a tiny automated smoke check (starts, does the core job, data survives a restart) and grow it by one check per delivered change, so the "Things that work" list doubles as the regression list [10]. Regression testing is rare in end-user tooling [5], so the AI must supply it.
 9. **Hand back with one concrete "try this now" and a stated expected result.** Feedback showing values without saying whether they are correct raised overconfidence in spreadsheet users, and 5–23% of end-user correctness judgments were wrong, mostly calling wrong values right [5]. Do not ask "does it look good?"; ask the user to do a specific action and compare against a specific expected outcome. Understanding barriers ("it didn't do what I expected") were the barrier type learners most often could not overcome (34 of 38) [6]; an expected result closes that gulf of evaluation [6]. Keep the try-step to about a minute: each check spends their attention, and Blackwell's model says people invest attention only when cost, risk and payoff look favourable [7][5].
 10. **Treat the user's reaction as the next requirement, not as a verdict.** Intent expands through evaluating output; in every studied session goals grew beyond the original plan after seeing results, sometimes prompted by a new need discovered in use (a "stop" button) [1]. End users often cannot state requirements until implementation and use [5]. Classify their reply (template below) and let real use, not speculation, choose what comes next.
-11. **Show visible payoff quickly and make risk feel low.** In attention-investment terms, programming has higher cost and risk than direct manipulation, so people abandon when risk outweighs reward [7]. Empirically, unhelpful LLM responses raised the odds of abandoning the tool about 11-fold in a task study (students and developers, not office workers) [21]. So: early iterations must visibly work, "go back" must always be on offer, and a failure streak must trigger the reset rule (rec 16), not a fourth patch.
+11. **Show visible payoff quickly and make risk feel low.** In attention-investment terms, programming has higher cost and risk than direct manipulation, so people abandon when risk outweighs reward [7]. Empirically, unhelpful LLM responses raised the odds of abandoning the tool about 11-fold in a task study (students and developers, not non-technical users) [21]. So: early iterations must visibly work, "go back" must always be on offer, and a failure streak must trigger the reset rule (rec 16), not a fourth patch.
 
 ### B. Scope and the smallest next change
 
@@ -58,7 +58,7 @@ Done: you can now [what the user can do, one sentence, in their words].
 
 Try it now (about a minute):
 1. [open/start step, or "keep the app open"]
-2. [one specific action, using an example from their own work, e.g. "add a 12 Oct entry for 'Printer paper, 18.50'"]
+2. [one specific action, using an example from their own job or project, e.g. "add a 12 Oct entry for 'Printer paper, 18.50'" or, for a club, "add a 12 Oct entry for 'Hall hire, 40.00'"]
 
 You should see: [specific expected result].
 If you see something different, just tell me what you saw. Or say "go back" and I'll restore the earlier version.

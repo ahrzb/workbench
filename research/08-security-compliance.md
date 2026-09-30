@@ -1,6 +1,6 @@
 # Security and compliance
 
-Scope: what the skill does by default to keep the user, their data and their employer safe, when it must stop and ask someone else, and how it hands the user a message they can forward. The skill is general-purpose. The persona is a non-programmer office worker who uses ChatGPT / Codex, has no admin rights, and wants routine work done. Research date 2026-09-29.
+Scope: what the skill does by default to keep the user, their data and anyone else involved (an employer, a client, other people) safe, when it must stop and ask someone else, and how it hands the user a message they can forward. The skill is general-purpose. The persona is a non-programmer who uses ChatGPT / Codex, has no admin rights, and wants a small tool built for a job, a hobby, a club or their household. Research date 2026-09-29.
 
 Tags: `[UNVERIFIED]` means not confirmed from a primary page. `[INFERENCE]` is my reasoning. `[LOCAL]` means observed on this machine (Windows 11 26200, Codex CLI 0.157.1, signed in with ChatGPT).
 
@@ -51,7 +51,7 @@ Tags: `[UNVERIFIED]` means not confirmed from a primary page. `[INFERENCE]` is m
 6. **The user never gets a technical question. The worst case is a forwardable question.**
    - The AI makes technical choices itself, and checks facts about the machine itself (preflight in [03a](03a-default-stack-runtime.md), account type in rec 4).
    - What only someone else can answer (a company policy, a blocked download, IT permission) becomes one self-contained message, with a default for what happens meanwhile. It is logged in the project notes under "Waiting on".
-   - The user is asked only about their own work and their own preferences, and about results they can see.
+   - The user is asked only about their own situation and their own preferences, and about results they can see.
 
 7. **At any point in any discussion, the user can ask for a message to send.** "Write this up for IT" or "for a tech-savvy friend" produces a ready-to-send message about whatever is being discussed, even when the AI didn't suggest it. The skill never describes the user as someone who doesn't know computers: they use computers all day, they just don't write code. Rules:
    - It stands alone: the reader has not seen the chat.

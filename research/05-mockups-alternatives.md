@@ -1,6 +1,6 @@
 # Showing 2–3 Alternative Mockups Before Building Each Feature
 
-Scope: evidence and rules for the "before each feature, show 2–3 alternative designs; the user picks" step. The user is an office worker who uses a computer all day but doesn't write code, and is the expert on their own work. The stack is Electron with an HTML UI (fallback: one self-contained HTML file), no admin rights, local-first ([03a](03a-default-stack-runtime.md)). Because the app renders HTML, an HTML sketch is made of the same material as the final app. Research only.
+Scope: evidence and rules for the "before each feature, show 2–3 alternative designs; the user picks" step. The user uses a computer all day but doesn't write code, and is the expert on their own job or project. The stack is Electron with an HTML UI (fallback: one self-contained HTML file), no admin rights, local-first ([03a](03a-default-stack-runtime.md)). Because the app renders HTML, an HTML sketch is made of the same material as the final app. Research only.
 
 ## Recommendations
 
@@ -46,7 +46,7 @@ Scope: evidence and rules for the "before each feature, show 2–3 alternative d
 
 12. **Ask for reactions and problems, not designs.** Ask the user to run one real task from their week through each option and say what bugs them. In Tohidi, seeing three designs did not produce more substantial suggestions ("usability testing … is a means to identify problems, not provide solutions"), because novices lack the language and hesitate to step into expert territory [2]. Explicitly offer "none of these" and rotate/mark option order as arbitrary, because first-seen versions bias later ones [3][2].
 
-13. **Give the recommendation last, once, labelled as a default.** Choice overload is reduced when a dominant option is available and preference uncertainty is low [12]. The user is expert in their work but new to choosing screen designs, so preference uncertainty about the screens is high and a clear default helps. But users withhold criticism to please the designer [2], so show the options neutrally, ask the open question first, then add "If you have no strong feeling, I'd start with B because …". Whether an AI recommendation suppresses critique is untested [INFERENCE].
+13. **Give the recommendation last, once, labelled as a default.** Choice overload is reduced when a dominant option is available and preference uncertainty is low [12]. The user is expert in their own job or project but new to choosing screen designs, so preference uncertainty about the screens is high and a clear default helps. But users withhold criticism to please the designer [2], so show the options neutrally, ask the open question first, then add "If you have no strong feeling, I'd start with B because …". Whether an AI recommendation suppresses critique is untested [INFERENCE].
 
 14. **Log the decision.** Record chosen option, rejected options, and one-line reason in a small project file (in the user's vocabulary). This prevents re-litigating and is cheap. [INFERENCE]
 

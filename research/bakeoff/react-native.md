@@ -147,7 +147,7 @@ No commercial licence is needed for anything I used.
 
 ## How a non-programmer would run it
 
-- **Not today.** The PDF path is broken and only a Debug build was made. If it were finished, the office worker would get the **whole** `windows\x64\Release` folder (exe + DLLs + `Bundle\`; a release build is untested) and double-click `ResumeParser.exe`. She needs **no** installer if the build is self-contained, but a Debug folder is 264 MB.
+- **Not today.** The PDF path is broken and only a Debug build was made. If it were finished, the user would get the **whole** `windows\x64\Release` folder (exe + DLLs + `Bundle\`; a release build is untested) and double-click `ResumeParser.exe`. She needs **no** installer if the build is self-contained, but a Debug folder is 264 MB.
 - To rebuild: `npm install`, then `powershell -File scripts\msb.ps1 -Config Debug -Bundle`, then run `windows\x64\Debug\ResumeParser.exe`. That needs VS Build Tools with C++ (admin-installed), Windows SDK, Node >= 22 and a **portable PowerShell 7** (`scripts\get-pwsh.ps1`).
 - To try it without dialogs: set `RESUME_PARSER_DEBUG_SAMPLES` (`;`-separated absolute paths) and `RESUME_PARSER_DEBUG_EXPORT` before launching a **Debug** build. `scripts\run-debug.ps1` does this with the samples in `samples\`.
 - Checks: `npm test` (Node), `node scripts/verify-xlsx.mjs <file>`.

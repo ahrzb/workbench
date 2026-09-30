@@ -1,6 +1,6 @@
-# Interviewing an Office Worker to Find the Smallest Useful Personal Tool
+# Interviewing a Non-Technical User to Find the Smallest Useful Personal Tool
 
-Scope: how an AI agent should interview an office worker who cannot name what they want, so it can pick a first version worth building. Sources were opened unless marked [snippet] (only search-result text seen) or [UNVERIFIED]. "[INFERENCE]" marks my own synthesis, not a sourced claim.
+Scope: how an AI agent should interview a non-technical user who cannot name what they want, so it can pick a first version worth building. Sources were opened unless marked [snippet] (only search-result text seen) or [UNVERIFIED]. "[INFERENCE]" marks my own synthesis, not a sourced claim.
 
 ## Recommendations
 
@@ -63,7 +63,7 @@ Use these as seeds, not lists; ask one at a time and adapt to the user's words.
 
 **Stage 1: find the episode (the user can't name a need)**
 
-- "Think back over this past week at work. Was there a moment you thought, 'ugh, there has to be a better way'? What was happening?"
+- "Think back over this past week, at work or at home. Was there a moment you thought, 'ugh, there has to be a better way'? What was happening?"
 - If none: "What did you do first thing Monday? … and then? Was any of it something you do again and again?"
 - "Which task do you most often put off, or do twice because something went wrong the first time?"
 - "Tell me about the last time you had to do that." [26]

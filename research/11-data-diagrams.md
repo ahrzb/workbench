@@ -14,7 +14,7 @@ There is a second, less obvious exit. Samples the user gives the AI go to OpenAI
 
 - **Text in the repo, kept by save points.** Save points take only `tools/<name>/NOTES.md` and `CONTEXT.md` per tool, plus a listed set of code and workbench files [REPO: `save.ps1` lines 20-25]. A new file type needs a line in both save scripts [REPO: `stack.md`, "Save points"]. Sketches are "never saved" [REPO: `stack.md`].
 - **Viewable with nothing installed.** The sketch page allows only inline script and style: `default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:` [REPO: `stack.md`, "Sketches"].
-- **No jargon.** The user is a tech-savvy office worker who does not write code. Notation names may appear in this note, never in what the AI says ([09](09-context-file.md)).
+- **No jargon.** The user is tech-savvy and does not write code. Notation names may appear in this note, never in what the AI says ([09](09-context-file.md)).
 - **Checkable.** The AI must be able to compare it with the code and stop when they differ.
 - **Small.** One person, small local tools, sometimes a few colleagues or a small private website. No certification, no paperwork for its own sake.
 
@@ -33,7 +33,7 @@ There is a second, less obvious exit. Samples the user gives the AI go to OpenAI
 
 ### Evidence on non-experts: thin
 
-I found no study of office workers reading pictures of their own small tools. What exists:
+I found no study of non-technical users reading pictures of their own small tools. What exists:
 
 - **Laypeople and DFDs** (McInnis et al., 2025): eight focus groups, 34 adults, shown DFDs of a service's data handling with no training beyond clarifying questions. DFDs could supplement text and prompt questions, but "do not replace" it. Several found them confusing ("too busy … too complicated"). Participants wanted simple diagrams, straight lines (curves and loops distracted), a legend, and the person put in the middle; one asked "Where does it start?" [24]. This is opinion from focus groups, not a comprehension test, and the diagrams were about consent, not tools.
 - **Graphics vs text** (Ottensooser et al., 2012): students with no training in process notation gained understanding from a text description but not from a BPMN diagram; trained readers gained from both [23]. It is BPMN, not DFDs, with students.
@@ -41,7 +41,7 @@ I found no study of office workers reading pictures of their own small tools. Wh
 - **Notation design** (Moody, 2009, nine principles): summaries list a recommended maximum of about six symbols, text added to pictures (dual coding), ways to manage size, and different notations for different audiences [21][22]. I read the summary [22], not Moody's full text.
 - **OWASP itself** says brainstorming on a whiteboard is "particularly useful when less technical individuals participate", because it removes "barriers to understanding and applying the components of DFD models" [4].
 
-`[INFERENCE]` The signals agree on four things: keep it small, keep the user's words, put the same content in text next to the picture, and have the user check it against their own work. The recommendations follow those four. They are not proven for this audience; see "Open questions".
+`[INFERENCE]` The signals agree on four things: keep it small, keep the user's words, put the same content in text next to the picture, and have the user check it against what they know. The recommendations follow those four. They are not proven for this audience; see "Open questions".
 
 ## The tools
 
@@ -116,7 +116,7 @@ I found no study of office workers reading pictures of their own small tools. Wh
 
     **Respect "Whose data".** The building exit is always a row in the table, because it is a fact. It is mentioned in chat, and in the "Leaves this computer" line, only under the same condition `safety.md` already sets for its one-line note: work with rules, or not sure, or other people's data. For "their own" or "work with no rules to mind" the rule "nothing more to say, now or later" stands [REPO: `safety.md`]. The map adds no warnings of its own.
 
-11. **Tie to `CONTEXT.md`.** Things the data is called (the "Things" section) name the boxes and the "what" column; the verbs are the "Actions"; a "when … then …" rule from Rules becomes the "when" of a row ("only when you click Read resumes"), and "never change the original" becomes the "read only" arrows. A box with no word yet gets the naming dialogue from [09](09-context-file.md) rec 3: a name offered in a sentence about their work, their answer decides. Add "the words on the map" to the pre-send check (09, rec 15).
+11. **Tie to `CONTEXT.md`.** Things the data is called (the "Things" section) name the boxes and the "what" column; the verbs are the "Actions"; a "when … then …" rule from Rules becomes the "when" of a row ("only when you click Read resumes"), and "never change the original" becomes the "read only" arrows. A box with no word yet gets the naming dialogue from [09](09-context-file.md) rec 3: a name offered in a sentence about their own case, their answer decides. Add "the words on the map" to the pre-send check (09, rec 15).
 
 ### E. Staying current, sharing, asking for UML
 
@@ -281,7 +281,7 @@ Row 4 is where `safety.md`'s "Other people's data" line applies, the forwardable
 
 ## Open questions
 
-- **Do users read the picture correctly?** Nothing found tests office workers on data maps of their own tools. The design leans on the four agreeing signals above; the real test is the user's reaction to "Is this right? Does anyone else get or see any of it?" at milestone 2. Worth a hands-on check with two or three users.
+- **Do users read the picture correctly?** Nothing found tests non-technical users on data maps of their own tools. The design leans on the four agreeing signals above; the real test is the user's reaction to "Is this right? Does anyone else get or see any of it?" at milestone 2. Worth a hands-on check with two or three users.
 - **Does the Codex desktop app draw Mermaid in chat?** `[UNVERIFIED]`. The changelog and one issue say it draws it in Markdown previews [17][18]. Only relevant if the author later wants Mermaid in chat; the recommendation doesn't depend on it.
 - **Does the generator survive real tools?** The prototype ran two examples in Edge headless [LOCAL]. It wasn't run on macOS, in the Electron window, or with a website (a fourth party, several outside boxes).
 - **What OpenAI does with page pictures and samples** wasn't researched here; `safety.md` already carries the wording for that.

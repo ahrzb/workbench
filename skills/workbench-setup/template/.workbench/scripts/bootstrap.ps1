@@ -1,7 +1,10 @@
 # Downloads the project's tools into .tools\ (Windows). No admin rights, nothing installed.
 #   Node.js  -> .tools\node   (official zip, SHA-256 checked against nodejs.org's SHASUMS256.txt)
 #   MinGit   -> .tools\git    (only when git is not already on PATH; checked against GitHub's asset digest)
-# Safe to run again: it skips what is already there.
+#   The design engine of the bundled impeccable skill (.agents\skills\impeccable): pinned version and
+#   SHA-256, signed by its publisher; kept in .tools\impeccable and placed where its launcher looks
+#   first, so it never downloads anything into the user's home folder.
+# Safe to run again: it skips what is already there (and puts the engine back after an update).
 # -NodeVersion v24.21.0 fetches that exact Node instead of the default (to rebuild a tool with the
 # Node its NOTES "Built with" records; move .tools\node aside first).
 param([string]$NodeVersion = 'v24.21.0')
@@ -54,4 +57,26 @@ if ((Get-Command git -ErrorAction SilentlyContinue) -or (Test-Path -LiteralPath 
   if ($LASTEXITCODE -ne 0) { throw 'Unpacking MinGit failed' }
   Remove-Item -LiteralPath $zip
   "MinGit $($rel.tag_name) ready."
+}
+
+# --- design engine for .agents\skills\impeccable (pinned; Windows x64 build, which also runs on ARM64)
+$engineVersion = '0.1.8'
+$engineSha = '5f39934bdbc24cd414173fd55a7bbd7a3b497646ce3d5124ba93eb591fa0ddcd'
+$skillScripts = Join-Path $root '.agents\skills\impeccable\scripts'
+if (Test-Path -LiteralPath $skillScripts) {
+  $pinned = (Get-Content -LiteralPath (Join-Path $skillScripts 'VERSION') -ErrorAction SilentlyContinue | Select-Object -First 1)
+  if ($pinned -and $pinned.Trim() -ne $engineVersion) { throw "The design skill wants engine $($pinned.Trim()) but this script pins ${engineVersion}; update the workbench." }
+  $cache = Join-Path $tools "impeccable\$engineVersion\impeccable.exe"
+  if (-not (Test-Path -LiteralPath $cache)) {
+    New-Item -ItemType Directory -Force -Path (Split-Path $cache) | Out-Null
+    Get-Checked "https://github.com/pbakaus/impeccable/releases/download/engine-v$engineVersion/impeccable-windows-x64.exe" "$cache.part" $engineSha
+    Move-Item -LiteralPath "$cache.part" -Destination $cache
+  }
+  $arch = if ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64') { 'arm64' } else { 'x64' }
+  $sibling = Join-Path $skillScripts "bin\windows-$arch\impeccable.exe"
+  if (-not (Test-Path -LiteralPath $sibling)) {
+    New-Item -ItemType Directory -Force -Path (Split-Path $sibling) | Out-Null
+    Copy-Item -LiteralPath $cache -Destination $sibling
+  }
+  "Design engine $engineVersion ready."
 }

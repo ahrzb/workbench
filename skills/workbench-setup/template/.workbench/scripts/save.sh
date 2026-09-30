@@ -13,9 +13,15 @@ allowed='^(\.gitignore|\.gitattributes|AGENTS\.md)$
 ^\.agents/skills/workbench/[A-Za-z0-9_./-]+\.(md|ts|tsx|mts|mjs|css|html|jsonc|txt)$
 ^\.agents/skills/workbench/starters/[a-z0-9-]+/(package|package-lock|tsconfig|components)\.json$
 ^\.agents/skills/workbench/starters/web/public/[A-Za-z0-9_./-]+\.json$
+^\.agents/skills/impeccable/[A-Za-z0-9_./-]+\.(md|json|toml|yaml|js|cmd)$
+^\.agents/skills/impeccable/(LICENSE|scripts/VERSION|scripts/impeccable)$
+^\.impeccable/config\.json$
 ^\.workbench/scripts/(bootstrap\.ps1|run\.cmd|git\.cmd|save\.ps1|save\.sh|try\.ps1|data-map\.ps1|account\.ps1|account\.sh)$
 ^\.workbench/(session-brief\.md|NOTES\.md|VERSION|account)$
 ^tools/[a-z0-9-]+/(NOTES|CONTEXT)\.md$
+^tools/[a-z0-9-]+/(PRODUCT|DESIGN)\.md$
+^tools/[a-z0-9-]+/\.impeccable/(config|design)\.json$
+^tools/[a-z0-9-]+/\.impeccable/(surfaces|critique)/[A-Za-z0-9_.-]+\.md$
 ^tools/[a-z0-9-]+/app/(package\.json|package-lock\.json|tsconfig\.json|index\.html|build\.mjs|forge\.config\.ts|forge\.env\.d\.ts|vite\.config\.ts|wrangler\.jsonc|components\.json|README\.md)$
 ^tools/[a-z0-9-]+/app/vite\.(main|preload|renderer)\.config\.mts$
 ^tools/[a-z0-9-]+/app/src/[A-Za-z0-9_./-]+\.(ts|tsx|mts|mjs|css|html)$
@@ -25,8 +31,8 @@ allowed='^(\.gitignore|\.gitattributes|AGENTS\.md)$
 
 list() {
   { find . -maxdepth 1 -type f
-    for d in .codex .codex/hooks .workbench .workbench/scripts tools/*/ tools/*/app tools/*/app/scripts; do [ -d "$d" ] && find "$d" -maxdepth 1 -type f; done
-    for d in .agents/skills/workbench tools/*/app/src tools/*/app/test tools/*/app/public; do [ -d "$d" ] && find "$d" -type f -not -path '*/node_modules/*'; done
+    for d in .codex .codex/hooks .impeccable .workbench .workbench/scripts tools/*/ tools/*/app tools/*/app/scripts tools/*/.impeccable tools/*/.impeccable/surfaces tools/*/.impeccable/critique; do [ -d "$d" ] && find "$d" -maxdepth 1 -type f; done
+    for d in .agents/skills/workbench .agents/skills/impeccable tools/*/app/src tools/*/app/test tools/*/app/public; do [ -d "$d" ] && find "$d" -type f -not -path '*/node_modules/*'; done
   } | sed 's|^\./||; s|//|/|g' | grep -v '\(^\|/\)\.env' | grep -E "$allowed" | sort -u
 }
 

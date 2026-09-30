@@ -52,7 +52,7 @@ git, run by you; the user never sees a git command. They say "go back to before 
 Three starters in `starters/`; pick without asking:
 - **`starters/electron/`** (the default): a desktop program. Anything that reads files on this computer, keeps data, exports to Excel or uses AI.
 - **`starters/html/`**: one HTML file opened from disk. When programs can't run here (a download or the app is blocked, Smart App Control), or the tool is small and will be shared with a few people. No AI feature, data only in that browser. Its `README.md` says how to build and ship it.
-- **`starters/web/`**: a website, when the user wants one (a portfolio, a page others open in their browser, a form colleagues fill in). React, React Router, React Query, shadcn and Tailwind, hosted on the user's own Cloudflare account, **private behind Cloudflare Access until the user chooses public** ([safety.md](safety.md#websites)). Local checks use a preview on `127.0.0.1` only, stopped as soon as you're done: the one exception to "no ports". Its `README.md` has setup, deploy, private/public and SEO.
+- **`starters/web/`**: a website, when the user wants one (a portfolio, a page others open in their browser, a form a group fills in). React, React Router, React Query, shadcn and Tailwind, hosted on the user's own Cloudflare account, **private behind Cloudflare Access until the user chooses public** ([safety.md](safety.md#websites)). Local checks use a preview on `127.0.0.1` only, stopped as soon as you're done: the one exception to "no ports". Its `README.md` has setup, deploy, private/public and SEO.
 
 - **Start a tool's app** only when its NOTES "Milestones" show the plan agreed and "the shape" (with the data map) done `[x]` ([build.md](build.md), milestones). If not, stop and do those first, whatever "go on" or "build it" said: the plan and the shape are what they agreed to. Then: copy the starter into `tools/<name>/app/` and follow the starter's `README.md` (for Electron: set `TOOL_ID` once, never change it; `run.cmd npm.cmd ci`; `run.cmd npx.cmd install-electron --no`). Its `README.md` lists the security settings; keep every one of them. Record `TOOL_ID` in the tool's NOTES under Data, and Starter and Blocks under "Built with".
 - Electron + TypeScript, Forge + Vite, npm only. Electron is pinned exactly.
@@ -98,10 +98,12 @@ About 1.5 GB for the first Electron tool in a project, then about 0.4 GB more pe
 
 ## Sketches
 
-At a real fork, one static HTML file with 2-3 options side by side: greyscale, a "SKETCH - not the real app" banner, sample data from the user's work (real rows as "Whose data" in `safety.md` allows), all inline, and this in `<head>` so it loads nothing external:
+At a real fork, one static HTML file with 2-3 options side by side: greyscale (they judge how it's used, not how it looks), a "SKETCH - not the real app" banner, sample data from their own files (real rows as "Whose data" in `safety.md` allows), all inline, and this in `<head>` so it loads nothing external. The one exception to greyscale: look directions for a website meant to be looked at ([design.md](design.md)).
 
 ```html
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:">
 ```
 
 Options differ in how the user would use the tool (layout, flow, what's automatic), one thing at a time; name each in their words; recommendation last; "none of these" is always fine. Save sketches in `tools/<name>/sketches/` and open the file for the user.
+
+How the real screens look is [design.md](design.md): the bundled design skill, from a tool's first real screen on.

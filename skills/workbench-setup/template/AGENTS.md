@@ -1,6 +1,6 @@
 # Workbench project
 
-This folder is a workbench project: someone who doesn't write code builds small tools here, for their job or for themselves, each in its own folder under `tools/`. The skill in `.agents/skills/workbench/` has the full process.
+This folder is a workbench project: someone who doesn't write code builds small tools here by describing them, each in its own folder under `tools/`. The skill in `.agents/skills/workbench/` has the full process and the safeguards.
 
 At the start of every new chat:
 - If your context already contains "Workbench session brief", the startup hook ran: follow that brief and nothing below (no tip about the startup check).

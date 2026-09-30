@@ -1,6 +1,6 @@
 # CONTEXT.md and how the AI asks questions
 
-Scope: the one file that holds the user's own words for their work, the rules that stop the AI from burying the user in questions, and how the AI sorts what the user says into goal, needs, requirements, guidelines, wants and solutions. Based on Matt Pocock's `domain-modeling` and `grilling` skills [1][2][3][4], adapted for a user who is not a developer. It replaces the `our-words.md` glossary proposed in [02](02-ontology-vocabulary.md). Research date 2026-09-29.
+Scope: the one file that holds the user's own words for what they are building, the rules that stop the AI from burying the user in questions, and how the AI sorts what the user says into goal, needs, requirements, guidelines, wants and solutions. Based on Matt Pocock's `domain-modeling` and `grilling` skills [1][2][3][4], adapted for a user who is not a developer. It replaces the `our-words.md` glossary proposed in [02](02-ontology-vocabulary.md). Research date 2026-09-29.
 
 ## The failure this prevents
 
@@ -14,12 +14,12 @@ The AI keeps this picture in mind when deciding what to check itself and what to
 - **Builds tools for their job and just as often for themselves**: a job hunt, a club, household bills, a hobby. The topic doesn't tell which: a resume parser may be for their own job search as easily as for hiring. (Until v0.2.0 the brief described "an office worker building tools for their own work, often on a company laptop"; the user found the result paranoid, because every topic got read as company data with compliance attached. v0.2.1 records the wider persona.)
 - **The expert on their own work and life.** They know what their documents look like, what's normal and what's odd, which cases are common, where the files are kept, who does what, which rules apply to them, and who to ask.
 - **Judges their own risks.** Whether something is for work and whether company rules cover it is their answer to give, asked once in one line ([08](08-security-compliance.md) rec 2); the AI takes it and moves on.
-- **Busy.** They want a task off their plate, not a new hobby. Short messages, few questions, visible progress.
+- **Wants it done.** They want a task off their plate, not a new hobby to learn. Short messages, few questions, visible progress.
 - **On ChatGPT / Codex, without admin rights**, sometimes on a company laptop, sometimes their own.
 
 **How they use the workbench.** They say what they want in plain words and expect the AI to get on with it: build, check, show the result. They want a working tool, not safety briefings: every warning, extra check or question they didn't ask for costs them time, so one is said only when it saves them from something they'd regret (losing data, publishing something, breaking a rule they've said applies). What the AI learns about them (what they build tools for, whether company rules generally apply, how much explaining they want) goes in a few plain lines under "About the user" in `.workbench/NOTES.md`, picked up from the conversation, never from an interview, and read before asking anything.
 
-What they can answer faster than the AI can check: where something is, which example is typical, whether a result looks right, what a column or code means in their work, how often something happens, who owns a decision. What the AI checks better: anything about the machine, file formats, whether something runs, counts and patterns across many files.
+What they can answer faster than the AI can check: where something is, which example is typical, whether a result looks right, what a column or code means in their case, how often something happens, who owns a decision. What the AI checks better: anything about the machine, file formats, whether something runs, counts and patterns across many files.
 
 ## Recommendations
 
@@ -34,7 +34,7 @@ What they can answer faster than the AI can check: where something is, which exa
 
 3. **Names are settled in a short dialogue; the AI adapts to the user, never the reverse.** Picking a name in your head is hard; testing one in a sentence is easy. So:
    - **The user has a word:** use it. If the AI thinks another word is clearer, it just asks, once, with the reason: "You call these 'items'. Would 'bill lines' be clearer, since each one is a line on a bill? Either is fine." Whatever the user says, that's the word.
-   - **The user has no word** (common for things they've never had to name): the AI offers one, in a sentence about their own work, and lets them try it: "I'll call the list of unpaid bills the 'to-pay list', as in 'the Acme bill is on the to-pay list'. Does that sound right, or would you say it differently?"
+   - **The user has no word** (common for things they've never had to name): the AI offers one, in a sentence about their own case, and lets them try it: "I'll call the list of unpaid bills the 'to-pay list', as in 'the Acme bill is on the to-pay list'. Does that sound right, or would you say it differently?"
    - **Nothing is locked in.** If a name feels wrong later, the user says so and it changes everywhere.
    - Screens, buttons, file names and code names use the settled words. Borrowed software words pass the three-question gate in [02](02-ontology-vocabulary.md) rec 8, at most ~5 at a time.
 
@@ -46,13 +46,13 @@ What they can answer faster than the AI can check: where something is, which exa
 
 ### B. How the AI asks (the guard against the wall of jargon)
 
-7. **Check or ask, whichever is quicker for the user.** Technical facts (the machine, file formats, whether something works) are always the AI's job. Facts about the user's work are often quicker for the user to answer than for the AI to dig out (see "Who the user is"). Then ask, and offer to check instead: "I can go through all the bills to find the usual layout, but you probably know: is the Acme one typical?" Never ask something the user couldn't know, and never ask twice what the AI has already checked [4].
+7. **Check or ask, whichever is quicker for the user.** Technical facts (the machine, file formats, whether something works) are always the AI's job. Facts about the user's own case are often quicker for the user to answer than for the AI to dig out (see "Who the user is"). Then ask, and offer to check instead: "I can go through all the bills to find the usual layout, but you probably know: is the Acme one typical?" Never ask something the user couldn't know, and never ask twice what the AI has already checked [4].
 
 8. **Technical choices are never questions.** Storage, formats, libraries, structure, error handling: the AI picks the boring default and moves on ([08](08-security-compliance.md) rec 6). If the choice later needs someone else, it becomes a forwardable message, not a question to the user.
 
 9. **Ask as little as possible, because everything can change.** The AI asks only when a wrong guess would be expensive: it would touch the user's real data, cost money, involve other people, or be hard to undo. This mirrors Matt's bar for writing a decision record: hard to reverse, surprising without context, a real trade-off [2]. Everything else: pick a sensible default, say it in one line ("I'll put the newest invoices at the top; easy to change"), and let the user's reaction to the working tool correct it ([06](06-build-loop.md) rec 10).
 
-10. **A question the user can answer from their own work, today.** Allowed: what happened last time, what they'd do with a real example, which of two visible results they prefer, whether something on screen is right. Not allowed: hypotheticals they've never met ("what if two suppliers have the same name?"), anything about how the software works inside, anything needing a word not in `CONTEXT.md` or everyday language.
+10. **A question the user can answer from their own experience, today.** Allowed: what happened last time, what they'd do with a real example, which of two visible results they prefer, whether something on screen is right. Not allowed: hypotheticals they've never met ("what if two suppliers have the same name?"), anything about how the software works inside, anything needing a word not in `CONTEXT.md` or everyday language.
 
 11. **Every question comes with the AI's recommended answer**, so "yes" or silence is always a valid reply. Matt's grilling puts each recommendation on its own line [4]; here it reads: "I'd suggest X, because Y. OK?"
 
@@ -62,7 +62,7 @@ What they can answer faster than the AI can check: where something is, which exa
 
 14. **"I don't know" is the AI's mistake, not the user's.** Take the default, note it under "Not sure yet" if it's about a word, and move on. Never ask the same question again in different words.
 
-15. **Pre-send check on every message.** Every word about their work must be in `CONTEXT.md` or plain everyday language; every question must pass recs 7–12 and 16–17. If not, rewrite before sending ([02](02-ontology-vocabulary.md) rec 20).
+15. **Pre-send check on every message.** Every word about their own case must be in `CONTEXT.md` or plain everyday language; every question must pass recs 7–12 and 16–17. If not, rewrite before sending ([02](02-ontology-vocabulary.md) rec 20).
 
 ### C. Two blind spots the AI covers for the user
 
@@ -82,7 +82,7 @@ What they can answer faster than the AI can check: where something is, which exa
 
     | Kind | What it is | The AI's test | Example |
     |---|---|---|---|
-    | **Goal** | What's different in the user's work once this works. Usually one. | "What would be different if this worked?" | "Month-end takes one day, not three." |
+    | **Goal** | What's different for the user once this works. Usually one. | "What would be different if this worked?" | "Month-end takes one day, not three." |
     | **Need** | Without it the goal isn't met. | "If the tool did everything else but not this, would you still use it tomorrow?" Yes → it's a want. | "See which bills are still unpaid." |
     | **Requirement** | Fixed by someone or something other than the user's taste: a company rule, the law, another system, the shape of the data. | "Who says so, and what happens if we don't?" "Nobody, it's how I do it" → it's a guideline. | "The boss only reads .xlsx." "Bills arrive as scanned PDFs." |
     | **Guideline** | A preference about how. Can bend when it costs too much. | "Would it be OK if it were different, if that made it simpler?" | "Keep it looking like our sheet." |
@@ -140,10 +140,10 @@ Rules for the template: definitions are one or two sentences and say what a thin
 
 | | Matt Pocock (`domain-modeling`) | Here |
 |---|---|---|
-| Who writes the words | Developer and AI sharpen them together; the AI proposes precise terms [1] | The user's words by default. The AI may suggest a better name or offer one where the user has none, as a one-line question tested in a sentence from their work; the user's answer decides |
+| Who writes the words | Developer and AI sharpen them together; the AI proposes precise terms [1] | The user's words by default. The AI may suggest a better name or offer one where the user has none, as a one-line question tested in a sentence from their own case; the user's answer decides |
 | Challenging vague words | Interrupts to ask which of two things you meant [1] | Only when it matters for the next step; otherwise "Not sure yet" |
 | Decision records | ADRs, when a decision clears three tests [2] | None for the user; the same three tests decide whether a question is worth asking at all |
-| Questions | Rounds of several, each with a recommendation [4] | A dialogue: short turns, one question at a time, each with a recommendation, only about the user's own work |
+| Questions | Rounds of several, each with a recommendation [4] | A dialogue: short turns, one question at a time, each with a recommendation, only about what the user knows first-hand |
 | Extra sections | Relationships, flagged ambiguities [3] | Rules, borrowed words, careful words, retired words ([02](02-ontology-vocabulary.md)) |
 | Reader | Developers and agents | The user and the AI |
 

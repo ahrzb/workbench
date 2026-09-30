@@ -163,7 +163,7 @@ Other hardening in `tauri.conf.json`: `withGlobalTauri: false`, `object-src 'non
 
 ## How a non-programmer would run it
 
-- **The office worker never runs a build.** She needs the per-user installer from a release build: `src-tauri/target/release/bundle/nsis/Resume Parser_0.1.0_x64-setup.exe` (2.76 MB). Double-click it (or run it with `/S`). It installed with no UAC to `%LOCALAPPDATA%\Resume Parser` and made a Desktop and a Start-menu shortcut (observed). She then double-clicks **Resume Parser**.
+- **The user never runs a build.** She needs the per-user installer from a release build: `src-tauri/target/release/bundle/nsis/Resume Parser_0.1.0_x64-setup.exe` (2.76 MB). Double-click it (or run it with `/S`). It installed with no UAC to `%LOCALAPPDATA%\Resume Parser` and made a Desktop and a Start-menu shortcut (observed). She then double-clicks **Resume Parser**.
 - **Is packaging needed?** For someone without the toolchain, yes: you must hand her the installer or the bare exe. A bare `resume-parser-tauri.exe` (10.7 MB release) also runs by double-click if WebView2 is present. Running from `dist/` in a browser is not the same app (no native dialogs, no persistent skill file).
 - **Where it is fragile:**
   - If the file reaches her by browser download or email it will carry Mark-of-the-Web, so SmartScreen may warn, and Smart App Control (if she has it enforcing) blocks unsigned code with no per-app bypass. Both **[UNVERIFIED]** here; only local-path behaviour was tested. Copying it from a USB stick or a network share by Explorer also needs testing **[UNVERIFIED]**.

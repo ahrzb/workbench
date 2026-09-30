@@ -2,6 +2,12 @@
 
 Written for the people using the workbench. The AI reads the entries newer than a project's version when it updates.
 
+## 0.2.5 (2026-09-30)
+
+- Better-looking, clearer tools: the workbench now brings a design skill (impeccable) that the AI uses for every screen, with a check before each demo for hard-to-read text and the generic "made by AI" look. You see only the result.
+- It works offline and stays inside the project: its program is downloaded once into the project with the other build tools, and it never checks for updates or phones home.
+- The workbench is described for anyone who doesn't write code, whatever the tools are for.
+
 ## 0.2.4 (2026-09-30)
 
 - Keep using your tool while it's being changed. New versions open as a separate "trying out" copy, next to the one you use, on a practice copy of your data. Your usual copy and your real data only change when you say "use this version". Codex asks you to allow opening that window each time.

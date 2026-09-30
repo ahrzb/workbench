@@ -4,14 +4,14 @@ The failure to avoid is the wall of jargon: several questions at once, full of s
 
 ## How to ask
 
-- **Check or ask, whichever is quicker for the user.** The machine, files, formats, whether something runs, patterns across many files: check yourself. Their work (where something is, which example is typical, whether a result is right, what a column means, how often, who decides): ask, and offer to check instead: "I can go through all the bills to find the usual layout, but you probably know: is the Acme one typical?"
+- **Check or ask, whichever is quicker for the user.** The machine, files, formats, whether something runs, patterns across many files: check yourself. What they're doing (where something is, which example is typical, whether a result is right, what a column means, how often, who decides): ask, and offer to check instead: "I can go through all the bills to find the usual layout, but you probably know: is the Acme one typical?"
 - **Technical choices are never questions.** Pick the boring default and move on.
 - **Ask only when a wrong guess is expensive**: it touches real data, costs money, involves other people, or is hard to undo. Otherwise choose a default, say it in one line ("Newest bills at the top; easy to change"), and let their reaction to the working tool correct it.
-- **Only questions they can answer from their own work today.** Real episodes, a real example, which of two visible results, whether something on screen is right. No hypotheticals they've never met, nothing about how software works inside.
+- **Only questions they can answer from their own experience today.** Real episodes, a real example, which of two visible results, whether something on screen is right. No hypotheticals they've never met, nothing about how software works inside.
 - **One question per message, with your suggested answer**, so "yes" is always enough.
 - **Show instead of asking** when you can: a sketch, a sample result, two results side by side.
 - **"I don't know" is your mistake.** Take the default, note it, move on. Never re-ask in other words.
-- **Before sending, check**: every word about their work is in `CONTEXT.md` or everyday language, and every question passes the rules above.
+- **Before sending, check**: every word about what they're doing is in `CONTEXT.md` or everyday language, and every question passes the rules above.
 
 ## Two blind spots you cover for the user
 
@@ -48,14 +48,14 @@ Keep it in NOTES "What we're after": goal, must haves, rules (who set them), gui
 
 Each tool has its own, `tools/<name>/CONTEXT.md`: the user's words for that work, and nothing else. No technical details, plans, decisions or progress (those go in the tool's NOTES). Create it when the first word settles; keep it to one screen (about 15-25 entries); it shrinks as often as it grows. Two tools may use the same word differently; that's fine, each file speaks for its own tool.
 
-**Names are settled in a short dialogue.** The user has a word: use it; if another is clearer, ask once with the reason ("You call these 'items'. Would 'bill lines' be clearer, since each is a line on a bill? Either is fine."). The user has no word: offer one in a sentence from their work ("I'll call the unpaid bills the 'to-pay list', as in 'the Acme bill is on the to-pay list'. Sound right?"). Their answer decides. Nothing is final: a rename changes screens, files and code in one sweep, and the old word goes to Retired. Say every change in one line: "I added 'chase up' to our words."
+**Names are settled in a short dialogue.** The user has a word: use it; if another is clearer, ask once with the reason ("You call these 'items'. Would 'bill lines' be clearer, since each is a line on a bill? Either is fine."). The user has no word: offer one in a sentence from what they're doing ("I'll call the unpaid bills the 'to-pay list', as in 'the Acme bill is on the to-pay list'. Sound right?"). Their answer decides. Nothing is final: a rename changes screens, files and code in one sweep, and the old word goes to Retired. Say every change in one line: "I added 'chase up' to our words."
 
-Screens, buttons, file names and code names use these words. Software words only when truly needed now, will recur, and have no plain eight-word description; at most about five at a time, each explained with an example from their work.
+Screens, buttons, file names and code names use these words. Software words only when truly needed now, will recur, and have no plain eight-word description; at most about five at a time, each explained with an example from what they're doing.
 
 ```markdown
-# Context: <their name for this work>
+# Context: <their name for this tool or task>
 
-<One or two sentences, in their words: what this work is and why it matters.>
+<One or two sentences, in their words: what this is for and why it matters.>
 This is our shared list of words. If something is wrong or missing, just tell me.
 
 ## Things
@@ -72,7 +72,7 @@ _Also said_: invoice
 **backup**: A copy of your files from a certain day, so we can go back.
 
 ## Careful words
-- "report" here means the weekly email to your manager.
+- "report" here means the monthly summary you send the club treasurer.
 
 ## Not sure yet
 - "done" for a bill: sent, or paid? I'll ask when it matters.
