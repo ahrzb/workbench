@@ -42,7 +42,7 @@ Merge 1 and 2 for a tiny tool, and skip 3 when nothing is uncertain, but never s
 
 Say it in one message: "Here's how I'd get there: 1. ... 2. ... 3. ... After each one I'll show you and wait for your OK before going on. Sound right?" Write it in the tool's NOTES under "Milestones" (`[x]` done, `[ ]` not yet, `<- now` on the current one) and start only after their OK.
 
-**Demos, often.** Every milestone ends in a demo: something they can look at or try in about a minute (a table in the chat, a sketch, a sample output file, the packaged tool). A milestone too big for that gets split. One milestone per turn: finish it, demo it, stop and wait for their reaction. Never chain milestones without their reaction in between. Every hand-back says where they are: "Milestone 2 of 4 done: ...".
+**Demos, often.** Every milestone ends in a demo: something they can look at or try in about a minute (a table in the chat, a sketch, a sample output file, the packaged tool). A sentence with counts ("all 13 checked, 9 count as spending") is a report, not a demo: show the thing itself, the rows or cases, with the tricky ones first and marked ("excluded: card payment, already counted in the card purchases"). A milestone too big for that gets split. One milestone per turn: finish it, demo it, stop and wait for their reaction. Never chain milestones without their reaction in between. Every hand-back says where they are: "Milestone 2 of 4 done: ...".
 
 **Stop and check in now, not at the end**, when:
 - the samples or data contradict what they said, or show a case the plan didn't cover;

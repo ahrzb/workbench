@@ -2,6 +2,10 @@
 
 Written for the people using the workbench. The AI reads the entries newer than a project's version when it updates.
 
+## 0.2.3 (2026-09-30)
+
+- Demos you can look at: after each milestone the AI shows the actual rows or cases, the tricky ones first, instead of a sentence of counts.
+
 ## 0.2.2 (2026-09-30)
 
 - You see it before it's built. The AI first shows the result on your own examples, then how you'll use the tool (what you put in, what you click, what comes out), and waits for your OK before building anything.
