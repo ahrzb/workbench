@@ -11,6 +11,9 @@ Rules we must follow:
 Guidelines:
 How we're doing it:
 
+## Milestones
+(Shown to the user and agreed before building; `[x]` done, `[ ]` not yet, `<- now` on the current one.)
+
 ## How to run and check
 
 ## Things that work

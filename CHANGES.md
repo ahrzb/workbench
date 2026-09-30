@@ -2,6 +2,12 @@
 
 Written for the people using the workbench. The AI reads the entries newer than a project's version when it updates.
 
+## 0.2.2 (2026-09-30)
+
+- You see it before it's built. The AI first shows the result on your own examples, then how you'll use the tool (what you put in, what you click, what comes out), and waits for your OK before building anything.
+- A short plan you can see: a few milestones, each ending in a demo you can try in about a minute. It does one at a time and stops to hear what you think before the next.
+- It checks in as soon as something surprises it, such as an example that doesn't fit what you said, instead of carrying on and telling you at the end.
+
 ## 0.2.1 (2026-09-30)
 
 - Less cautious by default. The AI no longer assumes your files are for work or need special care. The first time you share real files it asks once: is this for work, and if so, are there rules to keep in mind? Your answer decides, and it doesn't ask again.
