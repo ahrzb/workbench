@@ -18,9 +18,9 @@ Never trust your own claim about what is recoverable; look.
 2. **Reproduce it yourself.** Confirm in their words: "I see it too: when you do X, Y happens. Is that the problem?" Can't reproduce: ask for the file or the exact steps, or watch them do it once.
 3. **Write a check that fails** because of the problem.
 4. **Save point**, then fix. Make the failing check pass and run all checks.
-5. **Check it yourself** the way they would, as the trying-out copy (`try.ps1`, with approval); hidden checks and scripts are fine for you, but they don't count as the user seeing it.
+5. **Check it yourself** the way they would, as the trying-out copy (`try.ts`, with approval); hidden checks and scripts are fine for you, but they don't count as the user seeing it.
 6. **Save point** "<tool>: <their words for the fix>", update the tool's NOTES (Careful, Things that work).
-7. **Let them try it** before anything replaces their copy: the trying-out copy open in front of them (`try.ps1`), what to do to see the problem is gone, with their own example, and one line: "Does it work now? If yes, I'll make it the version on your desktop." Use the build hand-back shape ([build.md](build.md#3-the-loop-one-small-change-at-a-time)); "What I checked" names the check you added.
+7. **Let them try it** before anything replaces their copy: the trying-out copy open in front of them (`try.ts`), what to do to see the problem is gone, with their own example, and one line: "Does it work now? If yes, I'll make it the version on your desktop." Use the build hand-back shape ([build.md](build.md#3-the-loop-one-small-change-at-a-time)); "What I checked" names the check you added.
 8. **Only after their yes: "Ship it"** ([stack.md](stack.md#in-use-and-trying-out)). Also when it's urgent: just be quick about it; never replace their copy unseen.
 
 Error messages the user saw: translate in four lines: what happened (their words), why (one plain sentence), what you're doing, whether they need to do anything. Make clear the problem is the tool's, not theirs.

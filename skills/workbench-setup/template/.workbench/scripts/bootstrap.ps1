@@ -1,4 +1,5 @@
 # Downloads the project's tools into .tools\ (Windows). No admin rights, nothing installed.
+#   Bun      -> .tools\bun    (pinned version and SHA-256; runs the workbench's own scripts, *.ts)
 #   Node.js  -> .tools\node   (official zip, SHA-256 checked against nodejs.org's SHASUMS256.txt)
 #   MinGit   -> .tools\git    (only when git is not already on PATH; checked against GitHub's asset digest)
 #   The design engine of the bundled impeccable skill (.agents\skills\impeccable): pinned version and
@@ -23,6 +24,31 @@ function Get-Checked($url, $file, $sha256) {
   $got = (Get-FileHash -Algorithm SHA256 -LiteralPath $file).Hash.ToLower()
   if ($got -ne $sha256.ToLower()) { Remove-Item -LiteralPath $file; throw "Checksum mismatch for $url" }
 }
+
+# --- Bun (pinned). A running bun.exe can't be overwritten but can be renamed, so a new pin works
+# even while a workbench script (update.ts) is running on the old one.
+# When raising the pin, also update the macOS zips and hashes in .agents\skills\workbench\stack.md.
+$bunVersion = '1.4.2'
+$bunDir = Join-Path $tools 'bun'
+$bunExe = Join-Path $bunDir 'bun.exe'
+$haveBun = if (Test-Path -LiteralPath $bunExe) { (& $bunExe --version) } else { '' }
+if ($haveBun -ne $bunVersion) {
+  if ($env:PROCESSOR_ARCHITECTURE -eq 'ARM64') {
+    $bunName = 'bun-windows-aarch64'; $bunSha = 'a7a16b876a305fd1029c66dbd27007b4f6112ae896532f675878731a21e50cfd'
+  } else {
+    $bunName = 'bun-windows-x64-baseline'; $bunSha = '78c221c2376f79731ccf4e4af0b3bb46d81fefa3296c5abee09ad8a1b21e68c6'
+  }
+  $zip = Join-Path $tmp "$bunName.zip"
+  Get-Checked "https://github.com/oven-sh/bun/releases/download/bun-v$bunVersion/$bunName.zip" $zip $bunSha
+  tar -xf $zip -C $tmp
+  if ($LASTEXITCODE -ne 0) { throw 'Unpacking Bun failed' }
+  New-Item -ItemType Directory -Force -Path $bunDir | Out-Null
+  Get-ChildItem -LiteralPath $bunDir -Filter 'bun.old*.exe' | Remove-Item -ErrorAction SilentlyContinue
+  if (Test-Path -LiteralPath $bunExe) { Rename-Item -LiteralPath $bunExe "bun.old-$(Get-Date -Format yyyyMMddHHmmss).exe" }
+  Move-Item -LiteralPath (Join-Path $tmp "$bunName\bun.exe") -Destination $bunExe
+  Remove-Item -LiteralPath $zip, (Join-Path $tmp $bunName) -Recurse
+  "Bun $bunVersion ready."
+} else { "Bun already there: $bunVersion." }
 
 # --- Node.js
 $node = Join-Path $tools 'node'

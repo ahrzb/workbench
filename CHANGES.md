@@ -2,6 +2,12 @@
 
 Written for the people using the workbench. The AI reads the entries newer than a project's version when it updates.
 
+## 0.2.7 (2026-09-30)
+
+- Sketches you can find: the link to a sketch is the first thing in the reply (in the Codex app it opens beside the chat), and after every change to it the link comes again with what changed.
+- Sketches of changes to a tool you already have look like that tool: its colours, type, buttons and cards, not a grey stand-in.
+- The workbench's helpers now run on Bun, a small program downloaded into the project like the other build tools. The same helpers work on Windows and Mac, and the AI makes fewer slips with them. The first time after updating, Codex asks once to download it.
+
 ## 0.2.6 (2026-09-30)
 
 - You try things yourself. Before anything is built you click through a rough sketch of the tool; after every step and every fix, the new version opens for you to try, with the question "does it work the way you want, and do you like it?"

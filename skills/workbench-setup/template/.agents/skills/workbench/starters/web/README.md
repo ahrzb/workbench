@@ -27,7 +27,7 @@ A website is on someone else's servers. Say so once, in plain words, before the 
 | `scripts/deploy.mjs`, `scripts/deploy-flow.mjs`, `scripts/lib.mjs`, `scripts/check-url.mjs` | The only supported deploy, and the check "does this address ask for sign-in?". |
 | `test/*.test.mjs` | `node --test`: the pure logic, and every branch of the deploy order with fakes (no Cloudflare). |
 
-**Save-point allowlist** (`save.ps1`/`save.sh` need these names for `tools/<name>/app/`): `package.json`, `package-lock.json`, `tsconfig.json`, `index.html`, `vite.config.ts`, `wrangler.jsonc`, `components.json`; `src/**/*.{ts,tsx,css}`; `scripts/*.mjs`; `test/*.mjs`; the published content under `public/` (`*.{txt,xml,json,svg,png,jpg,jpeg,webp,ico,webmanifest}`). Never `dist/`, `.wrangler/`, `node_modules/`. Only put in `public/` what is meant to be published: it is not private data, and it must never be the user's own working files.
+**Save-point allowlist** (`save.ts` needs these names for `tools/<name>/app/`): `package.json`, `package-lock.json`, `tsconfig.json`, `index.html`, `vite.config.ts`, `wrangler.jsonc`, `components.json`; `src/**/*.{ts,tsx,css}`; `scripts/*.mjs`; `test/*.mjs`; the published content under `public/` (`*.{txt,xml,json,svg,png,jpg,jpeg,webp,ico,webmanifest}`). Never `dist/`, `.wrangler/`, `node_modules/`. Only put in `public/` what is meant to be published: it is not private data, and it must never be the user's own working files.
 
 ## Set up (from `tools/<name>/app/`)
 

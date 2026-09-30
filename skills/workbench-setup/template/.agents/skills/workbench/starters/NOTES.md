@@ -18,7 +18,7 @@ How we're doing it:
 ## How to run and check
 
 ## Built with
-(Exact versions, so this tool can be rebuilt the same way later. `.workbench\scripts\try.ps1` keeps Node.js, Pinned, AI model and Last checked up to date; you fill Starter and Blocks when you copy them in.)
+(Exact versions, so this tool can be rebuilt the same way later. `.workbench\scripts\run.cmd bun .workbench\scripts\try.ts` keeps Node.js, Pinned, AI model and Last checked up to date; you fill Starter and Blocks when you copy them in.)
 Node.js:
 Pinned:
 Starter:
@@ -46,7 +46,7 @@ Whose data: (not asked yet)
 TOOL_ID:
 
 ### Where it goes
-(Written at "the shape"; the picture comes from these tables: `powershell -NoProfile -ExecutionPolicy Bypass -File .workbench\scripts\data-map.ps1 <tool>`.)
+(Written at "the shape"; the picture comes from these tables: `.workbench\scripts\run.cmd bun .workbench\scripts\data-map.ts <tool>`.)
 Places
 | Place or party | Where | Notes |
 |---|---|---|

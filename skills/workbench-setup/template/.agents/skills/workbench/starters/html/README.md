@@ -43,7 +43,7 @@ Rename the tool: `<title>` and `<h1>` in `index.html`; set `TOOL_ID` in `src/mai
 ..\..\..\.workbench\scripts\run.cmd node build.mjs --try  # -> out\<title> (trying out).html
 ```
 
-For yourself and for demos, always the trying-out build (`.workbench\scripts\try.ps1 <tool>` builds and opens it): marked at the top, with its own practice storage, so it never changes the data of the copy they use (every local HTML page shares one browser store; the keys keep them apart). To practise on real data they restore a backup from their usual copy into it. Use it the way the user would (open a file, change a setting, export a backup) before handing over; never point a browser at the user's own files. Only "ship" copies the normal build to `current\`.
+For yourself and for demos, always the trying-out build (`.workbench\scripts\run.cmd bun .workbench\scripts\try.ts <tool>` builds and opens it): marked at the top, with its own practice storage, so it never changes the data of the copy they use (every local HTML page shares one browser store; the keys keep them apart). To practise on real data they restore a backup from their usual copy into it. Use it the way the user would (open a file, change a setting, export a backup) before handing over; never point a browser at the user's own files. Only "ship" copies the normal build to `current\`.
 
 **Ship** (same idea as "Ship it" in [stack.md](../../stack.md)):
 1. Ask the user to close the page if it's open in a browser tab.
@@ -84,7 +84,7 @@ Every localStorage key starts with `TOOL_ID` because Chromium gives all `file://
 
 ## Save points
 
-`save.ps1` already keeps `app/index.html`, `app/build.mjs`, `app/package.json`, `app/README.md`, `app/src/*.mjs|css|html` and `app/test/*.mjs`. `out/` and `current/` are builds, never saved. Nothing in this starter needs a new allowlist line.
+`save.ts` already keeps `app/index.html`, `app/build.mjs`, `app/package.json`, `app/README.md`, `app/src/*.mjs|css|html` and `app/test/*.mjs`. `out/` and `current/` are builds, never saved. Nothing in this starter needs a new allowlist line.
 
 ## Verified (Edge 154, headless, `file://`, Windows)
 

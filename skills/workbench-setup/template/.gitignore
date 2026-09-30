@@ -1,7 +1,7 @@
 # Save points hold ONLY the tools' source code and notes, and the workbench's own files.
 # This is an allowlist: everything is left out unless it is named below, so documents,
 # data, samples, backups, secrets, downloaded tools and build output never enter a save point.
-# (A second layer: .workbench/scripts/save.ps1 and save.sh save an explicit list of files.)
+# (A second layer: .workbench/scripts/save.ts saves an explicit list of files.)
 /*
 
 !/.gitignore
@@ -60,11 +60,10 @@
 !/.workbench/session-brief.md
 !/.workbench/NOTES.md
 !/.workbench/VERSION
-!/.workbench/scripts/save.ps1
-!/.workbench/scripts/save.sh
-!/.workbench/scripts/try.ps1
-!/.workbench/scripts/data-map.ps1
-!/.workbench/scripts/update.ps1
+!/.workbench/scripts/save.ts
+!/.workbench/scripts/try.ts
+!/.workbench/scripts/data-map.ts
+!/.workbench/scripts/update.ts
 !/.workbench/account
 
 # Each tool in tools/<name>/: its notes and words, named config files, and only code files
