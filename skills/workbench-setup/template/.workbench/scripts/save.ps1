@@ -21,7 +21,7 @@ $allowed = @(
   '^\.agents/skills/impeccable/[\w./-]+\.(md|json|toml|yaml|js|cmd)$'
   '^\.agents/skills/impeccable/(LICENSE|scripts/VERSION|scripts/impeccable)$'
   '^\.impeccable/config\.json$'
-  '^\.workbench/scripts/(bootstrap\.ps1|run\.cmd|git\.cmd|save\.ps1|save\.sh|try\.ps1|data-map\.ps1|account\.ps1|account\.sh)$'
+  '^\.workbench/scripts/(bootstrap\.ps1|run\.cmd|git\.cmd|save\.ps1|save\.sh|try\.ps1|update\.ps1|data-map\.ps1|account\.ps1|account\.sh)$'
   '^\.workbench/(session-brief\.md|NOTES\.md|VERSION|account)$'
   '^tools/[a-z0-9-]+/(NOTES|CONTEXT)\.md$'
   # A tool's design notes (impeccable's product and design records, briefs and reviews; no screenshots).

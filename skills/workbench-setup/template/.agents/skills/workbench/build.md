@@ -33,7 +33,7 @@ The costly failure is the wrong direction: a lot of work, then "that's not what 
 **The plan.** Right after the interview, show 3-5 milestones in their words, each ending in a demo, the cheapest and riskiest first:
 
 1. **First look**, minutes, before any app: the result on their own samples, worked out directly (a one-off script or by hand), shown as they'd get it: the spreadsheet rows as a table in the chat, or a sample output file. "Is this what you want to end up with?" Most wrong turns show up here, while nothing is built yet. The plan (below) goes in the same message, or the very next one if the first look raised a question; "go on" after the first look means the next milestone, never "build it all".
-2. **The shape**, still before any app code: how they'll use it, as a short walkthrough and, if it has a screen, one rough static sketch ([stack.md](stack.md#sketches)): what kind of thing it is (a small program, one HTML file, a website), what they click, what they get, what it deliberately won't do. Where their files come from and where the data goes is the data map ([data.md](data.md)): fill "Where it goes" in the tool's NOTES, then always run `powershell -NoProfile -ExecutionPolicy Bypass -File .workbench\scripts\data-map.ps1 <tool>` and open the page it prints for them (Start-Process on that path); give its numbered sentences in the chat and ask "Is this right? Does anyone else get or see any of it?" Then: "Is this how you pictured using it?" At a real fork, 2-3 sketches side by side with the user's (sample) data, one-line tradeoffs, your recommendation last.
+2. **The shape**, still before any app code: how they'll use it, as a short walkthrough and, if it has a screen, a rough clickable sketch they try themselves ([stack.md](stack.md#sketches)): the screens in order, and the buttons and steps working on sample rows from their files, so they can click through the flow: what kind of thing it is (a small program, one HTML file, a website), what they click, what they get, what it deliberately won't do. Open it for them and ask: "Click through it: is this how you'd use it? Anything missing or in the way?" Where their files come from and where the data goes is the data map ([data.md](data.md)): fill "Where it goes" in the tool's NOTES, then always run `powershell -NoProfile -ExecutionPolicy Bypass -File .workbench\scripts\data-map.ps1 <tool>` and open the page it prints for them (Start-Process on that path); give its numbered sentences in the chat and ask "Is this right? Does anyone else get or see any of it?" At a real fork, 2-3 sketches side by side with the user's (sample) data, one-line tradeoffs, your recommendation last.
 3. **The hard part, proven**: whatever might not work at all (their scanned PDFs, a messy layout, a rule with exceptions), run on all their samples, with an honest count of what came out right (nothing silently lost: checklist item 5 in [data.md](data.md)).
 4. **Thinnest working tool**: the agreed shape with only the one action working, on their real case; nothing else is built yet. Before it: the data checklist items for this point and the exits check ([data.md](data.md)). Its screen is designed properly from the start: `tools/<name>/PRODUCT.md` and the design skill, as [design.md](design.md) says.
 5. Then widen, one milestone at a time: more cases, a nicer screen, ideas from the shelf.
@@ -42,7 +42,9 @@ Merge 1 and 2 for a tiny tool, and skip 3 when nothing is uncertain, but never s
 
 Say it in one message: "Here's how I'd get there: 1. ... 2. ... 3. ... After each one I'll show you and wait for your OK before going on. Sound right?" Write it in the tool's NOTES under "Milestones" (`[x]` done, `[ ]` not yet, `<- now` on the current one) and start only after their OK.
 
-**Demos, often.** Every milestone ends in a demo: something they can look at or try in about a minute (a table in the chat, a sketch, a sample output file, the packaged tool). A sentence with counts ("all 13 checked, 9 count as spending") is a report, not a demo: show the thing itself, the rows or cases, with the tricky ones first and marked ("excluded: card payment, already counted in the card purchases"). A milestone too big for that gets split. One milestone per turn: finish it, demo it, stop and wait for their reaction. Never chain milestones without their reaction in between. Every hand-back says where they are: "Milestone 2 of 4 done: ...".
+**Demos, often, and a demo is the user trying it.** Every milestone ends in a demo: something they look at or try themselves in about a minute (a table in the chat, a clickable sketch, a sample output file, the trying-out copy of the tool). A sentence with counts ("all 13 checked, 9 count as spending") is a report, not a demo: show the thing itself, the rows or cases, with the tricky ones first and marked ("excluded: card payment, already counted in the card purchases"). Your own checks (tests, a hidden window, a script driving the app) are how you make sure it works; they never replace the demo. Once the tool has a screen, every milestone and every fix they'll see ends with the trying-out copy open in front of them (`try.ps1`), two or three things to do in it with their own example, and two questions in one line: "Does it work the way you want, and do you like how it looks and feels?" A milestone too big for that gets split. One milestone per turn: finish it, demo it, stop and wait for their reaction. Never chain milestones without their reaction in between. Every hand-back says where they are: "Milestone 2 of 4 done: ...".
+
+**Their copy changes only after they've tried the new one.** The version on their desktop (`current/`) is replaced only when they have used the trying-out copy and said yes to using it ("Ship it" in [stack.md](stack.md#in-use-and-trying-out)); never on your own checks, however good, and never as part of the same step as the change.
 
 **Stop and check in now, not at the end**, when:
 - the samples or data contradict what they said, or show a case the plan didn't cover;
@@ -69,16 +71,17 @@ A milestone is one or more small changes. For each change:
    ```
    Milestone <n> of <m> done: you can now <what they can do>.
 
-   Try it now (about a minute): I've opened the new version for you, on a practice copy of your data; your usual one is unchanged.
+   Try it now (about a minute): I've opened the new version for you, in the window titled "<App> (trying out)" (if you don't see it, it's behind this one); it uses a practice copy of your data, your usual one is unchanged.
    1. <one action with a real example of theirs>
+   2. <a second action, the one most likely to feel wrong>
 
    You should see: <specific result>.
-   Something different? Tell me what you saw, or say "go back".
+   Does it work the way you want, and do you like how it looks and feels? Anything odd: tell me what you saw, or say "go back".
 
    What I checked: <one true sentence>.
    Next: milestone <n+1>, <what they'll see>. Or something you noticed?
    ```
-8. **Read the reaction.** Happy: ask "Use this version from now on?"; yes -> "Ship it" ([stack.md](stack.md#in-use-and-trying-out)), then suggest using it for real for a day or two. "Not quite what I meant": a new small change. Unexpected result: [fix.md](fix.md). New idea: ideas shelf. "Fine"/"ok": ask what they saw after step 1.
+8. **Read the reaction.** Happy: ask "Use this version from now on?"; yes -> "Ship it" ([stack.md](stack.md#in-use-and-trying-out)), then suggest using it for real for a day or two. Likes it but wants a tweak: a new small change, then demo again. "Not quite what I meant": a new small change. Unexpected result: [fix.md](fix.md). New idea: ideas shelf. "Fine"/"ok": ask what they saw after step 1. No answer yet (they haven't tried it): wait; don't ship, don't start the next milestone.
 
 Never claim something works without saying what you ran. Never build extras nobody asked for; offer at most one idea per hand-back, as a question.
 

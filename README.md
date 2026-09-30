@@ -18,7 +18,7 @@ Needs the Codex app, CLI or IDE extension, signed in with ChatGPT. Nothing is in
 1. Make an empty folder named after what the tool is for (e.g. `Club members`) and open Codex in it.
 2. Paste this, and approve what Codex asks:
 
-   > Set this folder up as a workbench: download https://github.com/ahrzb/workbench/archive/refs/tags/v0.2.5.zip, unpack it, copy its `skills/workbench-setup` folder to `.agents/skills/workbench-setup` in this folder, and delete the download. Then read `.agents/skills/workbench-setup/SKILL.md` and follow it.
+   > Set this folder up as a workbench: download https://github.com/ahrzb/workbench/archive/refs/tags/v0.2.6.zip, unpack it, copy its `skills/workbench-setup` folder to `.agents/skills/workbench-setup` in this folder, and delete the download. Then read `.agents/skills/workbench-setup/SKILL.md` and follow it.
 
 3. Open a **new chat** in the same folder. Under the message box, click **Review hooks** and choose **Allow selected** (in the terminal version, type `/hooks`). If Codex asks to trust the folder, say yes. Then type **hi**.
 4. Say what you want in your own words. Later: another tool in the same folder ("something new: ..."), "something's wrong with the members tool", or "update the workbench".
@@ -40,7 +40,7 @@ Needs the Codex app, CLI or IDE extension, signed in with ChatGPT. Nothing is in
 
 Projects update from the latest **tagged GitHub release** (see `update.md`). To release: add a `CHANGES.md` entry, set `.workbench/VERSION` in the template to the new version and date, commit, then tag `vX.Y.Z` and publish a GitHub release for it. Keep `.codex/hooks.json` unchanged across releases unless you must: any change makes every user review the startup check again.
 
-**Trust.** Whoever can publish a release in this repository decides what runs in every project that updates. The update step shows the user, in plain words, every change to what runs automatically or what the AI may do, and downloads the exact release commit, but it doesn't verify a signature yet. Signed releases (a pinned maintainer key, checked before applying) are the next hardening step.
+**Trust.** Whoever can publish a release in this repository decides what runs in every project that updates. "Update the workbench" applies the latest release straight away (`.workbench/scripts/update.ps1`): it downloads the exact release commit from the source in `VERSION`, makes a save point first, undoes itself if anything fails, and then says in plain words what changed. It doesn't verify a signature yet. Signed releases (a pinned maintainer key, checked before applying) are the next hardening step.
 
 ## Status
 

@@ -2,6 +2,13 @@
 
 Written for the people using the workbench. The AI reads the entries newer than a project's version when it updates.
 
+## 0.2.6 (2026-09-30)
+
+- You try things yourself. Before anything is built you click through a rough sketch of the tool; after every step and every fix, the new version opens for you to try, with the question "does it work the way you want, and do you like it?"
+- Your copy only changes after you've tried the new one and said yes, fixes included. The AI's own checks never count as your OK.
+- Updating is one step: say "update the workbench" and it updates, keeps a save point to go back to, and tells you what's new. No second question.
+- Desktop tools are designed for their window sizes, not for phones.
+
 ## 0.2.5 (2026-09-30)
 
 - Better-looking, clearer tools: the workbench now brings a design skill (impeccable) that the AI uses for every screen, with a check before each demo for hard-to-read text and the generic "made by AI" look. You see only the result.

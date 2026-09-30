@@ -16,7 +16,7 @@ allowed='^(\.gitignore|\.gitattributes|AGENTS\.md)$
 ^\.agents/skills/impeccable/[A-Za-z0-9_./-]+\.(md|json|toml|yaml|js|cmd)$
 ^\.agents/skills/impeccable/(LICENSE|scripts/VERSION|scripts/impeccable)$
 ^\.impeccable/config\.json$
-^\.workbench/scripts/(bootstrap\.ps1|run\.cmd|git\.cmd|save\.ps1|save\.sh|try\.ps1|data-map\.ps1|account\.ps1|account\.sh)$
+^\.workbench/scripts/(bootstrap\.ps1|run\.cmd|git\.cmd|save\.ps1|save\.sh|try\.ps1|update\.ps1|data-map\.ps1|account\.ps1|account\.sh)$
 ^\.workbench/(session-brief\.md|NOTES\.md|VERSION|account)$
 ^tools/[a-z0-9-]+/(NOTES|CONTEXT)\.md$
 ^tools/[a-z0-9-]+/(PRODUCT|DESIGN)\.md$
