@@ -2,6 +2,12 @@
 
 Written for the people using the workbench. The AI reads the entries newer than a project's version when it updates.
 
+## 0.2.1 (2026-09-30)
+
+- Less cautious by default. The AI no longer assumes your files are for work or need special care. The first time you share real files it asks once: is this for work, and if so, are there rules to keep in mind? Your answer decides, and it doesn't ask again.
+- It remembers how you use the workbench (what you build tools for, whether company rules generally apply, how much explaining you want) in a few lines of the project notes, so later tools don't ask again either.
+- Sharing with colleagues and putting up a work website: you're asked whether your company needs to OK it, instead of always being sent to IT first.
+
 ## 0.2.0 (2026-09-30)
 
 - One project, many tools. Keep all your tools in one folder: each has its own notes and words, and "go back" only ever touches the tool you're talking about.

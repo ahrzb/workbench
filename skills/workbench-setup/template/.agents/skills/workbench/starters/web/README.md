@@ -8,7 +8,7 @@ For the AI, not the user. Copy everything in this folder except this README into
 - **Electron** (`starters/electron/`) when the tool works on the user's own files or owns their data on their own computer, or needs an AI feature.
 - **HTML-only** (`starters/html/`) for a tiny tool to double-click, or when programs can't run at all.
 
-A website is on someone else's servers. Say so once, in plain words, before the first deploy: what is published is copied to Cloudflare, and anything a visitor is allowed to open can be downloaded by them (the pages, the files in `public/`, all the code). Work sites need IT's OK first ([safety.md](../../safety.md#forwardable-messages)); ask "for your job or your own?" as usual.
+A website is on someone else's servers. Say so once, in plain words, before the first deploy: what is published is copied to Cloudflare, and anything a visitor is allowed to open can be downloaded by them (the pages, the files in `public/`, all the code). For a work site, ask once whether company rules cover publishing it ("Whose data" in [safety.md](../../safety.md#whose-data)); IT's OK comes first only if they say yes or aren't sure.
 
 ## Files
 
@@ -139,7 +139,7 @@ Not built. `deploy.mjs` refuses a `routes` entry on purpose. It needs a domain o
 
 - Data on a website is Cloudflare's, i.e. someone else's servers. There is no place for private data here: everything reachable by a visitor can be copied. No secrets in code, `public/` or config, ever. A backend or database is a separate, planned change (a Worker, with its own design and its own rules), not something to bolt on.
 - Costs: Cloudflare Workers Free plan; requests for static files are free and unlimited (no Worker code runs); Zero Trust Free needs payment details on file and is not charged up to 50 people. File count and size limits: developers.cloudflare.com/workers/platform/limits/#static-assets. A domain name costs money.
-- For a work site, IT may need to say yes (forwardable message, `safety.md`): what it is, that files are copied to Cloudflare, who can sign in, that no company data goes on it.
+- For a work site where company rules apply (or the user isn't sure), IT may need to say yes (forwardable message, `safety.md`): what it is, that files are copied to Cloudflare, who can sign in, that no company data goes on it.
 
 ## Verified (scratch project, Node 24.21.0 as `bootstrap.ps1` installs, Windows 11)
 

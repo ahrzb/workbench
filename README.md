@@ -1,6 +1,6 @@
 # Workbench
 
-A skill for Codex (ChatGPT) that helps office workers build small tools for their own work: turn a pile of PDFs into a clean spreadsheet, check a monthly report, keep a list that Excel keeps getting wrong, put up a small website. The user describes their work in their own words; Codex does the building, on their own computer. One project folder holds as many tools as they like.
+A skill for Codex (ChatGPT) that helps people who are good with computers but don't write code build small tools, for their job or for themselves: turn a pile of PDFs into a clean spreadsheet, check a monthly report, sort their job applications, keep a list that Excel keeps getting wrong, put up a small website. The user describes what they want in their own words; Codex does the building, on their own computer. One project folder holds as many tools as they like.
 
 - **No admin rights, nothing installed.** Everything the tools need downloads into the project folder. The only things outside it are a desktop shortcut per tool and each tool's own data folder.
 - **Local and quiet.** Tools on the computer open no network ports and have no accounts or cloud of their own. AI features, when the user wants them, run through their own ChatGPT plan. A website is the one exception: it lives on the user's own Cloudflare account, private until they choose to make it public.
@@ -13,7 +13,7 @@ Needs the Codex app, CLI or IDE extension, signed in with ChatGPT. Nothing is in
 1. Make an empty folder named after the work (e.g. `Supplier bills`) and open Codex in it.
 2. Paste this, and approve what Codex asks:
 
-   > Set this folder up as a workbench: download https://github.com/ahrzb/workbench/archive/refs/tags/v0.2.0.zip, unpack it, copy its `skills/workbench-setup` folder to `.agents/skills/workbench-setup` in this folder, and delete the download. Then read `.agents/skills/workbench-setup/SKILL.md` and follow it.
+   > Set this folder up as a workbench: download https://github.com/ahrzb/workbench/archive/refs/tags/v0.2.1.zip, unpack it, copy its `skills/workbench-setup` folder to `.agents/skills/workbench-setup` in this folder, and delete the download. Then read `.agents/skills/workbench-setup/SKILL.md` and follow it.
 
 3. Open a **new chat** in the same folder. Under the message box, click **Review hooks** and choose **Allow selected** (in the terminal version, type `/hooks`). If Codex asks to trust the folder, say yes. Then type **hi**.
 4. Talk about your work. Later: another tool in the same folder ("something new: ..."), "something's wrong with the bills tool", or "update the workbench".

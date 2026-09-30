@@ -39,7 +39,7 @@ Be critical, of your own ideas too:
 - A habit stated as a rule: ask who says so. The requirement is the rule ("the boss gets an .xlsx"), not the habit ("we work in Excel").
 - **A rule the data contradicts**: show the counterexamples and ask one question with the likely answers: "You said every bill has an order number, but these 3 don't (Acme 12 Mar, ...). Are they handled differently, or should the tool flag them?" Correct `CONTEXT.md` and NOTES with the answer. Same when your own assumption breaks.
 - No goal, only features: ask what would be different.
-- Rules nobody mentioned: check the data yourself; unknown company rules become a forwardable message.
+- Rules nobody mentioned: check the data yourself. Whether company rules apply is the user's call ("Whose data" in `safety.md`); only rules they aren't sure of become a forwardable message.
 - Every solution you propose names the need it serves.
 
 Keep it in NOTES "What we're after": goal, must haves, rules (who set them), guidelines, and each solution with the need it serves. Anything linked to nothing gets questioned or shelved.

@@ -10,10 +10,14 @@ The "wall of jargon": the AI asks five questions at once, each full of software 
 
 The AI keeps this picture in mind when deciding what to check itself and what to ask. It goes in the session brief ([07](07-codex-host.md)), so every chat starts with it.
 
-- **An office worker who uses a computer all day, but doesn't write code.** Comfortable with Excel, email, Word, PDFs, shared folders and their company's own systems. New to terminals, code, installs and developer words.
-- **The expert on their own work.** They know what their documents look like, what's normal and what's odd, which cases are common, where the files are kept, who does what, what the company rules are, and who to ask.
-- **Busy.** They want a routine task off their plate, not a new hobby. Short messages, few questions, visible progress.
-- **On ChatGPT / Codex, without admin rights**, often on a company laptop.
+- **Tech-savvy, uses a computer all day, but doesn't write code.** Comfortable with Excel, email, Word, PDFs, shared folders and online services. New to terminals, code, installs and developer words.
+- **Builds tools for their job and just as often for themselves**: a job hunt, a club, household bills, a hobby. The topic doesn't tell which: a resume parser may be for their own job search as easily as for hiring. (Until v0.2.0 the brief described "an office worker building tools for their own work, often on a company laptop"; the user found the result paranoid, because every topic got read as company data with compliance attached. v0.2.1 records the wider persona.)
+- **The expert on their own work and life.** They know what their documents look like, what's normal and what's odd, which cases are common, where the files are kept, who does what, which rules apply to them, and who to ask.
+- **Judges their own risks.** Whether something is for work and whether company rules cover it is their answer to give, asked once in one line ([08](08-security-compliance.md) rec 2); the AI takes it and moves on.
+- **Busy.** They want a task off their plate, not a new hobby. Short messages, few questions, visible progress.
+- **On ChatGPT / Codex, without admin rights**, sometimes on a company laptop, sometimes their own.
+
+**How they use the workbench.** They say what they want in plain words and expect the AI to get on with it: build, check, show the result. They want a working tool, not safety briefings: every warning, extra check or question they didn't ask for costs them time, so one is said only when it saves them from something they'd regret (losing data, publishing something, breaking a rule they've said applies). What the AI learns about them (what they build tools for, whether company rules generally apply, how much explaining they want) goes in a few plain lines under "About the user" in `.workbench/NOTES.md`, picked up from the conversation, never from an interview, and read before asking anything.
 
 What they can answer faster than the AI can check: where something is, which example is typical, whether a result looks right, what a column or code means in their work, how often something happens, who owns a decision. What the AI checks better: anything about the machine, file formats, whether something runs, counts and patterns across many files.
 

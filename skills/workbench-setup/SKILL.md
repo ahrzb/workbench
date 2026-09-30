@@ -1,11 +1,11 @@
 ---
 name: workbench-setup
-description: Sets up the folder it's installed in (`.agents/skills/workbench-setup/` inside the project) as a workbench project, where an office worker builds small tools for their own work with Codex. Use when the user asks to set this folder up as a workbench.
+description: Sets up the folder it's installed in (`.agents/skills/workbench-setup/` inside the project) as a workbench project, where someone who doesn't write code builds small tools for their job or for themselves with Codex. Use when the user asks to set this folder up as a workbench.
 ---
 
 # Set up a workbench
 
-The user is an office worker who doesn't write code. Keep every message short and plain; never ask them about technology.
+The user is tech-savvy but doesn't write code. Keep every message short and plain; never ask them about technology.
 
 This skill lives inside the project folder it sets up, at `.agents/skills/workbench-setup/` ("this skill folder" below), and removes itself when setup is done.
 

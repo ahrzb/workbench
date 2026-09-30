@@ -15,13 +15,15 @@ Tags: `[UNVERIFIED]` means not confirmed from a primary page. `[INFERENCE]` is m
    - The Electron hardening from [03a](03a-default-stack-runtime.md) is the baseline for every app: sandboxed renderer, no remote content, spellcheck download off, native Open dialog as the only way to read files.
    - Sharing the tool with other people, or letting it hold other people's data, is allowed and supported (rec 8). The AI says the project is growing, what that adds to the user's responsibilities, and helps them do it right.
 
-2. **Ask whose data it is; don't assume. Then the account type decides what to say.** Everything the user shows the building agent, and every AI feature inside their tool (the Codex SDK, see rec 5), goes to OpenAI under the same ChatGPT sign-in, so one rule covers both. But many projects are the user's own (a hobby, a club, their own job hunt), and treating every file as sensitive work data made the skill preachy in testing (v0.1.0: "made-up samples until IT approves" before anyone had asked what the files were). So the first time real files come up, the AI asks once, unless it's already clear: "Is this for your job, or something of your own?"
+2. **Ask whose data it is and whether rules apply; don't assume. The user's answer decides, not the topic or the account.** Everything the user shows the building agent, and every AI feature inside their tool (the Codex SDK, see rec 5), goes to OpenAI under the same ChatGPT sign-in, so one rule covers both. But many projects are the user's own (a hobby, a club, their own job hunt), and treating every file as sensitive work data made the skill preachy in testing (v0.1.0: "made-up samples until IT approves" before anyone had asked what the files were; up to v0.2.0 the persona itself said "office worker, their own work, often a company laptop", so a resume parser read as hiring data with compliance attached, which the user called paranoid). So the first time real files come up, unless "About the user" in the project notes or what the user said already answers it, the AI asks once, in one line, with its guess first: "Is this for your own job hunt, or for work? If it's for work, are there rules I should keep in mind, like data protection or company policy?"
 
-   | Signed in with | Work data | Their own data |
-   |---|---|---|
-   | Company account (Business, Enterprise, Edu, Team) | Fine, nothing to say. These plans are not used for training by default [1][2]. | Fine. |
-   | Personal plan (Free, Go, Plus, Pro) | One line, then the user's call (they know their company's rules): "you're on your personal ChatGPT account, so work files go to OpenAI under that account; if that's fine at your company we'll use the real ones, if you're not sure I'll use look-alikes and write IT a two-line question." Recorded in NOTES; not raised again. | Fine, nothing to say. |
-   | API key | Not the normal path for this persona. Treat like a company account only if the key is the company's. | Fine. |
+   | The user says | What the AI does |
+   |---|---|
+   | Their own | Real files. Nothing more to say, ever. |
+   | For work, no rules to mind | Real files. Nothing more to say; it's their call. |
+   | For work, rules apply or not sure | Follows the rules they name. On a personal plan (Free, Go, Plus, Pro, or unverified), one extra line, since it may matter for those rules: "you're on your personal ChatGPT account, so files you show me go to OpenAI under that account; fine under your rules? If you're not sure I'll use look-alikes and write IT a two-line question." Company plans (Business, Enterprise, Edu, Team) are not used for training by default [1][2]. |
+
+   The answer goes in the tool's NOTES ("Whose data"); anything general ("all my tools are personal") goes under "About the user" so later tools don't ask again.
 
    - Only if the user asks: personal plans may train on content unless "Improve the model for everyone" is off [1][2]; company Codex use is visible to the company through the Compliance API [1].
    - If the user mentions a rule of their own ("patient records must not leave the building"), that rule wins, whatever the account.
