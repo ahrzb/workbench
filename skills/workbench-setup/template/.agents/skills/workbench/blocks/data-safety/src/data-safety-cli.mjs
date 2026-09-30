@@ -5,9 +5,13 @@
 //   backup <label words>    copy the data to the backups folder; prints the path (label e.g. "before newest bills first")
 //   list                    the backups, newest first
 //   copy                    copy the data to a new folder in Temp; prints the path to use as WORKBENCH_DATA_DIR
+//   practice                fresh practice copy for trying out a new version next to the one in use:
+//                           %TEMP%\workbench-trying-out\<TOOL_ID>\data (replaced each time; Temp because Codex's
+//                           sandbox can write there, not in %LOCALAPPDATA%); prints the path for WORKBENCH_DATA_DIR
 //   restore <name>          go back to a backup (keeps the current data as "before-restore"; the tool must be closed)
 // TOOL_ID and DATA_VERSION are read from src\main.ts. WORKBENCH_DATA_DIR is honoured like the tool does.
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
+import { mkdir, rm } from 'node:fs/promises';
 import { randomBytes } from 'node:crypto';
 import os from 'node:os';
 import path from 'node:path';
@@ -48,11 +52,26 @@ if (command === 'status') {
   const target = path.join(os.tmpdir(), `wb-check-${randomBytes(4).toString('hex')}`, 'data');
   await copyData(dataDir(), target);
   console.log(target);
+} else if (command === 'practice') {
+  if (process.env.WORKBENCH_DATA_DIR) {
+    console.error('practice copies the real data: run it without WORKBENCH_DATA_DIR set.');
+    process.exit(1);
+  }
+  const target = path.join(os.tmpdir(), 'workbench-trying-out', toolId, 'data');
+  try {
+    await rm(path.dirname(target), { recursive: true, force: true, maxRetries: 3 });
+  } catch (e) {
+    console.error(`Could not replace the old practice copy (${e.code ?? e.message}). If a window titled "trying out" is open, close it first.`);
+    process.exit(1);
+  }
+  if (existsSync(dataDir())) await copyData(dataDir(), target);
+  else await mkdir(target, { recursive: true });
+  console.log(target);
 } else if (command === 'restore' && rest.length === 1) {
   const result = await safety.restoreBackup(rest[0], { maxVersion: expected });
   console.log(result.ok ? `Restored. Current data was kept in: ${result.setAside ?? '(there was none)'}` : result.message);
   process.exitCode = result.ok ? 0 : 1;
 } else {
-  console.error('Usage: data-safety-cli.mjs status | backup <label words> | list | copy | restore <name>');
+  console.error('Usage: data-safety-cli.mjs status | backup <label words> | list | copy | practice | restore <name>');
   process.exitCode = 1;
 }

@@ -20,7 +20,7 @@ Not for: tools that only read the user's files and write new ones through the Sa
   - newer data (an older tool opened newer data, e.g. after "go back"): refuses, touches nothing, no backup, plain message;
   - unreadable version file: refuses, touches nothing.
   On any refusal the tool shows the message in a native box, exits with code 1, and writes the same message to `%LOCALAPPDATA%\WorkbenchTools\<TOOL_ID>\start-problem.txt` (beside `data`, removed on the next good start). That file is how you detect a refusal when you run the exe yourself.
-- **Backups**: `%LOCALAPPDATA%\WorkbenchTools\<TOOL_ID>\backups\<yyyy-mm-dd-hhmm>[-label][.n]\` (beside `data`, never in the project). Copied to a `.tmp-` name first, then renamed. Same minute gives `.2`, `.3`. Unlabelled backups are "automatic": the newest 10 are kept, labelled ones are never deleted. The tool takes an automatic one on start when the newest is older than 20 hours (`backupIfDue`).
+- **Backups**: `%LOCALAPPDATA%\WorkbenchTools\<TOOL_ID>\backups\<yyyy-mm-dd-hhmm>[-label][.n]\` (beside `data`, never in the project). Copied to a `.tmp-` name first, then renamed. Same minute gives `.2`, `.3`. Unlabelled backups are "automatic": the newest 10 are kept, labelled ones are never deleted. The tool takes an automatic one on start, and checks hourly while it stays open, whenever the newest is older than 20 hours (`backupIfDue`).
 - **Restore** (`restoreBackup`): first copies the current data to `<stamp>-before-restore`, copies the chosen backup to a scratch folder, swaps it in. A backup made by a newer data version is refused. Restoring can itself be undone by restoring the `before-restore` copy.
 - **SQLite files are copied with `VACUUM INTO`**, so a backup taken while the tool has the database open is complete and consistent (rows still in the `-wal` file included; `-wal`/`-shm` are not copied). Needs `node:sqlite` (Electron 44: fine; the bundle needs the one-line Vite fix below). A damaged database that SQLite cannot read is copied raw instead: a damaged copy is still worth keeping. The copy is not in WAL mode and is defragmented; `user_version` is kept. Run `PRAGMA journal_mode = WAL` when the tool opens the file, as it should anyway.
 - **Restore and upgrade replace files**, so the database must be closed then: upgrade runs before the tool opens anything; for restore, fill in `closeData()` in `main.ts` the day the tool opens a database. The tool restarts after a restore.
@@ -141,6 +141,9 @@ app.whenReady().then(async () => {
       return;
     }
     await safety.backupIfDue().catch((e) => console.warn(`[backup] ${e instanceof Error ? e.message : String(e)}`));
+    // Also while it stays open (a tool left running for weeks otherwise never copies): checked hourly,
+    // a copy is made when the newest is older than 20 hours. Safe with a database open (VACUUM INTO).
+    setInterval(() => void safety.backupIfDue().catch((e) => console.warn(`[backup] ${e instanceof Error ? e.message : String(e)}`)), 60 * 60 * 1000).unref();
   } catch (e) {
     dialog.showErrorBox(`${app.getName()} could not check your data`, `Nothing was changed. ${e instanceof Error ? e.message : String(e)}`);
     app.exit(1);
@@ -188,22 +191,10 @@ Run from `tools/<name>/app/` (the CLI reads `TOOL_ID` and `DATA_VERSION` from `s
 ..\..\..\.workbench\scripts\run.cmd node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --disable-warning=ExperimentalWarning src\data-safety-cli.mjs <status | backup <words> | list | copy | restore <name>>
 ```
 
-- **Before any change that touches real data** (`safety.md`): `backup before <the change in their words>`, e.g. `backup before newest bills on top`. Say so in one line. It prints the path. "No data yet" is fine: nothing to lose.
-- **Changing how data is stored**: bump `DATA_VERSION`, add `MIGRATIONS[old]`, write the test above, `backup before <change>`, package, then check as below with a `copy` of the real data. Only then say it's done.
-- **"Go back"** (`stack.md` step 4): after rebuilding the older version, `copy` (prints a folder in Temp, e.g. `...\wb-check-1a2b3c4d\data`; it's a complete copy, safe while the tool is running), then run the old exe on it:
-
-  ```powershell
-  $copy = '<the path copy printed>'
-  $env:WORKBENCH_DATA_DIR = $copy
-  $p = Start-Process 'out\<App>-win32-x64\<App>.exe' -PassThru   # from tools\<name>\app\
-  Start-Sleep 8
-  $problem = Join-Path (Split-Path $copy) 'start-problem.txt'
-  if (Test-Path $problem) { Get-Content $problem }   # it refused: newer data, or a failed upgrade. Nothing was changed.
-  else { Get-Content (Join-Path $copy 'version.json') }  # it opened the data; now do the thing they use most
-  taskkill /PID $p.Id /T /F | Out-Null                    # only the process you started, never by name (their own tool may be open)
-  Remove-Item Env:WORKBENCH_DATA_DIR
-  ```
-  A refusal shows a native message box and waits, so the process is still alive: read the file, then kill it. "Refused, newer data" is exactly the case `stack.md` step 4 stops on: give them the three choices. Delete the Temp copy afterwards (`Remove-Item -Recurse (Split-Path $copy)`).
+- **Before any change that touches real data** (`safety.md`): `backup before <the change in their words>`, e.g. `backup before newest bills on top`. Say so in one line. It prints the path. "No data yet" is fine: nothing to lose. `backup` and `restore` write to `%LOCALAPPDATA%`, which Codex's sandbox doesn't allow, so Codex asks the user to approve that one command; say beforehand, in one line, why. (`copy`, `practice`, `list` and `status` need no approval.)
+- **Trying out a new version** (`stack.md` "In use and trying out"; `.workbench\scripts\try.ps1` runs this for you): `practice` replaces `%TEMP%\workbench-trying-out\<TOOL_ID>\data` with a fresh, complete copy of the real data (safe while the version in use is open) and prints that path; the new build starts with `WORKBENCH_DATA_DIR` set to it. Temp, because Codex's sandbox can write there and not in `%LOCALAPPDATA%`; practice data is throwaway. It refuses while the old trying-out copy is still open. Its backups and Electron profile stay beside it in that Temp folder.
+- **Changing how data is stored**: bump `DATA_VERSION`, add `MIGRATIONS[old]`, write the test above, `backup before <change>`, package, then open it with `try.ps1` (a fresh practice copy of the real data) and check the old data opened in the new shape. Only then say it's done.
+- **"Go back"** (`stack.md` step 4): after rebuilding the older version, `powershell -NoProfile -ExecutionPolicy Bypass -File .workbench\scripts\try.ps1 <tool>` from the project folder, with the user's approval (a tool's window can't run inside Codex's sandbox). It runs the older build on a fresh practice copy of the current data. If it refused (newer data, or a failed upgrade; nothing was changed), the window says so and `%TEMP%\workbench-trying-out\<TOOL_ID>\start-problem.txt` holds the message; otherwise the practice folder has the data's `version.json` and you do the thing they use most. "Refused, newer data" is exactly the case `stack.md` step 4 stops on: give them the three choices.
 - **Data looks wrong** (`fix.md` "Data first"): `backup before-restore` first (never skip). `list` shows the copies; compare the newest with the current data and tell them what a restore would bring back and lose. Only with their OK, and with the tool closed: `restore <name>` (it makes its own `before-restore` copy again, then replaces the data). Selective repair beats restoring everything where you can.
 - The app's Backups screen does the same restore for the user, with a native confirmation.
 

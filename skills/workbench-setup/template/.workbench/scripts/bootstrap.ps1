@@ -2,9 +2,12 @@
 #   Node.js  -> .tools\node   (official zip, SHA-256 checked against nodejs.org's SHASUMS256.txt)
 #   MinGit   -> .tools\git    (only when git is not already on PATH; checked against GitHub's asset digest)
 # Safe to run again: it skips what is already there.
+# -NodeVersion v24.21.0 fetches that exact Node instead of the default (to rebuild a tool with the
+# Node its NOTES "Built with" records; move .tools\node aside first).
+param([string]$NodeVersion = 'v24.21.0')
 $ErrorActionPreference = 'Stop'
 $ProgressPreference = 'SilentlyContinue'
-$NodeVersion = 'v24.21.0'
+if ($NodeVersion -notmatch '^v\d+\.\d+\.\d+$') { throw "NodeVersion must look like v24.21.0, not $NodeVersion" }
 
 $root  = Resolve-Path (Join-Path $PSScriptRoot '..\..')
 $tools = Join-Path $root '.tools'
@@ -33,7 +36,7 @@ if (-not (Test-Path -LiteralPath (Join-Path $node 'node.exe'))) {
   Rename-Item -LiteralPath (Join-Path $tools $name) 'node'
   Remove-Item -LiteralPath $zip
   "Node.js $NodeVersion ready."
-} else { 'Node.js already there.' }
+} else { "Node.js already there: $(& (Join-Path $node 'node.exe') -v)." }
 
 # --- git (only if missing)
 $git = Join-Path $tools 'git'

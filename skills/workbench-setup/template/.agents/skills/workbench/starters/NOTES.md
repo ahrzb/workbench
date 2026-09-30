@@ -3,6 +3,7 @@
 What it is: (not decided yet)
 Interview: not started
 Next: the interview
+In use: (nothing yet; the save point, their words and the date of the version on their desktop)
 
 ## What we're after
 Goal:
@@ -16,6 +17,15 @@ How we're doing it:
 
 ## How to run and check
 
+## Built with
+(Exact versions, so this tool can be rebuilt the same way later. `.workbench\scripts\try.ps1` keeps Node.js, Pinned, AI model and Last checked up to date; you fill Starter and Blocks when you copy them in.)
+Node.js:
+Pinned:
+Starter:
+Blocks:
+AI model:
+Last checked:
+
 ## Things that work
 
 ## Ideas shelf
@@ -25,10 +35,27 @@ How we're doing it:
 ## Decisions
 
 ## Data
+(Kinds only, never contents. Checklist and map: `.agents/skills/workbench/data.md`.)
 Where it is:
+Holds:
+Rebuild from originals:
 Backups:
+Restore checked:
+Copy elsewhere:
 Whose data: (not asked yet)
 TOOL_ID:
+
+### Where it goes
+(Written at "the shape"; the picture comes from these tables: `powershell -NoProfile -ExecutionPolicy Bypass -File .workbench\scripts\data-map.ps1 <tool>`.)
+Places
+| Place or party | Where | Notes |
+|---|---|---|
+
+Moves
+| # | From | To | What | When | Leaves this computer? |
+|---|---|---|---|---|---|
+
+Leaves this computer:
 
 ## Careful
 

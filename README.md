@@ -13,7 +13,7 @@ Needs the Codex app, CLI or IDE extension, signed in with ChatGPT. Nothing is in
 1. Make an empty folder named after the work (e.g. `Supplier bills`) and open Codex in it.
 2. Paste this, and approve what Codex asks:
 
-   > Set this folder up as a workbench: download https://github.com/ahrzb/workbench/archive/refs/tags/v0.2.3.zip, unpack it, copy its `skills/workbench-setup` folder to `.agents/skills/workbench-setup` in this folder, and delete the download. Then read `.agents/skills/workbench-setup/SKILL.md` and follow it.
+   > Set this folder up as a workbench: download https://github.com/ahrzb/workbench/archive/refs/tags/v0.2.4.zip, unpack it, copy its `skills/workbench-setup` folder to `.agents/skills/workbench-setup` in this folder, and delete the download. Then read `.agents/skills/workbench-setup/SKILL.md` and follow it.
 
 3. Open a **new chat** in the same folder. Under the message box, click **Review hooks** and choose **Allow selected** (in the terminal version, type `/hooks`). If Codex asks to trust the folder, say yes. Then type **hi**.
 4. Talk about your work. Later: another tool in the same folder ("something new: ..."), "something's wrong with the bills tool", or "update the workbench".

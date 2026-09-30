@@ -1,0 +1,190 @@
+<!doctype html>
+<!-- The data map: a picture of where a tool's data sits and goes, drawn from the tables under
+     "### Where it goes" in tools/<tool>/NOTES.md. Don't open this file: .workbench\scripts\data-map.ps1 <tool>
+     copies it to tools/<tool>/sketches/data-map.html with that tool's notes filled in, and the page draws
+     the picture itself (nothing to install, loads nothing). Layout is fixed: people and givers on the left,
+     "This computer" in the middle, other companies on the right; numbered arrows, thick when data leaves. -->
+<html lang="en"><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src data:">
+<title>Where your data goes</title></head>
+<body>
+<script type="text/plain" id="notes" data-tool="__TOOL_NAME__">__NOTES_BASE64__</script>
+<script>
+const TOOL = 'The tool';
+
+/** Rows of the first Markdown table after the line that starts with `label`. */
+function tableAfter(lines, label) {
+  const start = lines.findIndex((l) => l.trim().toLowerCase().startsWith(label.toLowerCase()));
+  if (start < 0) return [];
+  const rows = [];
+  let i = start + 1;
+  while (i < lines.length && !lines[i].trim().startsWith('|')) {
+    if (lines[i].startsWith('#')) return [];
+    i++;
+  }
+  for (; i < lines.length && lines[i].trim().startsWith('|'); i++) {
+    const cells = lines[i].trim().replace(/^\||\|$/g, '').split('|').map((c) => c.trim());
+    if (cells.every((c) => /^:?-+:?$/.test(c))) continue;
+    rows.push(cells);
+  }
+  return rows.slice(1); // drop the header
+}
+
+/** Reads the "Where it goes" block of a NOTES.md text. */
+function parseNotes(text) {
+  const lines = text.split(/\r?\n/);
+  const at = lines.findIndex((l) => /^###\s+Where it goes/i.test(l));
+  if (at < 0) throw new Error('NOTES.md has no "### Where it goes" block under "## Data" yet.');
+  let end = lines.findIndex((l, i) => i > at && /^##\s/.test(l));
+  if (end < 0) end = lines.length;
+  const block = lines.slice(at + 1, end);
+  const places = tableAfter(block, 'Places').map(([name, where = '', notes = '']) => ({ name, where, notes }));
+  const moves = tableAfter(block, 'Moves').map(([n, from, to, what = '', when = '', leaves = '']) => ({ n, from, to, what, when, leaves: /^yes/i.test(leaves) }));
+  const leavesLine = block.find((l) => /^Leaves this computer:/i.test(l.trim()))?.trim() ?? '';
+  if (moves.length === 0) throw new Error('The "Moves" table is empty.');
+  return { places, moves, leavesLine };
+}
+
+const kindOf = (where) => (/^other compan/i.test(where) ? 'right' : /^this computer/i.test(where) ? 'middle' : 'left');
+
+/** Puts every box in a fixed slot. */
+function layout({ places, moves }) {
+  const nodes = new Map();
+  for (const p of places) nodes.set(p.name, { name: p.name, column: kindOf(p.where), shape: kindOf(p.where) === 'middle' ? 'store' : 'party' });
+  nodes.set(TOOL, { name: TOOL, column: 'middle', shape: 'tool' });
+  for (const m of moves) for (const name of [m.from, m.to]) if (!nodes.has(name)) nodes.set(name, { name, column: 'left', shape: 'party' });
+  const readByTool = new Set(moves.filter((m) => m.to === TOOL).map((m) => m.from));
+  const middle = [...nodes.values()].filter((n) => n.column === 'middle' && n.name !== TOOL);
+  const columns = {
+    left: [...nodes.values()].filter((n) => n.column === 'left'),
+    middle: [...middle.filter((n) => readByTool.has(n.name)), nodes.get(TOOL), ...middle.filter((n) => !readByTool.has(n.name))],
+    right: [...nodes.values()].filter((n) => n.column === 'right'),
+  };
+  const X = { left: 20, middle: 360, right: 670 };
+  const WIDTH = { left: 190, middle: 220, right: 210 };
+  const H = 56, GAP = 34, TOP = 70;
+  for (const [col, list] of Object.entries(columns)) {
+    const offset = col === 'middle' ? 0 : Math.max(0, (columns.middle.length - list.length) * (H + GAP) / 2);
+    list.forEach((n, i) => Object.assign(n, { x: X[col], y: TOP + offset + i * (H + GAP), w: WIDTH[col], h: H }));
+  }
+  const rows = Math.max(columns.left.length, columns.middle.length, columns.right.length, 1);
+  return { nodes, height: TOP + rows * (H + GAP) + 20, boxes: nodes.size };
+}
+
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+
+function shape(n) {
+  const cx = n.x + n.w / 2, cy = n.y + n.h / 2;
+  const label = `<text x="${cx}" y="${cy + 5}" text-anchor="middle">${esc(n.name.length > 28 ? n.name.slice(0, 27) + '…' : n.name)}</text>`;
+  if (n.shape === 'tool') return `<rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" rx="18" class="tool"/>${label}`;
+  if (n.shape === 'store') {
+    const r = 8;
+    return `<path d="M${n.x} ${n.y + r} a${n.w / 2} ${r} 0 0 1 ${n.w} 0 v${n.h - 2 * r} a${n.w / 2} ${r} 0 0 1 ${-n.w} 0 z" class="store"/>` +
+      `<path d="M${n.x} ${n.y + r} a${n.w / 2} ${r} 0 0 0 ${n.w} 0" class="store-top"/>${label}`;
+  }
+  return `<rect x="${n.x}" y="${n.y}" width="${n.w}" height="${n.h}" class="party"/>${label}`;
+}
+
+/** `k`: this arrow's place among the same-column arrows, so each bows out a little further.
+ *  `lane`: shift for two moves between the same pair of boxes (there and back), so they don't overlap. */
+function arrow(m, a, b, k, lane = 0) {
+  const cls = m.leaves ? (/^b/i.test(m.n) ? 'move out building' : 'move out') : 'move';
+  let d, lx, ly;
+  if (a.column === b.column) {
+    // Same column: bow out to the side (left for the middle, into the gap for the outer columns), each
+    // arrow a little further, so lines and numbers never run through boxes or each other.
+    const toRight = a.column !== 'middle';
+    const x0 = toRight ? a.x + a.w : a.x;
+    const reach = 24 + 18 * k;
+    const side = toRight ? x0 + reach : x0 - reach;
+    const y0 = a.y + a.h / 2 + (b.y > a.y ? 8 : -8), y1 = b.y + b.h / 2 + (b.y > a.y ? -8 : 8);
+    d = `M${x0} ${y0} C${side} ${y0} ${side} ${y1} ${x0} ${y1}`;
+    lx = x0 + 0.75 * (side - x0); ly = (y0 + y1) / 2;
+  } else {
+    const leftToRight = a.x < b.x;
+    const x0 = leftToRight ? a.x + a.w : a.x, x1 = leftToRight ? b.x : b.x + b.w;
+    const y0 = a.y + a.h / 2 + lane, y1 = b.y + b.h / 2 + lane;
+    d = `M${x0} ${y0} L${x1} ${y1}`;
+    lx = x0 + (x1 - x0) * 0.35; ly = y0 + (y1 - y0) * 0.35;
+  }
+  return `<path d="${d}" class="${cls}" marker-end="url(#head)"/><circle cx="${lx}" cy="${ly}" r="11" class="num"/><text x="${lx}" y="${ly + 4}" text-anchor="middle" class="numtext">${esc(m.n)}</text>`;
+}
+
+function render(data, toolName = '') {
+  const { nodes, height, boxes } = layout(data);
+  const mid = [...nodes.values()].filter((n) => n.column === 'middle');
+  const boxTop = Math.min(...mid.map((n) => n.y)) - 38, boxBottom = Math.max(...mid.map((n) => n.y + n.h)) + 18;
+  const svg = [
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 ${Math.max(height, boxBottom + 20)}" role="img" aria-label="Where your data goes">`,
+    '<defs><marker id="head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 z" fill="#1f1f1f"/></marker></defs>',
+    '<text x="20" y="30" class="col">You and other people</text><text x="670" y="30" class="col">Other companies\' computers</text>',
+    `<rect x="250" y="${boxTop}" width="370" height="${boxBottom - boxTop}" class="boundary"/><text x="470" y="${boxTop + 22}" text-anchor="middle" class="col">This computer</text>`,
+    ...[...nodes.values()].map(shape),
+    ...(() => {
+      const count = { left: 0, middle: 0, right: 0 };
+      const pairs = new Map();
+      for (const m of data.moves) { const key = [m.from, m.to].sort().join('\u0000'); pairs.set(key, (pairs.get(key) ?? 0) + 1); }
+      const seen = new Map();
+      return data.moves.map((m) => {
+        const a = nodes.get(m.from), b = nodes.get(m.to);
+        const key = [m.from, m.to].sort().join('\u0000');
+        const i = seen.get(key) ?? 0; seen.set(key, i + 1);
+        const lane = (i - ((pairs.get(key) ?? 1) - 1) / 2) * 16;
+        return arrow(m, a, b, a.column === b.column ? count[a.column]++ : 0, lane);
+      });
+    })(),
+    '</svg>',
+  ].join('\n');
+  const sentences = data.moves.map((m) => {
+    const text = `${esc(m.n)}. ${esc(m.from)} → ${esc(m.to)}: ${esc(m.what)}${m.when ? `, ${esc(m.when)}` : ''}.`;
+    return `<p class="step">${m.leaves ? `<strong>${text}</strong>` : text}</p>`;
+  });
+  const warning = boxes > 8 ? '<p class="warn">This picture has more than 7 boxes. Split it in two (for example "using the tool" and "while we build it").</p>' : '';
+  return `<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:">
+<title>Where your data goes${toolName ? `: ${esc(toolName)}` : ''}</title>
+<style>
+body { font: 16px/1.5 'Segoe UI', system-ui, sans-serif; color: #1f1f1f; margin: 0; }
+.banner { background: #f2f2f2; border-bottom: 2px dashed #1f1f1f; padding: 8px 16px; font-weight: 600; }
+main { padding: 16px; max-width: 920px; }
+svg text { font: 14px 'Segoe UI', system-ui, sans-serif; fill: #1f1f1f; }
+svg .col { font-weight: 600; fill: #595959; }
+.party { fill: #fff; stroke: #1f1f1f; stroke-width: 1.5; }
+.tool { fill: #e6e6e6; stroke: #1f1f1f; stroke-width: 2; }
+.store, .store-top { fill: #fff; stroke: #1f1f1f; stroke-width: 1.5; }
+.store-top { fill: none; }
+.boundary { fill: none; stroke: #595959; stroke-width: 1.5; stroke-dasharray: 7 5; }
+.move { fill: none; stroke: #1f1f1f; stroke-width: 1.5; }
+.out { stroke-width: 4; }
+.building { stroke-dasharray: 10 6; }
+.num { fill: #fff; stroke: #1f1f1f; }
+.numtext { font-size: 12px; font-weight: 600; }
+.leaves { font-weight: 600; }
+.step { margin: 2px 0; }
+.warn { color: #7a0000; }
+</style></head><body>
+<p class="banner">A picture of where your data goes, not the tool itself.</p>
+<main>
+${svg}
+${sentences.join('\n')}
+${data.leavesLine ? `<p class="leaves">${esc(data.leavesLine)}</p>` : ''}
+${warning}
+</main></body></html>
+`;
+}
+
+(() => {
+  const holder = document.getElementById('notes');
+  try {
+    const bytes = Uint8Array.from(atob(holder.textContent.trim()), (c) => c.charCodeAt(0));
+    const html = render(parseNotes(new TextDecoder('utf-8').decode(bytes)), holder.dataset.tool);
+    document.open();
+    document.write(html);
+    document.close();
+  } catch (e) {
+    document.body.textContent = 'This picture could not be drawn: ' + (e instanceof Error ? e.message : String(e));
+  }
+})();
+</script>
+</body></html>

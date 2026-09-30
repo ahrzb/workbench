@@ -34,6 +34,14 @@ export function dataDir(): string {
   return process.env.WORKBENCH_DATA_DIR || path.join(process.env.LOCALAPPDATA ?? app.getPath('appData'), 'WorkbenchTools', TOOL_ID, 'data');
 }
 
+/**
+ * True when this run works on a copy of the data (WORKBENCH_DATA_DIR): the workbench's own checks, and
+ * a new version the user is trying out next to the one they use. Such a run gets its own Electron
+ * profile beside that copy, so both versions can be open at once, and says so in its window title.
+ */
+const ON_A_COPY = Boolean(process.env.WORKBENCH_DATA_DIR);
+if (ON_A_COPY) app.setPath('userData', path.join(path.dirname(dataDir()), 'electron-profile'));
+
 // Strict production policy. No remote origin appears anywhere. style-src has no
 // 'unsafe-inline': the page sets no inline style attributes.
 const CSP_PROD = [
@@ -243,6 +251,12 @@ function createWindow(): void {
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
+  if (ON_A_COPY) {
+    mainWindow.on('page-title-updated', (event, title) => {
+      event.preventDefault();
+      mainWindow?.setTitle(`${title} (trying out: practice copy of your data)`);
+    });
+  }
 
   if (DEV_URL) void mainWindow.loadURL(DEV_URL);
   else void mainWindow.loadURL(`${APP_ORIGIN}/index.html`);

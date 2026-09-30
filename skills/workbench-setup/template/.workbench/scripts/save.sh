@@ -13,7 +13,7 @@ allowed='^(\.gitignore|\.gitattributes|AGENTS\.md)$
 ^\.agents/skills/workbench/[A-Za-z0-9_./-]+\.(md|ts|tsx|mts|mjs|css|html|jsonc|txt)$
 ^\.agents/skills/workbench/starters/[a-z0-9-]+/(package|package-lock|tsconfig|components)\.json$
 ^\.agents/skills/workbench/starters/web/public/[A-Za-z0-9_./-]+\.json$
-^\.workbench/scripts/(bootstrap\.ps1|run\.cmd|git\.cmd|save\.ps1|save\.sh|account\.ps1|account\.sh)$
+^\.workbench/scripts/(bootstrap\.ps1|run\.cmd|git\.cmd|save\.ps1|save\.sh|try\.ps1|data-map\.ps1|account\.ps1|account\.sh)$
 ^\.workbench/(session-brief\.md|NOTES\.md|VERSION|account)$
 ^tools/[a-z0-9-]+/(NOTES|CONTEXT)\.md$
 ^tools/[a-z0-9-]+/app/(package\.json|package-lock\.json|tsconfig\.json|index\.html|build\.mjs|forge\.config\.ts|forge\.env\.d\.ts|vite\.config\.ts|wrangler\.jsonc|components\.json|README\.md)$

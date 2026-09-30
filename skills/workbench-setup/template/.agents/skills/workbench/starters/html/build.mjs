@@ -85,7 +85,10 @@ export function findAddresses({ js, css }) {
   return [...new Set([...(js + css).matchAll(/https?:\/\/[^\s'"`)<>]+/g)].map((m) => m[0]))];
 }
 
-export function build({ root = here, outDir = path.join(here, 'out') } = {}) {
+const TRY_MARKER = 'const TRYING_OUT = false;';
+
+/** `tryingOut`: builds `out/<title> (trying out).html`, a copy with its own practice storage (see main.mjs). */
+export function build({ root = here, outDir = path.join(here, 'out'), tryingOut = false } = {}) {
   const template = readText(path.join(root, 'index.html'));
   for (const marker of ['build:csp', 'build:css', 'build:js']) {
     const n = template.split(`<!-- ${marker} -->`).length - 1;
@@ -93,9 +96,13 @@ export function build({ root = here, outDir = path.join(here, 'out') } = {}) {
   }
   const title = template.match(/<title>([^<]*)<\/title>/)?.[1].trim();
   if (!title) throw new Error('index.html needs a <title>: it names the built file and the backup files');
-  const fileName = `${title.replace(/[\\/:*?"<>|\u0000-\u001f]/g, '-').trim()}.html`;
+  const fileName = `${title.replace(/[\\/:*?"<>|\u0000-\u001f]/g, '-').trim()}${tryingOut ? ' (trying out)' : ''}.html`;
 
-  const js = bundle(root, 'src/main.mjs');
+  let js = bundle(root, 'src/main.mjs');
+  if (tryingOut) {
+    if (js.split(TRY_MARKER).length !== 2) throw new Error(`src/main.mjs must contain "${TRY_MARKER}" exactly once for --try`);
+    js = js.replace(TRY_MARKER, 'const TRYING_OUT = true;');
+  }
   const css = readText(path.join(root, 'src/index.css'));
 
   const problems = findProblems({ html: template, js, css });
@@ -133,7 +140,7 @@ export function build({ root = here, outDir = path.join(here, 'out') } = {}) {
 
 if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.argv[1])).href) {
   try {
-    const result = build();
+    const result = build({ tryingOut: process.argv.includes('--try') });
     for (const a of result.addresses) console.warn(`Note: the source mentions ${a} (it is text only, nothing is loaded from it)`);
     console.log(`Built ${result.file} (${Buffer.byteLength(result.html)} bytes)`);
   } catch (e) {

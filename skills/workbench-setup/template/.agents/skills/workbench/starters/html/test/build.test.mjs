@@ -29,6 +29,23 @@ test('the built page is one file whose CSP hashes match its inline script and st
   }
 });
 
+test('--try builds a separate, marked copy whose policy still matches; the normal build is unmarked', () => {
+  const outDir = mkdtempSync(path.join(tmpdir(), 'wb-html-test-'));
+  try {
+    const normal = build({ outDir });
+    const trial = build({ outDir, tryingOut: true });
+    assert.equal(path.basename(trial.file), 'My tool (trying out).html');
+    assert.notEqual(trial.file, normal.file);
+    assert.ok(trial.js.includes('const TRYING_OUT = true;') && !trial.js.includes('const TRYING_OUT = false;'));
+    assert.ok(normal.js.includes('const TRYING_OUT = false;'));
+    const html = readFileSync(trial.file, 'utf8');
+    const script = html.match(/<script type="module">([\s\S]*)<\/script>/)[1];
+    assert.ok(trial.csp.includes(`script-src ${hash(script)}`));
+  } finally {
+    rmSync(outDir, { recursive: true, force: true });
+  }
+});
+
 test('the build refuses anything that loads from outside or breaks the policy', () => {
   const ok = { html: '<title>x</title>', js: 'const a = 1;', css: 'body { color: red; }' };
   assert.deepEqual(findProblems(ok), []);

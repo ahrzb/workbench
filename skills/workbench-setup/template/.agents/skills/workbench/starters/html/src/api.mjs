@@ -14,13 +14,16 @@ export const MAX_FILE_BYTES = 50 * 1024 * 1024; // same cap as the Electron star
  */
 
 /**
- * @param {{ toolId: string, toolName: string, dataVersion: number, document: Document, storage: Storage, now?: () => Date }} env
+ * @param {{ toolId: string, storageId?: string, toolName: string, dataVersion: number, document: Document, storage: Storage, now?: () => Date }} env
+ * `storageId` (default `toolId`) prefixes the localStorage keys; a copy being tried out uses its own, so
+ * it never touches the data of the copy in use. Backups are still checked against `toolId`, so a backup
+ * from the copy in use can be restored into the one being tried out.
  */
-export function createBrowserApi({ toolId, toolName, dataVersion, document, storage, now = () => new Date() }) {
+export function createBrowserApi({ toolId, storageId = toolId, toolName, dataVersion, document, storage, now = () => new Date() }) {
   // Chrome and Edge give every file:// page the same localStorage, so every key starts with
   // this tool's own id. Never read or write a key without it.
-  const settingsKey = `${toolId}:settings`;
-  const dataKey = `${toolId}:data`;
+  const settingsKey = `${storageId}:settings`;
+  const dataKey = `${storageId}:data`;
 
   /** @param {string} key */
   function read(key) {

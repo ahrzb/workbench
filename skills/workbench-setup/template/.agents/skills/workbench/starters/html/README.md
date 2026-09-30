@@ -30,7 +30,7 @@ If unsure and programs can run, use Electron. You can start here and port later 
 | `src/logic.mjs` | Pure logic: `summarize` (identical to the Electron starter's `logic.ts`), settings and data normalizing, the backup file format, file-name cleaning. Rules the tool must get right go here. |
 | `src/index.css` | Greyscale styles, 16px minimum. No `@import`, no `url()` except `data:`. |
 | `build.mjs` | Plain Node build: inlines JS and CSS, computes the CSP hashes, refuses anything that reaches outside the page. |
-| `test/logic.test.mjs`, `test/build.test.mjs` | Logic checks; build checks (CSP hashes match the inline blocks, forbidden things are refused). |
+| `test/logic.test.mjs`, `test/build.test.mjs`, `test/api.test.mjs` | Logic checks; build checks (CSP hashes match the inline blocks, forbidden things are refused, the trying-out build is separate and marked); the trying-out copy never touches the in-use copy's storage. |
 | `package.json` | Only names two scripts (`test`, `build`). No dependencies. |
 
 Rename the tool: `<title>` and `<h1>` in `index.html`; set `TOOL_ID` in `src/main.mjs`. The built file is `out\<title>.html`.
@@ -40,9 +40,10 @@ Rename the tool: `<title>` and `<h1>` in `index.html`; set `TOOL_ID` in `src/mai
 ```
 ..\..\..\.workbench\scripts\run.cmd node --test test/*.test.mjs
 ..\..\..\.workbench\scripts\run.cmd node build.mjs        # -> out\<title>.html
+..\..\..\.workbench\scripts\run.cmd node build.mjs --try  # -> out\<title> (trying out).html
 ```
 
-Then open `out\<title>.html` yourself and use it the way the user would (open a file, change a setting, export a backup) before handing over. A quick browser check with a scratch copy is fine; never point a browser at the user's own files.
+For yourself and for demos, always the trying-out build (`.workbench\scripts\try.ps1 <tool>` builds and opens it): marked at the top, with its own practice storage, so it never changes the data of the copy they use (every local HTML page shares one browser store; the keys keep them apart). To practise on real data they restore a backup from their usual copy into it. Use it the way the user would (open a file, change a setting, export a backup) before handing over; never point a browser at the user's own files. Only "ship" copies the normal build to `current\`.
 
 **Ship** (same idea as "Ship it" in [stack.md](../../stack.md)):
 1. Ask the user to close the page if it's open in a browser tab.

@@ -32,10 +32,10 @@ The costly failure is the wrong direction: a lot of work, then "that's not what 
 
 **The plan.** Right after the interview, show 3-5 milestones in their words, each ending in a demo, the cheapest and riskiest first:
 
-1. **First look**, minutes, before any app: the result on their own samples, worked out directly (a one-off script or by hand), shown as they'd get it: the spreadsheet rows as a table in the chat, or a sample output file. "Is this what you want to end up with?" Most wrong turns show up here, while nothing is built yet.
-2. **The shape**, still before any app code: how they'll use it, as a short walkthrough and, if it has a screen, one rough static sketch ([stack.md](stack.md#sketches)): what kind of thing it is (a small program, one HTML file, a website), where their files come from, what they click, what they get and where it goes, what it deliberately won't do. "Is this how you pictured using it?" At a real fork, 2-3 sketches side by side with the user's (sample) data, one-line tradeoffs, your recommendation last.
-3. **The hard part, proven**: whatever might not work at all (their scanned PDFs, a messy layout, a rule with exceptions), run on all their samples, with an honest count of what came out right.
-4. **Thinnest working tool**: the agreed shape with only the one action working, on their real case; nothing else is built yet.
+1. **First look**, minutes, before any app: the result on their own samples, worked out directly (a one-off script or by hand), shown as they'd get it: the spreadsheet rows as a table in the chat, or a sample output file. "Is this what you want to end up with?" Most wrong turns show up here, while nothing is built yet. The plan (below) goes in the same message, or the very next one if the first look raised a question; "go on" after the first look means the next milestone, never "build it all".
+2. **The shape**, still before any app code: how they'll use it, as a short walkthrough and, if it has a screen, one rough static sketch ([stack.md](stack.md#sketches)): what kind of thing it is (a small program, one HTML file, a website), what they click, what they get, what it deliberately won't do. Where their files come from and where the data goes is the data map ([data.md](data.md)): fill "Where it goes" in the tool's NOTES, then always run `powershell -NoProfile -ExecutionPolicy Bypass -File .workbench\scripts\data-map.ps1 <tool>` and open the page it prints for them (Start-Process on that path); give its numbered sentences in the chat and ask "Is this right? Does anyone else get or see any of it?" Then: "Is this how you pictured using it?" At a real fork, 2-3 sketches side by side with the user's (sample) data, one-line tradeoffs, your recommendation last.
+3. **The hard part, proven**: whatever might not work at all (their scanned PDFs, a messy layout, a rule with exceptions), run on all their samples, with an honest count of what came out right (nothing silently lost: checklist item 5 in [data.md](data.md)).
+4. **Thinnest working tool**: the agreed shape with only the one action working, on their real case; nothing else is built yet. Before it: the data checklist items for this point and the exits check ([data.md](data.md)).
 5. Then widen, one milestone at a time: more cases, a nicer screen, ideas from the shelf.
 
 Merge 1 and 2 for a tiny tool, and skip 3 when nothing is uncertain, but never start the app before they've seen the result and the shape.
@@ -62,16 +62,15 @@ A milestone is one or more small changes. For each change:
 2. **Echo.** "Next (milestone <n> of <m>): after this, you'll be able to <thing they can see or do, their words>. Anything I got wrong?" One change only; everything else to the ideas shelf.
 3. **Size.** Can they see the result after one build and a one-minute try? If not, split and offer the first piece.
 4. **Save point** "before: <their words>". Back up their data first if the change touches it ([safety.md](safety.md#data)).
-5. **Build and verify.** Smallest change, nothing extra. Add a check for it, run all checks, then use the tool the way they would (start it, do the action, restart, look at the data). Two failed attempts: go back to the save point and rethink ([fix.md](fix.md#two-strike-reset)).
-6. **Save point** "<their words>" once everything passes. Update NOTES.
+5. **Build and verify.** Smallest change, nothing extra. Add a check for it, run all checks, package, then use the tool the way they would (start it, do the action, restart, look at the data), always as the trying-out copy that `.workbench\scripts\try.ps1 <tool>` opens on a practice copy of their data. It opens a window, which Codex's sandbox can't, so run it with escalated permissions and a one-line reason for the user's approval ([stack.md](stack.md#in-use-and-trying-out)). Never start the new build any other way and never link the user to it: that runs it on their real data. Two failed attempts: go back to the save point and rethink ([fix.md](fix.md#two-strike-reset)).
+6. **Save point** "<their words>" once everything passes. Update NOTES, including "Built with" from what `try.ps1` printed (add the section if it's missing).
 7. **Hand back**, under ~120 words, no file names, no jargon:
 
    ```
    Milestone <n> of <m> done: you can now <what they can do>.
 
-   Try it now (about a minute):
-   1. <start step>
-   2. <one action with an example from their work>
+   Try it now (about a minute): I've opened the new version for you, on a practice copy of your data; your usual one is unchanged.
+   1. <one action with an example from their work>
 
    You should see: <specific result>.
    Something different? Tell me what you saw, or say "go back".
@@ -79,10 +78,10 @@ A milestone is one or more small changes. For each change:
    What I checked: <one true sentence>.
    Next: milestone <n+1>, <what they'll see>. Or something you noticed?
    ```
-8. **Read the reaction.** Happy: suggest using it for real for a day or two. "Not quite what I meant": a new small change. Unexpected result: [fix.md](fix.md). New idea: ideas shelf. "Fine"/"ok": ask what they saw after step 2.
+8. **Read the reaction.** Happy: ask "Use this version from now on?"; yes -> "Ship it" ([stack.md](stack.md#in-use-and-trying-out)), then suggest using it for real for a day or two. "Not quite what I meant": a new small change. Unexpected result: [fix.md](fix.md). New idea: ideas shelf. "Fine"/"ok": ask what they saw after step 1.
 
 Never claim something works without saying what you ran. Never build extras nobody asked for; offer at most one idea per hand-back, as a question.
 
-**Every ~5 changes**: tidy up without changing behaviour, run all checks, prune the ideas shelf with the user ("still want these?").
+**Every ~5 changes**: tidy up without changing behaviour, run all checks, re-read the Data lines and the data map against the app ([data.md](data.md)), prune the ideas shelf with the user ("still want these?").
 
 **When the tool grows** (someone else will use it, it holds other people's data, mistakes would be costly): [safety.md](safety.md#when-the-tool-grows).

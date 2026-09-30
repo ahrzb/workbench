@@ -50,6 +50,8 @@
 !/.workbench/VERSION
 !/.workbench/scripts/save.ps1
 !/.workbench/scripts/save.sh
+!/.workbench/scripts/try.ps1
+!/.workbench/scripts/data-map.ps1
 !/.workbench/account
 
 # Each tool in tools/<name>/: its notes and words, named config files, and only code files

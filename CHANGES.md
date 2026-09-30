@@ -2,6 +2,15 @@
 
 Written for the people using the workbench. The AI reads the entries newer than a project's version when it updates.
 
+## 0.2.4 (2026-09-30)
+
+- Keep using your tool while it's being changed. New versions open as a separate "trying out" copy, next to the one you use, on a practice copy of your data. Your usual copy and your real data only change when you say "use this version". Codex asks you to allow opening that window each time.
+- A picture of where your data goes: early on, before anything is built, you see who and what touches your data and whether anything leaves your computer, and say if it's right.
+- A short, mostly silent data checklist behind the scenes: copies of your data also while a tool stays open, a check that a copy really opens, a suggestion to keep a copy off this computer for data that exists nowhere else, and, for other people's details, keeping only what's used and for how long.
+- Each tool writes down the exact versions it was built with, so it can be rebuilt the same way later.
+- Downloads for building ask for your OK (Codex's sandbox has no network), instead of being mistaken for a blocked network.
+- Tools made before this version get the "trying out" part the next time they're changed.
+
 ## 0.2.3 (2026-09-30)
 
 - Demos you can look at: after each milestone the AI shows the actual rows or cases, the tricky ones first, instead of a sentence of counts.
