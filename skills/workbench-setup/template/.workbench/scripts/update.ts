@@ -15,7 +15,7 @@ const root = path.resolve(import.meta.dir, '..', '..')
 const checkOnly = process.argv.slice(2).some((a) => /^(-|--)check-?only$/i.test(a))
 const P = (rel: string) => path.join(root, rel)
 const owned = ['.agents/skills/workbench', '.agents/skills/impeccable', '.impeccable/config.json', '.workbench/scripts',
-  '.workbench/session-brief.md', '.codex/hooks', '.codex/hooks.json', 'AGENTS.md', '.gitignore', '.gitattributes', '.workbench/VERSION']
+  '.workbench/session-brief.md', '.codex/hooks', '.codex/hooks.json', '.codex/agents', 'AGENTS.md', '.gitignore', '.gitattributes', '.workbench/VERSION']
 
 // Child processes get the project's own tools first on PATH, like run.cmd does.
 const sep = win ? ';' : ':'

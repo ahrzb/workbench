@@ -29,6 +29,7 @@ const allowed = [
   String.raw`^(\.gitignore|\.gitattributes|AGENTS\.md)$`,
   String.raw`^\.codex/hooks\.json$`,
   String.raw`^\.codex/hooks/session-start\.(ps1|sh)$`,
+  String.raw`^\.codex/agents/[a-z0-9_-]+\.toml$`,
   String.raw`^\.agents/skills/workbench/[${W}./-]+\.(md|ts|tsx|mts|mjs|css|html|jsonc|txt)$`,
   String.raw`^\.agents/skills/workbench/starters/[a-z0-9-]+/(package|package-lock|tsconfig|components)\.json$`,
   String.raw`^\.agents/skills/workbench/starters/web/public/[${W}./-]+\.json$`,
@@ -39,6 +40,8 @@ const allowed = [
   String.raw`^\.workbench/scripts/(bootstrap\.ps1|run\.cmd|git\.cmd|account\.ps1|account\.sh|[a-z0-9-]+\.ts)$`,
   String.raw`^\.workbench/(session-brief\.md|NOTES\.md|VERSION|account)$`,
   String.raw`^tools/[a-z0-9-]+/(NOTES|CONTEXT)\.md$`,
+  // A tool's formal model (modeller) and screens map (designer).
+  String.raw`^tools/[a-z0-9-]+/(model|screens)\.json$`,
   // A tool's design notes (impeccable's product and design records, briefs and reviews; no screenshots).
   String.raw`^tools/[a-z0-9-]+/(PRODUCT|DESIGN)\.md$`,
   String.raw`^tools/[a-z0-9-]+/\.impeccable/(config|design)\.json$`,
@@ -53,7 +56,7 @@ const allowed = [
 ].map((s) => new RegExp(s, 'iu'))
 
 // Only these places are searched (never node_modules, builds, tools' copies in use, samples or data).
-const places = ['.', '.codex', '.codex/hooks', '.workbench', '.workbench/scripts', '.impeccable']
+const places = ['.', '.codex', '.codex/hooks', '.codex/agents', '.workbench', '.workbench/scripts', '.impeccable']
 const recurse = ['.agents/skills/workbench', '.agents/skills/impeccable']
 const toolsDir = path.join(root, 'tools')
 if (fs.existsSync(toolsDir) && fs.statSync(toolsDir).isDirectory()) {

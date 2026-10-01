@@ -12,6 +12,27 @@ For you, not the user. The bundled **impeccable** skill (`.agents/skills/impecca
 - **"It looks plain / cluttered / make it nicer":** a normal small change, and "nicer" means easier to use first, looks second. Run impeccable's critique privately in this chat (no sub-agents, so don't ask about them) against `PRODUCT.md`, then fix the few things that matter most: what to do first and what's most important visible at a glance, an empty screen that says what to do, labels and messages in the tool's CONTEXT words (clarify, onboard, layout), then type and colour (typeset, colorize, quieter or bolder). Demo before/after on the trying-out copy.
 - **Desktop tools (Electron, one HTML file):** where impeccable says to check desktop and mobile widths, check the window at its default size and maximised instead; never phone widths. Look at it through the trying-out copy, not a browser tab. The user's own reaction in the demo ("do you like how it looks and feels?") is the real test of the look.
 
+## The screens map (`tools/<name>/screens.json`)
+
+The designer's formal record of the flows, kept from "the shape" on, because sketches aren't saved and the agreed flow must not live only in chat. Words are the user's; `does` names the model's event (`<thing>:<event>` from `model-check.ts --summary`) or a plain command the model has no event for (`open-file`, `export`).
+
+```json
+{
+  "screens": [
+    { "id": "owing", "word": "Who still owes", "first": true,
+      "shows": ["member: name, band, paid so far, still owing", "the 'check these' list first when it has rows"],
+      "actions": [
+        { "label": "Open this month's bank file", "does": "open-file" },
+        { "label": "Mark as left", "does": "member:leave", "greyedWhen": "already left" }
+      ],
+      "leadsTo": ["member"],
+      "empty": "Open a bank file to see who still owes." }
+  ]
+}
+```
+
+`model-check.ts <tool>` compares it with the model: an event no screen offers, or an action the model doesn't have, is a `DESIGN` gap. Every screen also states its empty state, and every action the model can refuse has `greyedWhen` with the reason the user will read.
+
 ## What never reaches the user
 
 - Impeccable's vocabulary and reports: no command names, scores, heuristic names, "degraded" banners, design jargon, long reviews. Say what changed in their words: "The totals now stand out and the two buttons are easier to tell apart."

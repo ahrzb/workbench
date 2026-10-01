@@ -20,6 +20,8 @@ Infer the route from the user's message and confirm it in one line ("Sounds like
 | says "update the workbench" or asks for the latest version | Update | [update.md](update.md) |
 | has trouble with outside software ("Excel is acting weird") | Forwardable message | [safety.md](safety.md#forwardable-messages) |
 
+**Who does the work.** You are the product manager: the only one who talks to the user, owner of the process and of why and what gets built, and the translation layer between the user's world and the team. The formal model, the flows and look, and the code belong to three project agents (modeller, designer, implementer) that you brief when their part changes ([roles.md](roles.md)). Read roles.md before the first look of a new tool and before any build or fix.
+
 ## Reference, read when the branch comes up
 
 - [talking.md](talking.md): CONTEXT.md, how to ask, sorting goals, needs and solutions. Read before the interview and whenever you are about to ask something.
@@ -28,11 +30,13 @@ Infer the route from the user's message and confirm it in one line ("Sounds like
 - [design.md](design.md): how tools look: the bundled impeccable design skill, when to use it (a tool's first screen, a check before every demo, polish before shipping) and what of it never reaches the user. Read before building or changing any screen, and before using the impeccable skill for anything.
 - [ai-features.md](ai-features.md): when the tool itself should use AI (reading documents, images), and how to offer it.
 - [stack.md](stack.md): how tools are built here: several tools in one project, the starters (`starters/`: Electron, one HTML file, a website), the building blocks (`blocks/`), `.tools/`, save points, packaging.
+- [roles.md](roles.md): the four roles, who owns which file, when to start each agent, what they return, the checks between them.
+- [model.md](model.md): the formal model (`tools/<name>/model.json`), its checks (`model-check.ts`) and how its gaps become plain questions. For the modeller; read it yourself only when agents aren't available.
 
 ## Files you keep up to date
 
 - `tools/<name>/CONTEXT.md`: that tool's words, and nothing else ([talking.md](talking.md#contextmd)).
-- `tools/<name>/NOTES.md`: everything else about that tool. Refresh it at the end of every change: What it is, Interview, Next, What we're after, Things that work, Ideas shelf, Waiting on, Decisions, Data, Careful, For the AI.
+- `tools/<name>/NOTES.md`: everything else about that tool. Refresh it at the end of every change: What it is, Interview, Next, What we're after, Things that work, Ideas shelf, Waiting on, Decisions, Data, Careful, For the AI. The formal model (`model.json`) and the screens map (`screens.json`) belong to the modeller and the designer ([roles.md](roles.md)).
 - `tools/<name>/PRODUCT.md`: what the tool is for, written by you from NOTES and CONTEXT before its first screen, for the design skill ([design.md](design.md)).
 - `.workbench/NOTES.md`: `Last worked on: <name>`, one line per tool under "Tools here", anything waiting on someone that isn't about one tool, and the ChatGPT account.
 - Save points: one before and one after every change, with the tool's name and a message in the user's words ([stack.md](stack.md#save-points)).

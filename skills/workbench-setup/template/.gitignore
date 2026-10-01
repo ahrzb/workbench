@@ -16,6 +16,9 @@
 /.codex/hooks/*
 !/.codex/hooks/session-start.ps1
 !/.codex/hooks/session-start.sh
+!/.codex/agents/
+/.codex/agents/*
+!/.codex/agents/*.toml
 !/.agents/
 /.agents/*
 !/.agents/skills/
@@ -64,6 +67,7 @@
 !/.workbench/scripts/try.ts
 !/.workbench/scripts/data-map.ts
 !/.workbench/scripts/update.ts
+!/.workbench/scripts/model-check.ts
 !/.workbench/account
 
 # Each tool in tools/<name>/: its notes and words, named config files, and only code files
@@ -74,6 +78,8 @@
 !/tools/*/CONTEXT.md
 !/tools/*/PRODUCT.md
 !/tools/*/DESIGN.md
+!/tools/*/model.json
+!/tools/*/screens.json
 !/tools/*/.impeccable/
 /tools/*/.impeccable/*
 !/tools/*/.impeccable/config.json

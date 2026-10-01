@@ -38,6 +38,8 @@ The costly failure is the wrong direction: a lot of work, then "that's not what 
 4. **Thinnest working tool**: the agreed shape with only the one action working, on their real case; nothing else is built yet. Before it: the data checklist items for this point and the exits check ([data.md](data.md)). Its screen is designed properly from the start: `tools/<name>/PRODUCT.md` and the design skill, as [design.md](design.md) says.
 5. Then widen, one milestone at a time: more cases, a nicer screen, ideas from the shelf.
 
+**Who does each milestone** ([roles.md](roles.md)): you, the product manager, run the interview, scope it, keep the plan and show every demo. At the first look the modeller profiles the samples, writes the first model and returns the result on their samples with the tricky rows first; you show it. At the shape the modeller and then the designer (sketch and screens map) run; the sketch link comes from the designer's return. From the thinnest working tool on, the implementer builds; you do the demos, the questions and the "Ship it". Before every demo, `model-check.ts <tool>` shows no `MODEL` or `DESIGN` gaps, and the implementer's tests (one per case, and every stage x event from the model) pass.
+
 Merge 1 and 2 for a tiny tool, and skip 3 when nothing is uncertain, but never start the app before they've seen the result and the shape.
 
 Say it in one message: "Here's how I'd get there: 1. ... 2. ... 3. ... After each one I'll show you and wait for your OK before going on. Sound right?" Write it in the tool's NOTES under "Milestones" (`[x]` done, `[ ]` not yet, `<- now` on the current one) and start only after their OK.
