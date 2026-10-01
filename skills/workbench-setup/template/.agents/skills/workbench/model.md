@@ -52,7 +52,7 @@ JSON, written and kept by you, the guide; the maker only reads it. No real data 
     "id": "B1", "milestone": 3, "canDo": "see who still owes this year's fee, unsure payments set apart",
     "quote": "I want to see quickly who still owes this year's fee",
     "cases": ["C1", "C4"], "facts": ["F3", "F8"], "screens": ["owing"],
-    "status": "confirmed"
+    "status": "confirmed", "sketch": "sketches/owing.html"
   }]
 }
 ```
@@ -71,7 +71,7 @@ What each part catches, and the rules for writing it:
 - **cases**: a rule's examples, with the expected result, as made-up twins of the tricky real rows. `said`: `you` (the user confirmed the result: proof), `guess` (still runs, proves nothing about what they want), `waiting` (an open question). Cases become tests named by their sentence ([build.md](build.md)).
 - **promises**: who else cares (members, a committee, a client) and what the tool promises them, each checked by a case.
 - **screens**: the flow, because it's about how the user works: each screen in their words, what it shows (what they need to see to decide), the actions with `does` (`<thing>:<event>` from a life, or a plain command like `open-file`, `export`), `greyedWhen` with the reason they'll read for every action the spec can refuse, and the empty state. The user confirms the flow by clicking through the sketch the maker makes from it. How it looks (spacing, type, colour) is not here: that's the maker's craft ([design.md](design.md)); the user's reactions to the look come back as backlog items.
-- **backlog**: what gets built, one item per thing the user will be able to do, in milestone order. Each item: `canDo` (their words: "you can now ..."), `quote` (what they said that asked for it), the `cases` that prove it, the `facts` and `screens` it relies on, and a `status` only you move: `proposed` → `confirmed` (the user said yes to the plan or the sketch) → `built` (the maker's checks pass) → `tried` (the user used the trying-out copy) → `accepted` (their yes; then "Ship it"). An item is ready for the maker only when it is `confirmed` and every one of its cases is `you` or `guess` (none `waiting`). The maker builds only `confirmed` items; anything it builds that no item asks for is a mistake.
+- **backlog**: what gets built, one item per thing the user will be able to do, in milestone order. Each item: `canDo` (their words: "you can now ..."), `quote` (what they said that asked for it), the `cases` that prove it, the `facts` and `screens` it relies on, and a `status` only you move: `proposed` → `confirmed` (the user clicked through the wireframe and said yes; record which one in `sketch`, the file in `sketches/`; an item with no screen names its sample output file) → `built` (the maker's checks pass) → `tried` (the user used the trying-out copy) → `accepted` (their yes; then "Ship it"). An item is ready for the maker only when it is `confirmed` and every one of its cases is `you` or `guess` (none `waiting`). The maker builds only `confirmed` items; anything it builds that no item asks for is a mistake.
 
 Size: about six things, 25 facts, 8 stages and 12 moves per life. Past that it is probably two tools.
 

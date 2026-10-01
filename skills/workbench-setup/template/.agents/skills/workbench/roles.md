@@ -19,8 +19,8 @@ Before each step, run `.workbench\scripts\run.cmd bun .workbench\scripts\gate.ts
 
 | Step | Before | It checks |
 |---|---|---|
-| `shape` | showing the shape (sketch and plan) | the spec has a job, steps, screens and a backlog; nothing left for you to settle in it |
-| `build` | briefing the maker to build | at least one backlog item `confirmed`, none of its cases waiting on the user |
+| `shape` | showing the wireframe and the plan | the spec has a job, steps, screens and a backlog; nothing left for you to settle in it |
+| `build` | briefing the maker to build | at least one backlog item `confirmed` against a wireframe that exists (`sketch`), none of its cases waiting on the user |
 | `demo` | opening the trying-out copy for the user | every case of each built item has a test, the tests pass, the design check passes |
 | `ship` | replacing the version in use | every built item was tried and said yes to (`accepted`), tests still pass |
 
