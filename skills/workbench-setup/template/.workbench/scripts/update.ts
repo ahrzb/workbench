@@ -78,7 +78,10 @@ function main() {
   const tag = getJson<{ tag_name?: string }>(`https://api.github.com/repos/${source}/releases/latest`).tag_name
   const next = `${tag}`.replace(/^v/, '')
   if (!/^\d+\.\d+\.\d+$/.test(next)) throw new Error(`Unexpected release tag '${tag}'.`)
-  if (cmp(next, current) <= 0) { console.log(`UP_TO_DATE: this project has workbench ${current}, the latest.`); return 0 }
+  // A project updated to 0.3.0 by a 0.2.x script got everything but the team's agent files (the old script
+  // didn't own .codex/agents): apply the same release once more to put them in.
+  const missingTeam = cmp(next, current) === 0 && !existsSync(P('.codex/agents/modeller.toml'))
+  if (cmp(next, current) <= 0 && !missingTeam) { console.log(`UP_TO_DATE: this project has workbench ${current}, the latest.`); return 0 }
   if (checkOnly) { console.log(`AVAILABLE: workbench ${next} (this project has ${current}).`); return 0 }
   if (existsSync(P('app/package.json')) && !existsSync(P('tools'))) {
     console.log('OLD_LAYOUT: this project still has its one tool in app\\. Move it into tools\\<name>\\ first (update.md), then run this again.')

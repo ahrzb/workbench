@@ -68,6 +68,7 @@
 !/.workbench/scripts/data-map.ts
 !/.workbench/scripts/update.ts
 !/.workbench/scripts/model-check.ts
+!/.workbench/scripts/design-check.ts
 !/.workbench/account
 
 # Each tool in tools/<name>/: its notes and words, named config files, and only code files

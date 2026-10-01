@@ -70,6 +70,14 @@ Reading it:
 - **Both missed a typed status the data contradicts** (Eli: Lapsed but paid). The model recorded status as `one-of`; `model-check.ts` has no rule that compares a typed column with what other columns imply (note 17's question 7 "typed or follows"). A `follows` rule is the obvious next check.
 - One run per side, one example, a simulated user: this shows the design works and where the cost goes, not that it is better on average.
 
+## Second run, with the 0.3.0 changes [LOCAL]
+
+The same book club files and planted problems, now with a `follows` rule in `model-check.ts`, the implementer set to `gpt-6-luna` in its agent file, the token set in the starters' stylesheets and `design-check.ts`. Five user turns this time (one question per message, so the scripted answers didn't line up with three): 178 s, 47 s, 51 s, 211 s (sketch and data map), then about 730 s for the build, plus a few minutes lost when the test harness itself crashed mid-build. Total about 20 minutes, about the same as the first team run and about 2.5 times the one-agent run (which never got to a built app). Uncached input tokens about 350 k (main 89 k, modeller 40 k, designer 36 k, implementer 185 k over two threads), against about 330 k before and 68 k for one agent. The app built with 62 tests passing; `model-check.ts` showed no design gaps; `design-check.ts` found nothing.
+
+- **The cheaper implementer didn't apply.** Both implementer threads ran on `gpt-6-sol`: Codex passes the chat's own model (set here on the command line; in the app, picked in the window) on to every agent, as its documentation says for runtime overrides [1]. The `model` line only helps where the chat's model isn't set for the session.
+- **Eli (Lapsed but paid) was missed again.** The modeller kept the status column as a plain `one-of` list, so no `follows` fact was written. `model-check.ts` now reports any typed status column without a `follows` fact as a gap. Re-run on the same model, it flagged `members.status`; the modeller, started again, declined to add the rule ("the confirmed paused and lapsed cases mean payments cannot safely determine it"). A judgement call the user's earlier answer invited, not a missing check.
+- **Where the time goes:** the build step (copying the starter, the Excel block, tests, packaging) is about 60% of the total.
+
 ## Open questions
 
 1. **Cost.** Is a 2–3 times slower, roughly 5 times more expensive build worth five extra problems found? Options: run the team only from "the shape" on; keep the modeller and drop the separate implementer (the product manager builds); use a smaller model for the implementer (`model` in its TOML [1]); cap reads in the implementer's brief.

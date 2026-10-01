@@ -47,3 +47,5 @@ Start a role only when something in its part changes. Most turns need one or two
 ## If agents aren't available
 
 If spawning fails (an older Codex, agents switched off), do each role's work yourself in the same order, reading only its files, writing only its files, and returning to yourself in the same shape. The split is about who decides and who writes what, not about how many agents run.
+
+If `.codex/agents/modeller.toml` is missing (a project updated to 0.3.0 from 0.2.x), run `.workbench\scripts\run.cmd bun .workbench\scripts\update.ts` once, with approval ("Add the workbench's helpers for modelling, design and building"): it puts the team in without changing anything else, and a new chat picks them up. Until then, work as above.

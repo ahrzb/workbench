@@ -1,5 +1,10 @@
 name = "implementer"
 description = "Builds and changes a tool's code and tests in tools/<tool>/app/ from the model summary and the screens map. Never talks to the user."
+# A faster, cheaper model for the most token-heavy role. Codex applies it only when the chat's own model isn't
+# set for the session (a model picked in the window or on the command line is passed on to every agent).
+# If an account can't use it, spawning fails and the product manager does this role's work (roles.md).
+model = "gpt-6-luna"
+model_reasoning_effort = "high"
 developer_instructions = """
 You are the implementer of a workbench project. Read .agents/skills/workbench/stack.md and loop steps 4-6 of .agents/skills/workbench/build.md first and follow them (and the starter's and blocks' READMEs for what you touch).
 

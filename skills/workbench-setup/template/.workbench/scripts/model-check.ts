@@ -190,7 +190,32 @@ for (const f of model.facts ?? []) {
       }
       if (bad.length) broken('differs for the same key', bad); break
     }
-    default: gap({ kind: 'model', cost: 1, about, what: `unknown rule "${f.rule}" (use required, optional, unique, one-of, date, money, refers-to, mentions-one, mentions-some, same-per, derived, words)` })
+    case 'follows': {
+      // A typed value that should agree with other data ("Lapsed" while payments say otherwise).
+      // args.ok is a JavaScript expression, true when this row agrees; it sees `row` (this row, by column
+      // header), rows('<source>') (all rows of a source), mentions(text, key) and today ('YYYY-MM-DD').
+      const expr = String(f.args?.ok ?? '')
+      if (!expr) { gap({ kind: 'model', cost: 1, about, what: '"follows" needs args.ok: an expression that is true when the row agrees' }); break }
+      const asObjects = (tb: Table) => tb.rows.map((r) => Object.fromEntries(tb.header.map((h, k) => [h, (r[k] ?? '').trim()])))
+      const rowsOf = (id: string) => { const s = sourceById.get(id); const tb = s && tables.get(s.file.toLowerCase()); return tb ? asObjects(tb) : [] }
+      const mentions = (text: string, key: string) => !!key && new RegExp(`(^|[^a-z0-9])${key.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}([^a-z0-9]|$)`).test(String(text).toLowerCase())
+      let ok: (...a: unknown[]) => unknown
+      try { ok = new Function('row', 'rows', 'mentions', 'today', `return (${expr})`) as typeof ok } catch (e) { gap({ kind: 'model', cost: 2, about, what: `args.ok doesn't read as an expression: ${(e as Error).message}` }); break }
+      const today = new Date().toISOString().slice(0, 10)
+      // Show each disagreeing row by what tells it apart (its thing's key column), plus the typed value.
+      const srcId = f.where.split('.')[0]
+      const keyName = (model.things ?? []).map((th) => th.toldApartBy?.[0]).find((w) => w?.startsWith(srcId + '.'))?.slice(srcId.length + 1)
+      const keyCol = keyName ? t.header.findIndex((h) => h.toLowerCase() === keyName.toLowerCase()) : -1
+      const objs = asObjects(t)
+      for (let r = 0; r < objs.length; r++) {
+        let res: unknown
+        try { res = ok(objs[r], rowsOf, mentions, today) } catch (e) { gap({ kind: 'model', cost: 2, about, what: `args.ok failed on line ${r + 2}: ${(e as Error).message}` }); break }
+        if (!res) bad.push(ev(t, r, keyCol >= 0 && keyCol !== i ? [keyCol, i] : [i]))
+      }
+      if (bad.length) gap({ kind: 'ask', cost: COST[f.cost ?? ''] ?? 2, about, what: `the typed value disagrees with the files in ${bad.length} rows ("${f.says}"): set by hand, or should it follow from the data?`, evidence: bad.slice(0, 5) })
+      break
+    }
+    default: gap({ kind: 'model', cost: 1, about, what: `unknown rule "${f.rule}" (use required, optional, unique, one-of, date, money, refers-to, mentions-one, mentions-some, same-per, follows, derived, words)` })
   }
 }
 // A broken enforced rule already asks about it; drop the plain "confirm my guess" for the same fact.
@@ -230,6 +255,15 @@ for (const life of model.lives ?? []) {
     }
   }
 }
+
+// A status typed by hand (a life's status column, or a one-of column named like a status) goes stale: it
+// needs a "follows" fact saying when it agrees with the other files, so rows that disagree come up.
+const typed = new Set([
+  ...(model.lives ?? []).map((l) => l.statusAt),
+  ...(model.facts ?? []).filter((f) => f.rule === 'one-of' && /status|stage|state|paid|done|sent|active|lapsed|open|closed/i.test(f.where ?? '')).map((f) => f.where),
+].filter(Boolean).map((w) => w!.toLowerCase()))
+for (const w of typed) if (!(model.facts ?? []).some((f) => f.rule === 'follows' && f.where?.toLowerCase() === w))
+  gap({ kind: 'model', cost: 2, about: `column ${w}`, what: 'typed by hand: add a "follows" fact saying when each value agrees with the other files (e.g. Lapsed but paid this year doesn\'t), so rows that disagree come up' })
 
 // Columns nothing explains: the omission guard.
 for (const s of model.sources ?? []) {
