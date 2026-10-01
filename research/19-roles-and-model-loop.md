@@ -76,7 +76,23 @@ The same book club files and planted problems, now with a `follows` rule in `mod
 
 - **The cheaper implementer didn't apply.** Both implementer threads ran on `gpt-6-sol`: Codex passes the chat's own model (set here on the command line; in the app, picked in the window) on to every agent, as its documentation says for runtime overrides [1]. The `model` line only helps where the chat's model isn't set for the session.
 - **Eli (Lapsed but paid) was missed again.** The modeller kept the status column as a plain `one-of` list, so no `follows` fact was written. `model-check.ts` now reports any typed status column without a `follows` fact as a gap. Re-run on the same model, it flagged `members.status`; the modeller, started again, declined to add the rule ("the confirmed paused and lapsed cases mean payments cannot safely determine it"). A judgement call the user's earlier answer invited, not a missing check.
-- **Where the time goes:** the build step (copying the starter, the Excel block, tests, packaging) is about 60% of the total.
+- **Where the time goes** (from the session logs): not the build tools. The implementer's 673 s build thread spent 79 s in commands (npm, tests, packaging) and about 595 s in the model, over 38 tool round trips; the modeller 370 s of 419 s in the model over 22 round trips; the designer 267 s of 288 s. The main thread spent 913 s of 1,500 s waiting for agents, mostly in 120 s waits. So the cost is the number of model round trips each role makes (reading files, small edits, re-checks), times about 15 s each, done one role after another while the main thread idles.
+
+## Third run: one agent with the scripts vs a guide and a maker [LOCAL]
+
+After the owner's point that four tech-company roles were incidental, the split became two parts: the **guide** (the chat: process, why and what, the spec `model.json` with the model, the screens and a **backlog** whose statuses only it moves) and the **maker** (one project agent that builds from the spec only). New scripts: `model-check.ts --trace` (every case of a built backlog item has a test named `[Cn] ...`) and `gate.ts <tool> shape|build|demo|ship` (the guide checks, rather than trusts). Two variants of the same template, run at the same time on the same book club with the same three scripted turns (all answers given up front in turn 2): **B** without the maker's agent file (the guide does the maker's work itself, as `roles.md` says), **C** with it.
+
+| | B: one agent, scripts and gates | C: guide + maker |
+|---|---|---|
+| Time (3 turns) | 466 s (58 + 35 + 373) | 556 s (69 + 58 + 429) |
+| Uncached input tokens | 83 k | 158 k (guide 81 k, maker 77 k) |
+| Planted problems shown to the user | 6 of 9 (the two Ann Lees and the cash payment, the joint payment, the repeated line, the impossible date, Paused) | 5 of 9 (as B, without the repeated line) |
+| Gates run | shape 2, build 1, demo 2; demo OK, ship correctly blocked (not tried yet) | build 3, demo 3; demo OK, ship correctly blocked |
+| Built | one HTML file, 21 tests, every case traced to a test (Electron fell back: no network in the sandbox) | one HTML file, 22 tests, every case traced |
+
+For comparison: 0.2.7 with one agent, 468 s and 68 k uncached tokens, showed 2 of 9 and didn't get to a build; the four-role team about 20 minutes and 330-350 k tokens for 5 of 9.
+
+Reading it: **the gain comes from the spec and the scripts, not from splitting the work.** One agent with them matched the old single agent's speed and found three times as many problems; adding the maker cost about 20% more time and twice the tokens for no extra catch here. The maker's possible benefit, a clean guide context over a long session, isn't visible in three turns and wasn't measured. Missed by all: the shared email, Lapsed-but-paid (both specs wrote a `follows` fact saying status is set by hand, in line with the user's front-loaded answer), and last year's fee amount. One run per variant, one example, a simulated user.
 
 ## Open questions
 

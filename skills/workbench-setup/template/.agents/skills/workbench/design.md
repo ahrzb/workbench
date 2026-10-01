@@ -14,7 +14,7 @@ For you, not the user. The bundled **impeccable** skill (`.agents/skills/impecca
 
 ## The design system and the hierarchy pass
 
-From Refactoring UI (research note 18). The designer owns them.
+From Refactoring UI (research note 18). The maker owns them.
 
 - **Tokens.** The Electron and one-HTML-file starters' `app/src/index.css` open with a `:root` block: a spacing scale, a type scale (body 16px; 14px only for secondary text), two weights, ten greys, roles (`--text`, `--text-2`, `--surface-sunken`, `--border-control`, `--action`, ...), one radius, four shadows. Everything else in the stylesheet uses only those names; a value is always a step on a scale. A tool that needs something new gets a new token, not a typed-in value.
 - **Feature first, greyscale first.** Design the screen that carries the one main action first, on real sample content; navigation and frames only when a second feature exists. Colour waits for "the look".
@@ -22,26 +22,9 @@ From Refactoring UI (research note 18). The designer owns them.
 - **The hierarchy pass**, on every screen before anything decorative: decide what's primary, secondary and quiet, for content and for actions. One solid main button (`button.primary`) per screen; others outlined or plain. Make the quiet things quieter (colour, weight, the small size) rather than the main thing bigger. Section titles stay small in a tool. A label next to a value that explains itself goes. Group by space before borders: more space around a group than inside it; a tone before a line. A destructive action that isn't the main one is quiet; the loud red is only in its confirm step.
 - In `DESIGN.md`: the feel in one line (from `PRODUCT.md`), where the tool's tokens differ from the starter's and why, and per screen what's primary, secondary and quiet.
 
-## The screens map (`tools/<name>/screens.json`)
+## Flow and look
 
-The designer's formal record of the flows, kept from "the shape" on, because sketches aren't saved and the agreed flow must not live only in chat. Words are the user's; `does` names the model's event (`<thing>:<event>` from `model-check.ts --summary`) or a plain command the model has no event for (`open-file`, `export`).
-
-```json
-{
-  "screens": [
-    { "id": "owing", "word": "Who still owes", "first": true,
-      "shows": ["member: name, band, paid so far, still owing", "the 'check these' list first when it has rows"],
-      "actions": [
-        { "label": "Open this month's bank file", "does": "open-file" },
-        { "label": "Mark as left", "does": "member:leave", "greyedWhen": "already left" }
-      ],
-      "leadsTo": ["member"],
-      "empty": "Open a bank file to see who still owes." }
-  ]
-}
-```
-
-`model-check.ts <tool>` compares it with the model: an event no screen offers, or an action the model doesn't have, is a `DESIGN` gap. Every screen also states its empty state, and every action the model can refuse has `greyedWhen` with the reason the user will read.
+The flow (screens, what each shows, the actions and when they're greyed, empty states) is part of the spec the guide writes (`screens` in `model.json`, [model.md](model.md)), because it's about how the user works and they confirm it in the sketch. How it looks is the maker's: the design system and hierarchy pass above, `design-check.ts`, and impeccable as this file says. The user's reactions to the look come back as backlog items.
 
 ## What never reaches the user
 

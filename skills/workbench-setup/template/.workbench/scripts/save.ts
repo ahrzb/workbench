@@ -40,8 +40,8 @@ const allowed = [
   String.raw`^\.workbench/scripts/(bootstrap\.ps1|run\.cmd|git\.cmd|account\.ps1|account\.sh|[a-z0-9-]+\.ts)$`,
   String.raw`^\.workbench/(session-brief\.md|NOTES\.md|VERSION|account)$`,
   String.raw`^tools/[a-z0-9-]+/(NOTES|CONTEXT)\.md$`,
-  // A tool's formal model (modeller) and screens map (designer).
-  String.raw`^tools/[a-z0-9-]+/(model|screens)\.json$`,
+  // A tool's spec (the guide's: model, screens, backlog).
+  String.raw`^tools/[a-z0-9-]+/model\.json$`,
   // A tool's design notes (impeccable's product and design records, briefs and reviews; no screenshots).
   String.raw`^tools/[a-z0-9-]+/(PRODUCT|DESIGN)\.md$`,
   String.raw`^tools/[a-z0-9-]+/\.impeccable/(config|design)\.json$`,

@@ -80,7 +80,6 @@
 !/tools/*/PRODUCT.md
 !/tools/*/DESIGN.md
 !/tools/*/model.json
-!/tools/*/screens.json
 !/tools/*/.impeccable/
 /tools/*/.impeccable/*
 !/tools/*/.impeccable/config.json

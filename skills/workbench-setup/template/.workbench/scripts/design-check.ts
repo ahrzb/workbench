@@ -1,6 +1,6 @@
 // Checks a tool's stylesheet against its own design system (the tokens in :root) with the arithmetic rules
 // from Refactoring UI: values on the scales, few sizes and weights, readable contrast, no colours or shadows
-// typed outside the tokens, few borders, one radius, one main button per screen. For the designer; runs
+// typed outside the tokens, few borders, one radius, one main button per screen. For the maker; runs
 // before impeccable's detector, offline, inside Codex's sandbox. Desktop tools (Electron, one HTML file).
 //   .workbench\scripts\run.cmd bun .workbench\scripts\design-check.ts <tool>
 // Prints DESIGN-CHECK <tool>: <n> findings, then one line each. Exit 1 if there are findings.

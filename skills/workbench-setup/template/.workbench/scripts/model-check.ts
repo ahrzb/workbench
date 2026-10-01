@@ -1,18 +1,19 @@
-// Checks a tool's formal model (tools/<tool>/model.json) against itself, the user's sample files and the
-// designer's screens map, and prints the gaps: what the model doesn't settle yet. The modeller turns the
-// "ask" gaps into questions in the user's words; it fixes the "model" gaps itself; "design" gaps go to the
-// designer. Real values from the samples are printed here (for the chat) and never written anywhere.
+// Checks a tool's spec (tools/<tool>/model.json: the formal model, the flow and the backlog) against itself,
+// the user's sample files and, with --trace, the tool's tests, and prints the gaps. The guide turns ASK gaps
+// into questions in the user's words and settles MODEL and DESIGN gaps in the spec; BUILD gaps go to the
+// maker. Real values from the samples are printed here (for the chat) and never written anywhere.
 //   .workbench\scripts\run.cmd bun .workbench\scripts\model-check.ts <tool>            gaps, most costly first
-//   .workbench\scripts\run.cmd bun .workbench\scripts\model-check.ts <tool> --json     the same as JSON
-//   .workbench\scripts\run.cmd bun .workbench\scripts\model-check.ts <tool> --summary  short model for the other roles
-//   .workbench\scripts\run.cmd bun .workbench\scripts\model-check.ts <tool> --profile  what the samples look like (before a model)
-// Exit code: 0 no gaps of kind "ask" or "model"; 1 there are; 2 the model can't be read.
+//   .workbench\scripts\run.cmd bun .workbench\scripts\model-check.ts <tool> --trace    also: every built case has a test
+//   .workbench\scripts\run.cmd bun .workbench\scripts\model-check.ts <tool> --json     the gaps as JSON
+//   .workbench\scripts\run.cmd bun .workbench\scripts\model-check.ts <tool> --summary  the spec in short, for a brief
+//   .workbench\scripts\run.cmd bun .workbench\scripts\model-check.ts <tool> --profile  what the samples look like (before a spec)
+// Exit code: 0 no gaps; 1 there are; 2 the spec can't be read.
 import { existsSync, readdirSync, readFileSync } from 'node:fs'
 import path from 'node:path'
 
 const root = path.resolve(import.meta.dir, '..', '..')
 const [tool, ...flags] = process.argv.slice(2)
-if (!tool || !/^[a-z0-9-]+$/.test(tool)) { console.error('Usage: model-check.ts <tool> [--json | --summary | --profile]'); process.exit(2) }
+if (!tool || !/^[a-z0-9-]+$/.test(tool)) { console.error('Usage: model-check.ts <tool> [--trace] [--json | --summary | --profile]'); process.exit(2) }
 const toolDir = path.join(root, 'tools', tool)
 const samplesDir = path.join(toolDir, 'samples')
 
@@ -68,6 +69,8 @@ type Model = {
   facts?: Fact[]; ignored?: { where: string; why: string }[]; lives?: Life[]
   cases?: { id: string; says: string; about?: string[]; said: string }[]
   promises?: { to: string; says: string; case?: string }[]
+  screens?: { id: string; word?: string; shows?: string[]; actions?: { label: string; does?: string; greyedWhen?: string }[]; empty?: string }[]
+  backlog?: { id: string; milestone?: number; canDo: string; quote?: string; cases?: string[]; facts?: string[]; screens?: string[]; status: string }[]
 }
 const modelPath = path.join(toolDir, 'model.json')
 if (!existsSync(modelPath)) { console.error(`No model yet: tools/${tool}/model.json. Use --profile to look at the samples first.`); process.exit(2) }
@@ -78,7 +81,7 @@ if (flags.includes('--summary')) { summary(); process.exit(0) }
 
 // ---------- gaps ----------
 type Evidence = { file: string; line: number; values: Record<string, string> }
-type Gap = { kind: 'ask' | 'model' | 'design'; cost: number; about: string; what: string; evidence?: Evidence[] }
+type Gap = { kind: 'ask' | 'model' | 'design' | 'build'; cost: number; about: string; what: string; evidence?: Evidence[] }
 const gaps: Gap[] = []
 const COST: Record<string, number> = { ruins: 3, 'wrong-total': 3, annoying: 1 }
 const gap = (g: Gap) => gaps.push(g)
@@ -283,33 +286,56 @@ if (!model.job?.wants) gap({ kind: 'model', cost: 1, about: 'job', what: 'no job
 if (!model.steps?.length) gap({ kind: 'model', cost: 1, about: 'steps', what: 'no steps of the usual way' })
 if (!model.startsWhen?.length) gap({ kind: 'model', cost: 1, about: 'starts when', what: 'nothing says what starts it (something arrives, a date, something expected that never comes)' })
 
-// The designer's screens map, if there is one: every event has a way to do it; every action is a real event.
-const screensPath = path.join(toolDir, 'screens.json')
-if (existsSync(screensPath)) {
-  let screens: { screens: { id: string; actions?: { label: string; does?: string }[] }[] } | null = null
-  try { screens = JSON.parse(readFileSync(screensPath, 'utf8')) } catch { gap({ kind: 'design', cost: 2, about: 'screens.json', what: 'not valid JSON' }) }
-  if (screens) {
-    const actions = screens.screens.flatMap((s) => (s.actions ?? []).map((a) => ({ screen: s.id, ...a })))
-    for (const life of model.lives ?? []) for (const e of new Set(life.moves.map((m) => m.event)))
-      if (!actions.some((a) => a.does === `${life.thing}:${e}`)) gap({ kind: 'design', cost: 2, about: `life of ${life.thing}`, what: `no screen lets the user "${e}" (add an action with does: "${life.thing}:${e}")` })
-    for (const a of actions) if (a.does?.includes(':')) {
-      const [thing, e] = [a.does.slice(0, a.does.indexOf(':')), a.does.slice(a.does.indexOf(':') + 1)]
-      if (!(model.lives ?? []).some((l) => l.thing === thing && l.moves.some((m) => m.event === e))) gap({ kind: 'design', cost: 2, about: `screen ${a.screen}`, what: `action "${a.label}" does ${a.does}, which the model doesn't have` })
-    }
+// The flow: every event has a way to do it on some screen; every action is a real event; screens say their empty state.
+const actions = (model.screens ?? []).flatMap((s) => (s.actions ?? []).map((a) => ({ screen: s.id, ...a })))
+if (model.screens?.length) {
+  for (const life of model.lives ?? []) for (const e of new Set(life.moves.map((m) => m.event)))
+    if (!actions.some((a) => a.does === `${life.thing}:${e}`)) gap({ kind: 'design', cost: 2, about: `life of ${life.thing}`, what: `no screen lets the user "${e}" (add an action with does: "${life.thing}:${e}")` })
+  for (const a of actions) if (a.does?.includes(':')) {
+    const [thing, e] = [a.does.slice(0, a.does.indexOf(':')), a.does.slice(a.does.indexOf(':') + 1)]
+    if (!(model.lives ?? []).some((l) => l.thing === thing && l.moves.some((m) => m.event === e))) gap({ kind: 'design', cost: 2, about: `screen ${a.screen}`, what: `action "${a.label}" does ${a.does}, which the spec doesn't have` })
   }
+  for (const s of model.screens ?? []) if (!s.empty) gap({ kind: 'design', cost: 1, about: `screen ${s.id}`, what: 'no empty state: what it says before there is anything to show' })
 }
 
-gaps.sort((a, b) => ({ ask: 0, model: 1, design: 2 }[a.kind] - { ask: 0, model: 1, design: 2 }[b.kind]) || b.cost - a.cost)
+// The backlog: every item points at real cases, facts and screens, and has at least one case that proves it.
+const STATUS = ['proposed', 'confirmed', 'built', 'tried', 'accepted']
+const caseById = new Map((model.cases ?? []).map((c) => [c.id, c]))
+const screenIds = new Set((model.screens ?? []).map((s) => s.id))
+for (const b of model.backlog ?? []) {
+  const about = `backlog ${b.id}`
+  if (!STATUS.includes(b.status)) gap({ kind: 'model', cost: 1, about, what: `status "${b.status}" isn't one of ${STATUS.join(', ')}` })
+  if (!b.cases?.length) gap({ kind: 'model', cost: 2, about, what: `"${b.canDo}" has no case that shows it works` })
+  for (const c of b.cases ?? []) if (!caseById.has(c)) gap({ kind: 'model', cost: 2, about, what: `case ${c} doesn't exist` })
+  for (const f of b.facts ?? []) if (!factIds.has(f)) gap({ kind: 'model', cost: 1, about, what: `fact ${f} doesn't exist` })
+  for (const s of b.screens ?? []) if (!screenIds.has(s)) gap({ kind: 'design', cost: 1, about, what: `screen ${s} doesn't exist` })
+}
+
+// --trace: the code is made from the backlog. Every case of a built item has a test named with its id ("[C4] ..."),
+// and every id in a test is a real case.
+if (flags.includes('--trace')) {
+  const testFiles: string[] = []
+  const walkT = (d: string) => { if (!existsSync(d)) return; for (const e of readdirSync(d, { withFileTypes: true })) { const p = path.join(d, e.name); if (e.isDirectory()) { if (e.name !== 'node_modules') walkT(p) } else if (/\.test\.(m?[jt]s|tsx)$|[\\/]test[\\/].*\.(m?[jt]s)$/.test(p)) testFiles.push(p) } }
+  walkT(path.join(toolDir, 'app', 'test')); walkT(path.join(toolDir, 'app', 'src'))
+  const inTests = new Set<string>()
+  for (const f of testFiles) for (const m of readFileSync(f, 'utf8').matchAll(/\[(C\d+)\]/g)) inTests.add(m[1])
+  for (const b of model.backlog ?? []) if (['built', 'tried', 'accepted'].includes(b.status))
+    for (const c of b.cases ?? []) if (!inTests.has(c)) gap({ kind: 'build', cost: 2, about: `backlog ${b.id}`, what: `case ${c} ("${caseById.get(c)?.says ?? '?'}") has no test named "[${c}] ..."` })
+  for (const c of inTests) if (!caseById.has(c)) gap({ kind: 'build', cost: 1, about: `test [${c}]`, what: 'names a case the spec doesn\'t have: built from no backlog item?' })
+}
+
+const ORDER: Record<string, number> = { ask: 0, model: 1, design: 2, build: 3 }
+gaps.sort((a, b) => ORDER[a.kind] - ORDER[b.kind] || b.cost - a.cost)
 if (flags.includes('--json')) console.log(JSON.stringify(gaps, null, 2))
 else {
   const n = (k: string) => gaps.filter((g) => g.kind === k).length
-  console.log(`MODEL ${tool}: ${n('ask')} to ask the user, ${n('model')} for the modeller, ${n('design')} for the designer`)
+  console.log(`SPEC ${tool}: ${n('ask')} to ask the user, ${n('model') + n('design')} to settle in the spec${flags.includes('--trace') ? `, ${n('build')} for the maker` : ''}`)
   for (const g of gaps) {
     console.log(`${g.kind.toUpperCase()} [${g.about}] ${g.what}`)
     for (const e of g.evidence ?? []) console.log(`    ${e.file} line ${e.line}: ${Object.entries(e.values).map(([k, v]) => `${k}=${JSON.stringify(v)}`).join(', ')}`)
   }
 }
-process.exit(gaps.some((g) => g.kind !== 'design') ? 1 : 0)
+process.exit(gaps.length ? 1 : 0)
 
 // ---------- outputs ----------
 function summary() {
@@ -325,6 +351,8 @@ function summary() {
   }
   for (const c of m.cases ?? []) out.push(`Case ${c.id} (${c.said}): ${c.says}`)
   for (const p of m.promises ?? []) out.push(`Promise to ${p.to}: ${p.says}`)
+  for (const s of m.screens ?? []) out.push(`Screen ${s.id} ("${s.word ?? s.id}"): shows ${s.shows?.join('; ') ?? '?'}; actions ${(s.actions ?? []).map((a) => `${a.label} [${a.does ?? '-'}]${a.greyedWhen ? ` greyed when ${a.greyedWhen}` : ''}`).join(', ') || '-'}; empty: ${s.empty ?? '?'}`)
+  for (const b of m.backlog ?? []) out.push(`Backlog ${b.id} (${b.status}, milestone ${b.milestone ?? '?'}): you can ${b.canDo}; cases ${b.cases?.join(', ') ?? '-'}; screens ${b.screens?.join(', ') ?? '-'}`)
   console.log(out.join('\n'))
 }
 
